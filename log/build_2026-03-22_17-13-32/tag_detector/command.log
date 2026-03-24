@@ -1,0 +1,1 @@
+Invoking command in '/home/nvidia/vtol_ws/build/tag_detector': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake /home/nvidia/vtol_ws/src/tag_detector -DCMAKE_INSTALL_PREFIX=/home/nvidia/vtol_ws/install/tag_detector

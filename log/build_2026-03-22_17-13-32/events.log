@@ -1,0 +1,289 @@
+[0.000000] (-) TimerEvent: {}
+[0.000252] (ardupilot_mavlink_bridge) JobQueued: {'identifier': 'ardupilot_mavlink_bridge', 'dependencies': OrderedDict()}
+[0.000512] (bringup) JobQueued: {'identifier': 'bringup', 'dependencies': OrderedDict()}
+[0.000997] (camera) JobQueued: {'identifier': 'camera', 'dependencies': OrderedDict()}
+[0.001237] (pose_bridge) JobQueued: {'identifier': 'pose_bridge', 'dependencies': OrderedDict()}
+[0.001495] (tag_detector) JobQueued: {'identifier': 'tag_detector', 'dependencies': OrderedDict()}
+[0.001584] (tag_nav_stub) JobQueued: {'identifier': 'tag_nav_stub', 'dependencies': OrderedDict()}
+[0.001651] (ardupilot_mavlink_bridge) JobStarted: {'identifier': 'ardupilot_mavlink_bridge'}
+[0.014407] (bringup) JobStarted: {'identifier': 'bringup'}
+[0.022440] (camera) JobStarted: {'identifier': 'camera'}
+[0.027913] (pose_bridge) JobStarted: {'identifier': 'pose_bridge'}
+[0.035729] (tag_detector) JobStarted: {'identifier': 'tag_detector'}
+[0.041342] (tag_nav_stub) JobStarted: {'identifier': 'tag_nav_stub'}
+[0.099306] (-) TimerEvent: {}
+[0.199666] (-) TimerEvent: {}
+[0.300013] (-) TimerEvent: {}
+[0.400337] (-) TimerEvent: {}
+[0.500647] (-) TimerEvent: {}
+[0.600973] (-) TimerEvent: {}
+[0.701310] (-) TimerEvent: {}
+[0.801648] (-) TimerEvent: {}
+[0.902031] (-) TimerEvent: {}
+[0.922139] (camera) JobProgress: {'identifier': 'camera', 'progress': 'cmake'}
+[0.923224] (camera) Command: {'cmd': ['/usr/bin/cmake', '/home/nvidia/vtol_ws/src/camera', '-DCMAKE_INSTALL_PREFIX=/home/nvidia/vtol_ws/install/camera'], 'cwd': '/home/nvidia/vtol_ws/build/camera', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('VSCODE_CWD', '/home/nvidia'), ('VSCODE_ESM_ENTRYPOINT', 'vs/workbench/api/node/extensionHostProcess'), ('CONDA_PROMPT_MODIFIER', '(nim)'), ('USER', 'nvidia'), ('SSH_CLIENT', '192.168.0.100 56272 22'), ('VSCODE_NLS_CONFIG', '{"userLocale":"en","osLocale":"en","resolvedLanguage":"en","defaultMessagesFile":"/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/out/nls.messages.json","locale":"en","availableLanguages":{}}'), ('CI', '1'), ('VSCODE_HANDLES_UNCAUGHT_ERRORS', 'true'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.6/lib64:/usr/local/cuda-12.6/lib64:'), ('BROWSER', '/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/helpers/browser.sh'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/nvidia'), ('CONDA_SHLVL', '2'), ('OLDPWD', '/home/nvidia/vtol_ws/src'), ('VSCODE_IPC_HOOK_CLI', '/run/user/1000/vscode-ipc-32435362-afb5-4eed-99b8-f345e7daeea2.sock'), ('JETSON_L4T', '36.4.7'), ('ROS_PYTHON_VERSION', '3'), ('JETSON_MODEL', 'NVIDIA Jetson Orin NX Engineering Reference Developer Kit'), ('NO_COLOR', '1'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/nvidia/vtol_ws/install'), ('ROS_DISTRO', 'humble'), ('OVSX_REGISTRY_URL', 'https://open-vsx.org'), ('LOGNAME', 'nvidia'), ('FORCE_COLOR', '0'), ('JETSON_MODULE', 'NVIDIA Jetson Orin NX (16GB ram)'), ('JETSON_SERIAL_NUMBER', '1420825014689'), ('VSCODE_HANDLES_SIGPIPE', 'true'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'dumb'), ('XDG_SESSION_ID', '6'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/nvidia/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/home/nvidia/miniconda3/envs/nim/bin:/home/nvidia/miniconda3/condabin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('VSCODE_AGENT_FOLDER', '/home/nvidia/.cursor-server'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('CURSOR_AGENT', '1'), ('LANG', 'ru_RU.UTF-8'), ('CONDA_PREFIX_1', '/home/nvidia/miniconda3'), ('LS_COLORS', ''), ('JETSON_SOC', 'tegra234'), ('AMENT_PREFIX_PATH', '/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble'), ('CONDA_PYTHON_EXE', '/home/nvidia/miniconda3/bin/python'), ('SHELL', '/bin/bash'), ('VSCODE_SERVER_SHUTDOWN_TIMEOUT', '300'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CONDA_DEFAULT_ENV', 'nim'), ('JETSON_CUDA_ARCH_BIN', '8.7'), ('PWD', '/home/nvidia/vtol_ws/build/camera'), ('CONDA_EXE', '/home/nvidia/miniconda3/bin/conda'), ('SSH_CONNECTION', '192.168.0.100 56272 192.168.0.107 22'), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:'), ('CONDA_PREFIX', '/home/nvidia/miniconda3/envs/nim'), ('COLCON', '1'), ('_ZO_DOCTOR', '0'), ('JETSON_JETPACK', ''), ('JETSON_P_NUMBER', 'p3767-0000'), ('CMAKE_PREFIX_PATH', '/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble')]), 'shell': False}
+[1.002158] (-) TimerEvent: {}
+[1.102496] (-) TimerEvent: {}
+[1.202803] (-) TimerEvent: {}
+[1.303122] (-) TimerEvent: {}
+[1.364555] (tag_detector) JobProgress: {'identifier': 'tag_detector', 'progress': 'cmake'}
+[1.365470] (tag_detector) Command: {'cmd': ['/usr/bin/cmake', '/home/nvidia/vtol_ws/src/tag_detector', '-DCMAKE_INSTALL_PREFIX=/home/nvidia/vtol_ws/install/tag_detector'], 'cwd': '/home/nvidia/vtol_ws/build/tag_detector', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('VSCODE_CWD', '/home/nvidia'), ('VSCODE_ESM_ENTRYPOINT', 'vs/workbench/api/node/extensionHostProcess'), ('CONDA_PROMPT_MODIFIER', '(nim)'), ('USER', 'nvidia'), ('SSH_CLIENT', '192.168.0.100 56272 22'), ('VSCODE_NLS_CONFIG', '{"userLocale":"en","osLocale":"en","resolvedLanguage":"en","defaultMessagesFile":"/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/out/nls.messages.json","locale":"en","availableLanguages":{}}'), ('CI', '1'), ('VSCODE_HANDLES_UNCAUGHT_ERRORS', 'true'), ('XDG_SESSION_TYPE', 'tty'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.6/lib64:/usr/local/cuda-12.6/lib64:'), ('BROWSER', '/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/helpers/browser.sh'), ('MOTD_SHOWN', 'pam'), ('HOME', '/home/nvidia'), ('CONDA_SHLVL', '2'), ('OLDPWD', '/home/nvidia/vtol_ws/src'), ('VSCODE_IPC_HOOK_CLI', '/run/user/1000/vscode-ipc-32435362-afb5-4eed-99b8-f345e7daeea2.sock'), ('JETSON_L4T', '36.4.7'), ('ROS_PYTHON_VERSION', '3'), ('JETSON_MODEL', 'NVIDIA Jetson Orin NX Engineering Reference Developer Kit'), ('NO_COLOR', '1'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLCON_PREFIX_PATH', '/home/nvidia/vtol_ws/install'), ('ROS_DISTRO', 'humble'), ('OVSX_REGISTRY_URL', 'https://open-vsx.org'), ('LOGNAME', 'nvidia'), ('FORCE_COLOR', '0'), ('JETSON_MODULE', 'NVIDIA Jetson Orin NX (16GB ram)'), ('JETSON_SERIAL_NUMBER', '1420825014689'), ('VSCODE_HANDLES_SIGPIPE', 'true'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('TERM', 'dumb'), ('XDG_SESSION_ID', '6'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/nvidia/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/home/nvidia/miniconda3/envs/nim/bin:/home/nvidia/miniconda3/condabin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('VSCODE_AGENT_FOLDER', '/home/nvidia/.cursor-server'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('CURSOR_AGENT', '1'), ('LANG', 'ru_RU.UTF-8'), ('CONDA_PREFIX_1', '/home/nvidia/miniconda3'), ('LS_COLORS', ''), ('JETSON_SOC', 'tegra234'), ('AMENT_PREFIX_PATH', '/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble'), ('CONDA_PYTHON_EXE', '/home/nvidia/miniconda3/bin/python'), ('SHELL', '/bin/bash'), ('VSCODE_SERVER_SHUTDOWN_TIMEOUT', '300'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('CONDA_DEFAULT_ENV', 'nim'), ('JETSON_CUDA_ARCH_BIN', '8.7'), ('PWD', '/home/nvidia/vtol_ws/build/tag_detector'), ('CONDA_EXE', '/home/nvidia/miniconda3/bin/conda'), ('SSH_CONNECTION', '192.168.0.100 56272 192.168.0.107 22'), ('XDG_DATA_DIRS', '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:'), ('CONDA_PREFIX', '/home/nvidia/miniconda3/envs/nim'), ('COLCON', '1'), ('_ZO_DOCTOR', '0'), ('JETSON_JETPACK', ''), ('JETSON_P_NUMBER', 'p3767-0000'), ('CMAKE_PREFIX_PATH', '/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble')]), 'shell': False}
+[1.403573] (-) TimerEvent: {}
+[1.503928] (-) TimerEvent: {}
+[1.604291] (-) TimerEvent: {}
+[1.704657] (-) TimerEvent: {}
+[1.805039] (-) TimerEvent: {}
+[1.838495] (camera) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[1.839329] (camera) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[1.839757] (camera) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[1.840322] (camera) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[1.840552] (camera) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[1.841006] (camera) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[1.841654] (camera) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[1.841799] (camera) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[1.841986] (camera) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[1.842562] (camera) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[1.842866] (camera) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[1.843039] (camera) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[1.844162] (camera) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[1.844303] (tag_detector) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[1.844477] (tag_detector) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[1.844586] (tag_detector) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[1.844691] (tag_detector) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[1.844791] (tag_detector) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[1.844887] (tag_detector) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[1.844983] (tag_detector) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[1.845078] (tag_detector) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[1.845171] (tag_detector) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[1.845264] (tag_detector) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[1.845359] (tag_detector) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[1.845450] (tag_detector) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[1.845545] (tag_detector) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[1.905217] (-) TimerEvent: {}
+[2.005617] (-) TimerEvent: {}
+[2.106007] (-) TimerEvent: {}
+[2.206400] (-) TimerEvent: {}
+[2.300022] (camera) StdoutLine: {'line': b'-- Found Python3: /home/nvidia/miniconda3/envs/nim/bin/python3 (found version "3.10.18") found components: Interpreter \n'}
+[2.306579] (-) TimerEvent: {}
+[2.407000] (-) TimerEvent: {}
+[2.501431] (ardupilot_mavlink_bridge) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/ardupilot_mavlink_bridge', 'build', '--build-base', '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build', 'install', '--record', '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/nvidia/vtol_ws/src/ardupilot_mavlink_bridge', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'VSCODE_CWD': '/home/nvidia', 'VSCODE_ESM_ENTRYPOINT': 'vs/workbench/api/node/extensionHostProcess', 'CONDA_PROMPT_MODIFIER': '(nim)', 'USER': 'nvidia', 'SSH_CLIENT': '192.168.0.100 56272 22', 'VSCODE_NLS_CONFIG': '{"userLocale":"en","osLocale":"en","resolvedLanguage":"en","defaultMessagesFile":"/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/out/nls.messages.json","locale":"en","availableLanguages":{}}', 'CI': '1', 'VSCODE_HANDLES_UNCAUGHT_ERRORS': 'true', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.6/lib64:/usr/local/cuda-12.6/lib64:', 'BROWSER': '/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/helpers/browser.sh', 'MOTD_SHOWN': 'pam', 'HOME': '/home/nvidia', 'CONDA_SHLVL': '2', 'OLDPWD': '/home/nvidia/vtol_ws/src', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-32435362-afb5-4eed-99b8-f345e7daeea2.sock', 'JETSON_L4T': '36.4.7', 'ROS_PYTHON_VERSION': '3', 'JETSON_MODEL': 'NVIDIA Jetson Orin NX Engineering Reference Developer Kit', 'NO_COLOR': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLCON_PREFIX_PATH': '/home/nvidia/vtol_ws/install', 'ROS_DISTRO': 'humble', 'OVSX_REGISTRY_URL': 'https://open-vsx.org', 'LOGNAME': 'nvidia', 'FORCE_COLOR': '0', 'JETSON_MODULE': 'NVIDIA Jetson Orin NX (16GB ram)', 'JETSON_SERIAL_NUMBER': '1420825014689', 'VSCODE_HANDLES_SIGPIPE': 'true', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'dumb', 'XDG_SESSION_ID': '6', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/nvidia/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/home/nvidia/miniconda3/envs/nim/bin:/home/nvidia/miniconda3/condabin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'VSCODE_AGENT_FOLDER': '/home/nvidia/.cursor-server', 'XDG_RUNTIME_DIR': '/run/user/1000', 'CURSOR_AGENT': '1', 'LANG': 'ru_RU.UTF-8', 'CONDA_PREFIX_1': '/home/nvidia/miniconda3', 'LS_COLORS': '', 'JETSON_SOC': 'tegra234', 'AMENT_PREFIX_PATH': '/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble', 'CONDA_PYTHON_EXE': '/home/nvidia/miniconda3/bin/python', 'SHELL': '/bin/bash', 'VSCODE_SERVER_SHUTDOWN_TIMEOUT': '300', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'CONDA_DEFAULT_ENV': 'nim', 'JETSON_CUDA_ARCH_BIN': '8.7', 'PWD': '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge', 'CONDA_EXE': '/home/nvidia/miniconda3/bin/conda', 'SSH_CONNECTION': '192.168.0.100 56272 192.168.0.107 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages:/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:', 'CONDA_PREFIX': '/home/nvidia/miniconda3/envs/nim', 'COLCON': '1', '_ZO_DOCTOR': '0', 'JETSON_JETPACK': '', 'JETSON_P_NUMBER': 'p3767-0000'}, 'shell': False}
+[2.507179] (-) TimerEvent: {}
+[2.524898] (bringup) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/bringup', 'build', '--build-base', '/home/nvidia/vtol_ws/build/bringup/build', 'install', '--record', '/home/nvidia/vtol_ws/build/bringup/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/nvidia/vtol_ws/src/bringup', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'VSCODE_CWD': '/home/nvidia', 'VSCODE_ESM_ENTRYPOINT': 'vs/workbench/api/node/extensionHostProcess', 'CONDA_PROMPT_MODIFIER': '(nim)', 'USER': 'nvidia', 'SSH_CLIENT': '192.168.0.100 56272 22', 'VSCODE_NLS_CONFIG': '{"userLocale":"en","osLocale":"en","resolvedLanguage":"en","defaultMessagesFile":"/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/out/nls.messages.json","locale":"en","availableLanguages":{}}', 'CI': '1', 'VSCODE_HANDLES_UNCAUGHT_ERRORS': 'true', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.6/lib64:/usr/local/cuda-12.6/lib64:', 'BROWSER': '/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/helpers/browser.sh', 'MOTD_SHOWN': 'pam', 'HOME': '/home/nvidia', 'CONDA_SHLVL': '2', 'OLDPWD': '/home/nvidia/vtol_ws/src', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-32435362-afb5-4eed-99b8-f345e7daeea2.sock', 'JETSON_L4T': '36.4.7', 'ROS_PYTHON_VERSION': '3', 'JETSON_MODEL': 'NVIDIA Jetson Orin NX Engineering Reference Developer Kit', 'NO_COLOR': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLCON_PREFIX_PATH': '/home/nvidia/vtol_ws/install', 'ROS_DISTRO': 'humble', 'OVSX_REGISTRY_URL': 'https://open-vsx.org', 'LOGNAME': 'nvidia', 'FORCE_COLOR': '0', 'JETSON_MODULE': 'NVIDIA Jetson Orin NX (16GB ram)', 'JETSON_SERIAL_NUMBER': '1420825014689', 'VSCODE_HANDLES_SIGPIPE': 'true', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'dumb', 'XDG_SESSION_ID': '6', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/nvidia/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/home/nvidia/miniconda3/envs/nim/bin:/home/nvidia/miniconda3/condabin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'VSCODE_AGENT_FOLDER': '/home/nvidia/.cursor-server', 'XDG_RUNTIME_DIR': '/run/user/1000', 'CURSOR_AGENT': '1', 'LANG': 'ru_RU.UTF-8', 'CONDA_PREFIX_1': '/home/nvidia/miniconda3', 'LS_COLORS': '', 'JETSON_SOC': 'tegra234', 'AMENT_PREFIX_PATH': '/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble', 'CONDA_PYTHON_EXE': '/home/nvidia/miniconda3/bin/python', 'SHELL': '/bin/bash', 'VSCODE_SERVER_SHUTDOWN_TIMEOUT': '300', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'CONDA_DEFAULT_ENV': 'nim', 'JETSON_CUDA_ARCH_BIN': '8.7', 'PWD': '/home/nvidia/vtol_ws/build/bringup', 'CONDA_EXE': '/home/nvidia/miniconda3/bin/conda', 'SSH_CONNECTION': '192.168.0.100 56272 192.168.0.107 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/nvidia/vtol_ws/build/bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/bringup/lib/python3.10/site-packages:/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:', 'CONDA_PREFIX': '/home/nvidia/miniconda3/envs/nim', 'COLCON': '1', '_ZO_DOCTOR': '0', 'JETSON_JETPACK': '', 'JETSON_P_NUMBER': 'p3767-0000'}, 'shell': False}
+[2.547576] (camera) StdoutLine: {'line': b'-- Found rclcpp: 16.0.18 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[2.549208] (tag_nav_stub) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/tag_nav_stub', 'build', '--build-base', '/home/nvidia/vtol_ws/build/tag_nav_stub/build', 'install', '--record', '/home/nvidia/vtol_ws/build/tag_nav_stub/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/nvidia/vtol_ws/src/tag_nav_stub', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'VSCODE_CWD': '/home/nvidia', 'VSCODE_ESM_ENTRYPOINT': 'vs/workbench/api/node/extensionHostProcess', 'CONDA_PROMPT_MODIFIER': '(nim)', 'USER': 'nvidia', 'SSH_CLIENT': '192.168.0.100 56272 22', 'VSCODE_NLS_CONFIG': '{"userLocale":"en","osLocale":"en","resolvedLanguage":"en","defaultMessagesFile":"/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/out/nls.messages.json","locale":"en","availableLanguages":{}}', 'CI': '1', 'VSCODE_HANDLES_UNCAUGHT_ERRORS': 'true', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.6/lib64:/usr/local/cuda-12.6/lib64:', 'BROWSER': '/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/helpers/browser.sh', 'MOTD_SHOWN': 'pam', 'HOME': '/home/nvidia', 'CONDA_SHLVL': '2', 'OLDPWD': '/home/nvidia/vtol_ws/src', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-32435362-afb5-4eed-99b8-f345e7daeea2.sock', 'JETSON_L4T': '36.4.7', 'ROS_PYTHON_VERSION': '3', 'JETSON_MODEL': 'NVIDIA Jetson Orin NX Engineering Reference Developer Kit', 'NO_COLOR': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLCON_PREFIX_PATH': '/home/nvidia/vtol_ws/install', 'ROS_DISTRO': 'humble', 'OVSX_REGISTRY_URL': 'https://open-vsx.org', 'LOGNAME': 'nvidia', 'FORCE_COLOR': '0', 'JETSON_MODULE': 'NVIDIA Jetson Orin NX (16GB ram)', 'JETSON_SERIAL_NUMBER': '1420825014689', 'VSCODE_HANDLES_SIGPIPE': 'true', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'dumb', 'XDG_SESSION_ID': '6', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/nvidia/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/home/nvidia/miniconda3/envs/nim/bin:/home/nvidia/miniconda3/condabin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'VSCODE_AGENT_FOLDER': '/home/nvidia/.cursor-server', 'XDG_RUNTIME_DIR': '/run/user/1000', 'CURSOR_AGENT': '1', 'LANG': 'ru_RU.UTF-8', 'CONDA_PREFIX_1': '/home/nvidia/miniconda3', 'LS_COLORS': '', 'JETSON_SOC': 'tegra234', 'AMENT_PREFIX_PATH': '/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble', 'CONDA_PYTHON_EXE': '/home/nvidia/miniconda3/bin/python', 'SHELL': '/bin/bash', 'VSCODE_SERVER_SHUTDOWN_TIMEOUT': '300', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'CONDA_DEFAULT_ENV': 'nim', 'JETSON_CUDA_ARCH_BIN': '8.7', 'PWD': '/home/nvidia/vtol_ws/build/tag_nav_stub', 'CONDA_EXE': '/home/nvidia/miniconda3/bin/conda', 'SSH_CONNECTION': '192.168.0.100 56272 192.168.0.107 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/nvidia/vtol_ws/build/tag_nav_stub/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages:/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:', 'CONDA_PREFIX': '/home/nvidia/miniconda3/envs/nim', 'COLCON': '1', '_ZO_DOCTOR': '0', 'JETSON_JETPACK': '', 'JETSON_P_NUMBER': 'p3767-0000'}, 'shell': False}
+[2.553378] (pose_bridge) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/pose_bridge', 'build', '--build-base', '/home/nvidia/vtol_ws/build/pose_bridge/build', 'install', '--record', '/home/nvidia/vtol_ws/build/pose_bridge/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/nvidia/vtol_ws/src/pose_bridge', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'VSCODE_CWD': '/home/nvidia', 'VSCODE_ESM_ENTRYPOINT': 'vs/workbench/api/node/extensionHostProcess', 'CONDA_PROMPT_MODIFIER': '(nim)', 'USER': 'nvidia', 'SSH_CLIENT': '192.168.0.100 56272 22', 'VSCODE_NLS_CONFIG': '{"userLocale":"en","osLocale":"en","resolvedLanguage":"en","defaultMessagesFile":"/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/out/nls.messages.json","locale":"en","availableLanguages":{}}', 'CI': '1', 'VSCODE_HANDLES_UNCAUGHT_ERRORS': 'true', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.6/lib64:/usr/local/cuda-12.6/lib64:', 'BROWSER': '/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/helpers/browser.sh', 'MOTD_SHOWN': 'pam', 'HOME': '/home/nvidia', 'CONDA_SHLVL': '2', 'OLDPWD': '/home/nvidia/vtol_ws/src', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-32435362-afb5-4eed-99b8-f345e7daeea2.sock', 'JETSON_L4T': '36.4.7', 'ROS_PYTHON_VERSION': '3', 'JETSON_MODEL': 'NVIDIA Jetson Orin NX Engineering Reference Developer Kit', 'NO_COLOR': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLCON_PREFIX_PATH': '/home/nvidia/vtol_ws/install', 'ROS_DISTRO': 'humble', 'OVSX_REGISTRY_URL': 'https://open-vsx.org', 'LOGNAME': 'nvidia', 'FORCE_COLOR': '0', 'JETSON_MODULE': 'NVIDIA Jetson Orin NX (16GB ram)', 'JETSON_SERIAL_NUMBER': '1420825014689', 'VSCODE_HANDLES_SIGPIPE': 'true', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'dumb', 'XDG_SESSION_ID': '6', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/nvidia/.local/bin:/opt/ros/humble/bin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/home/nvidia/miniconda3/envs/nim/bin:/home/nvidia/miniconda3/condabin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'VSCODE_AGENT_FOLDER': '/home/nvidia/.cursor-server', 'XDG_RUNTIME_DIR': '/run/user/1000', 'CURSOR_AGENT': '1', 'LANG': 'ru_RU.UTF-8', 'CONDA_PREFIX_1': '/home/nvidia/miniconda3', 'LS_COLORS': '', 'JETSON_SOC': 'tegra234', 'AMENT_PREFIX_PATH': '/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble', 'CONDA_PYTHON_EXE': '/home/nvidia/miniconda3/bin/python', 'SHELL': '/bin/bash', 'VSCODE_SERVER_SHUTDOWN_TIMEOUT': '300', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'CONDA_DEFAULT_ENV': 'nim', 'JETSON_CUDA_ARCH_BIN': '8.7', 'PWD': '/home/nvidia/vtol_ws/build/pose_bridge', 'CONDA_EXE': '/home/nvidia/miniconda3/bin/conda', 'SSH_CONNECTION': '192.168.0.100 56272 192.168.0.107 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/nvidia/vtol_ws/build/pose_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages:/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:', 'CONDA_PREFIX': '/home/nvidia/miniconda3/envs/nim', 'COLCON': '1', '_ZO_DOCTOR': '0', 'JETSON_JETPACK': '', 'JETSON_P_NUMBER': 'p3767-0000'}, 'shell': False}
+[2.607346] (-) TimerEvent: {}
+[2.612351] (camera) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[2.612783] (camera) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[2.619737] (camera) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[2.640970] (camera) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[2.672629] (camera) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[2.677311] (tag_detector) StdoutLine: {'line': b'-- Found Python3: /home/nvidia/miniconda3/envs/nim/bin/python3 (found version "3.10.18") found components: Interpreter \n'}
+[2.707493] (-) TimerEvent: {}
+[2.758497] (camera) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[2.762982] (camera) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.10 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[2.807648] (-) TimerEvent: {}
+[2.897485] (tag_detector) StdoutLine: {'line': b'-- Found rclcpp: 16.0.18 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[2.907801] (-) TimerEvent: {}
+[2.940367] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running egg_info\n'}
+[2.942034] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'creating ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info\n'}
+[2.942726] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'writing ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/PKG-INFO\n'}
+[2.943857] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'writing dependency_links to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/dependency_links.txt\n'}
+[2.944660] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'writing entry points to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/entry_points.txt\n'}
+[2.945321] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'writing requirements to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/requires.txt\n'}
+[2.946001] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'writing top-level names to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/top_level.txt\n'}
+[2.947043] (ardupilot_mavlink_bridge) StdoutLine: {'line': b"writing manifest file '../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/SOURCES.txt'\n"}
+[2.951401] (ardupilot_mavlink_bridge) StdoutLine: {'line': b"reading manifest file '../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/SOURCES.txt'\n"}
+[2.953374] (ardupilot_mavlink_bridge) StdoutLine: {'line': b"writing manifest file '../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/SOURCES.txt'\n"}
+[2.954228] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running build\n'}
+[2.954675] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running build_py\n'}
+[2.955455] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build\n'}
+[2.956028] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib\n'}
+[2.956521] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge\n'}
+[2.957109] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'copying ardupilot_mavlink_bridge/__init__.py -> /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge\n'}
+[2.957740] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'copying ardupilot_mavlink_bridge/mavlink_bridge_node.py -> /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge\n'}
+[2.961846] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running install\n'}
+[2.963302] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running install_lib\n'}
+[2.965533] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge\n'}
+[2.966287] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'copying /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge/__init__.py -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge\n'}
+[2.966944] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'copying /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge/mavlink_bridge_node.py -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge\n'}
+[2.968805] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'byte-compiling /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge/__init__.py to __init__.cpython-310.pyc\n'}
+[2.969345] (tag_detector) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[2.970368] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'byte-compiling /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge/mavlink_bridge_node.py to mavlink_bridge_node.cpython-310.pyc\n'}
+[2.971631] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running install_data\n'}
+[2.972154] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index\n'}
+[2.972619] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index/resource_index\n'}
+[2.972798] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index/resource_index/packages\n'}
+[2.973284] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'copying resource/ardupilot_mavlink_bridge -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index/resource_index/packages\n'}
+[2.973759] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'copying package.xml -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge\n'}
+[2.974203] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running install_egg_info\n'}
+[2.978103] (tag_detector) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[2.979157] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'Copying ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info to /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge-0.0.0-py3.10.egg-info\n'}
+[2.981363] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running install_scripts\n'}
+[2.991119] (tag_detector) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[3.007952] (-) TimerEvent: {}
+[3.015066] (tag_detector) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[3.021359] (bringup) StdoutLine: {'line': b'running egg_info\n'}
+[3.022946] (bringup) StdoutLine: {'line': b'creating ../../build/bringup/bringup.egg-info\n'}
+[3.023293] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'Installing mavlink_bridge_node script to /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/ardupilot_mavlink_bridge\n'}
+[3.023698] (bringup) StdoutLine: {'line': b'writing ../../build/bringup/bringup.egg-info/PKG-INFO\n'}
+[3.024284] (bringup) StdoutLine: {'line': b'writing dependency_links to ../../build/bringup/bringup.egg-info/dependency_links.txt\n'}
+[3.024654] (bringup) StdoutLine: {'line': b'writing entry points to ../../build/bringup/bringup.egg-info/entry_points.txt\n'}
+[3.025047] (bringup) StdoutLine: {'line': b'writing requirements to ../../build/bringup/bringup.egg-info/requires.txt\n'}
+[3.025206] (ardupilot_mavlink_bridge) StdoutLine: {'line': b"writing list of installed files to '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/install.log'\n"}
+[3.025483] (bringup) StdoutLine: {'line': b'writing top-level names to ../../build/bringup/bringup.egg-info/top_level.txt\n'}
+[3.025907] (bringup) StdoutLine: {'line': b"writing manifest file '../../build/bringup/bringup.egg-info/SOURCES.txt'\n"}
+[3.027809] (tag_nav_stub) StdoutLine: {'line': b'running egg_info\n'}
+[3.029340] (tag_nav_stub) StdoutLine: {'line': b'writing ../../build/tag_nav_stub/tag_nav_stub.egg-info/PKG-INFO\n'}
+[3.029842] (tag_nav_stub) StdoutLine: {'line': b'writing dependency_links to ../../build/tag_nav_stub/tag_nav_stub.egg-info/dependency_links.txt\n'}
+[3.030150] (tag_nav_stub) StdoutLine: {'line': b'writing entry points to ../../build/tag_nav_stub/tag_nav_stub.egg-info/entry_points.txt\n'}
+[3.030409] (tag_nav_stub) StdoutLine: {'line': b'writing requirements to ../../build/tag_nav_stub/tag_nav_stub.egg-info/requires.txt\n'}
+[3.030654] (tag_nav_stub) StdoutLine: {'line': b'writing top-level names to ../../build/tag_nav_stub/tag_nav_stub.egg-info/top_level.txt\n'}
+[3.030904] (bringup) StdoutLine: {'line': b"reading manifest file '../../build/bringup/bringup.egg-info/SOURCES.txt'\n"}
+[3.032426] (bringup) StdoutLine: {'line': b"writing manifest file '../../build/bringup/bringup.egg-info/SOURCES.txt'\n"}
+[3.032813] (bringup) StdoutLine: {'line': b'running build\n'}
+[3.033119] (bringup) StdoutLine: {'line': b'running build_py\n'}
+[3.033437] (bringup) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/build/bringup/build\n'}
+[3.033706] (bringup) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/build/bringup/build/lib\n'}
+[3.033953] (bringup) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/build/bringup/build/lib/bringup\n'}
+[3.034223] (bringup) StdoutLine: {'line': b'copying bringup/__init__.py -> /home/nvidia/vtol_ws/build/bringup/build/lib/bringup\n'}
+[3.034888] (bringup) StdoutLine: {'line': b'running install\n'}
+[3.035837] (bringup) StdoutLine: {'line': b'running install_lib\n'}
+[3.037769] (tag_nav_stub) StdoutLine: {'line': b"reading manifest file '../../build/tag_nav_stub/tag_nav_stub.egg-info/SOURCES.txt'\n"}
+[3.039134] (tag_nav_stub) StdoutLine: {'line': b"writing manifest file '../../build/tag_nav_stub/tag_nav_stub.egg-info/SOURCES.txt'\n"}
+[3.039577] (tag_nav_stub) StdoutLine: {'line': b'running build\n'}
+[3.039748] (tag_nav_stub) StdoutLine: {'line': b'running build_py\n'}
+[3.039996] (tag_nav_stub) StdoutLine: {'line': b'running install\n'}
+[3.040278] (tag_detector) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[3.040640] (tag_nav_stub) StdoutLine: {'line': b'running install_lib\n'}
+[3.042208] (bringup) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/bringup/lib/python3.10/site-packages/bringup\n'}
+[3.042670] (bringup) StdoutLine: {'line': b'copying /home/nvidia/vtol_ws/build/bringup/build/lib/bringup/__init__.py -> /home/nvidia/vtol_ws/install/bringup/lib/python3.10/site-packages/bringup\n'}
+[3.043079] (tag_nav_stub) StdoutLine: {'line': b'running install_data\n'}
+[3.043412] (tag_nav_stub) StdoutLine: {'line': b'running install_egg_info\n'}
+[3.044511] (bringup) StdoutLine: {'line': b'byte-compiling /home/nvidia/vtol_ws/install/bringup/lib/python3.10/site-packages/bringup/__init__.py to __init__.cpython-310.pyc\n'}
+[3.045219] (bringup) StdoutLine: {'line': b'running install_data\n'}
+[3.045546] (bringup) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/bringup/share/ament_index\n'}
+[3.045809] (bringup) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/bringup/share/ament_index/resource_index\n'}
+[3.046069] (bringup) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/bringup/share/ament_index/resource_index/packages\n'}
+[3.046314] (bringup) StdoutLine: {'line': b'copying resource/bringup -> /home/nvidia/vtol_ws/install/bringup/share/ament_index/resource_index/packages\n'}
+[3.046756] (bringup) StdoutLine: {'line': b'copying package.xml -> /home/nvidia/vtol_ws/install/bringup/share/bringup\n'}
+[3.046896] (tag_nav_stub) StdoutLine: {'line': b"removing '/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages/tag_nav_stub-0.0.0-py3.10.egg-info' (and everything under it)\n"}
+[3.047132] (bringup) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/bringup/share/bringup/launch\n'}
+[3.047433] (bringup) StdoutLine: {'line': b'copying launch/system.launch.py -> /home/nvidia/vtol_ws/install/bringup/share/bringup/launch\n'}
+[3.047650] (tag_nav_stub) StdoutLine: {'line': b'Copying ../../build/tag_nav_stub/tag_nav_stub.egg-info to /home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages/tag_nav_stub-0.0.0-py3.10.egg-info\n'}
+[3.047908] (bringup) StdoutLine: {'line': b'running install_egg_info\n'}
+[3.048816] (camera) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[3.049139] (tag_nav_stub) StdoutLine: {'line': b'running install_scripts\n'}
+[3.052360] (bringup) StdoutLine: {'line': b'Copying ../../build/bringup/bringup.egg-info to /home/nvidia/vtol_ws/install/bringup/lib/python3.10/site-packages/bringup-0.0.0-py3.10.egg-info\n'}
+[3.054220] (bringup) StdoutLine: {'line': b'running install_scripts\n'}
+[3.076512] (pose_bridge) StdoutLine: {'line': b'running egg_info\n'}
+[3.078236] (pose_bridge) StdoutLine: {'line': b'creating ../../build/pose_bridge/pose_bridge.egg-info\n'}
+[3.079178] (pose_bridge) StdoutLine: {'line': b'writing ../../build/pose_bridge/pose_bridge.egg-info/PKG-INFO\n'}
+[3.080617] (pose_bridge) StdoutLine: {'line': b'writing dependency_links to ../../build/pose_bridge/pose_bridge.egg-info/dependency_links.txt\n'}
+[3.081435] (pose_bridge) StdoutLine: {'line': b'writing entry points to ../../build/pose_bridge/pose_bridge.egg-info/entry_points.txt\n'}
+[3.082123] (pose_bridge) StdoutLine: {'line': b'writing requirements to ../../build/pose_bridge/pose_bridge.egg-info/requires.txt\n'}
+[3.082678] (pose_bridge) StdoutLine: {'line': b'writing top-level names to ../../build/pose_bridge/pose_bridge.egg-info/top_level.txt\n'}
+[3.083844] (pose_bridge) StdoutLine: {'line': b"writing manifest file '../../build/pose_bridge/pose_bridge.egg-info/SOURCES.txt'\n"}
+[3.087301] (tag_nav_stub) StdoutLine: {'line': b"writing list of installed files to '/home/nvidia/vtol_ws/build/tag_nav_stub/install.log'\n"}
+[3.088677] (pose_bridge) StdoutLine: {'line': b"reading manifest file '../../build/pose_bridge/pose_bridge.egg-info/SOURCES.txt'\n"}
+[3.090403] (pose_bridge) StdoutLine: {'line': b"writing manifest file '../../build/pose_bridge/pose_bridge.egg-info/SOURCES.txt'\n"}
+[3.091161] (pose_bridge) StdoutLine: {'line': b'running build\n'}
+[3.091409] (pose_bridge) StdoutLine: {'line': b'running build_py\n'}
+[3.092179] (pose_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/build/pose_bridge/build\n'}
+[3.092664] (pose_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/build/pose_bridge/build/lib\n'}
+[3.093075] (pose_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/build/pose_bridge/build/lib/pose_bridge\n'}
+[3.093629] (pose_bridge) StdoutLine: {'line': b'copying pose_bridge/pose_bridge_node.py -> /home/nvidia/vtol_ws/build/pose_bridge/build/lib/pose_bridge\n'}
+[3.094509] (pose_bridge) StdoutLine: {'line': b'copying pose_bridge/__init__.py -> /home/nvidia/vtol_ws/build/pose_bridge/build/lib/pose_bridge\n'}
+[3.095035] (camera) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[3.095845] (pose_bridge) StdoutLine: {'line': b'running install\n'}
+[3.096868] (pose_bridge) StdoutLine: {'line': b'running install_lib\n'}
+[3.101299] (bringup) StdoutLine: {'line': b"writing list of installed files to '/home/nvidia/vtol_ws/build/bringup/install.log'\n"}
+[3.102601] (pose_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge\n'}
+[3.102891] (pose_bridge) StdoutLine: {'line': b'copying /home/nvidia/vtol_ws/build/pose_bridge/build/lib/pose_bridge/pose_bridge_node.py -> /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge\n'}
+[3.103443] (pose_bridge) StdoutLine: {'line': b'copying /home/nvidia/vtol_ws/build/pose_bridge/build/lib/pose_bridge/__init__.py -> /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge\n'}
+[3.105213] (tag_detector) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[3.105524] (pose_bridge) StdoutLine: {'line': b'byte-compiling /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge/pose_bridge_node.py to pose_bridge_node.cpython-310.pyc\n'}
+[3.107246] (pose_bridge) StdoutLine: {'line': b'byte-compiling /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge/__init__.py to __init__.cpython-310.pyc\n'}
+[3.107899] (pose_bridge) StdoutLine: {'line': b'running install_data\n'}
+[3.108091] (-) TimerEvent: {}
+[3.108481] (pose_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/pose_bridge/share/ament_index\n'}
+[3.109026] (pose_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/pose_bridge/share/ament_index/resource_index\n'}
+[3.109152] (tag_detector) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.10 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[3.109283] (pose_bridge) StdoutLine: {'line': b'creating /home/nvidia/vtol_ws/install/pose_bridge/share/ament_index/resource_index/packages\n'}
+[3.109383] (pose_bridge) StdoutLine: {'line': b'copying resource/pose_bridge -> /home/nvidia/vtol_ws/install/pose_bridge/share/ament_index/resource_index/packages\n'}
+[3.110412] (pose_bridge) StdoutLine: {'line': b'copying package.xml -> /home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge\n'}
+[3.110756] (pose_bridge) StdoutLine: {'line': b'running install_egg_info\n'}
+[3.116205] (pose_bridge) StdoutLine: {'line': b'Copying ../../build/pose_bridge/pose_bridge.egg-info to /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge-0.0.0-py3.10.egg-info\n'}
+[3.118314] (pose_bridge) StdoutLine: {'line': b'running install_scripts\n'}
+[3.152267] (ardupilot_mavlink_bridge) CommandEnded: {'returncode': 0}
+[3.159359] (ardupilot_mavlink_bridge) JobEnded: {'identifier': 'ardupilot_mavlink_bridge', 'rc': 0}
+[3.163694] (pose_bridge) StdoutLine: {'line': b'Installing pose_bridge_node script to /home/nvidia/vtol_ws/install/pose_bridge/lib/pose_bridge\n'}
+[3.165912] (pose_bridge) StdoutLine: {'line': b"writing list of installed files to '/home/nvidia/vtol_ws/build/pose_bridge/install.log'\n"}
+[3.168507] (tag_nav_stub) CommandEnded: {'returncode': 0}
+[3.188481] (tag_nav_stub) JobEnded: {'identifier': 'tag_nav_stub', 'rc': 0}
+[3.190202] (camera) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[3.191375] (bringup) CommandEnded: {'returncode': 0}
+[3.202670] (bringup) JobEnded: {'identifier': 'bringup', 'rc': 0}
+[3.203748] (camera) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[3.208294] (-) TimerEvent: {}
+[3.246429] (pose_bridge) CommandEnded: {'returncode': 0}
+[3.257910] (pose_bridge) JobEnded: {'identifier': 'pose_bridge', 'rc': 0}
+[3.264635] (tag_detector) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[3.304579] (tag_detector) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[3.308360] (-) TimerEvent: {}
+[3.318749] (camera) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[3.319420] (camera) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[3.368090] (tag_detector) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[3.381744] (tag_detector) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[3.408631] (-) TimerEvent: {}
+[3.436240] (camera) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[3.437806] (camera) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[3.490192] (tag_detector) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[3.490747] (tag_detector) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[3.508787] (-) TimerEvent: {}
+[3.512930] (camera) StdoutLine: {'line': b'-- Found sensor_msgs: 4.9.1 (/opt/ros/humble/share/sensor_msgs/cmake)\n'}
+[3.597122] (camera) StderrLine: {'line': b'Traceback (most recent call last):\n'}
+[3.597612] (camera) StderrLine: {'line': b'  File "/opt/ros/humble/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 22, in <module>\n'}
+[3.597769] (camera) StderrLine: {'line': b'    from catkin_pkg.package import parse_package_string\n'}
+[3.597890] (camera) StderrLine: {'line': b"ModuleNotFoundError: No module named 'catkin_pkg'\n"}
+[3.601367] (tag_detector) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[3.603017] (tag_detector) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[3.603847] (camera) StderrLine: {'line': b'CMake Error at /opt/ros/humble/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:95 (message):\n'}
+[3.604029] (camera) StderrLine: {'line': b'  execute_process(/home/nvidia/miniconda3/envs/nim/bin/python3\n'}
+[3.604141] (camera) StderrLine: {'line': b'  /opt/ros/humble/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py\n'}
+[3.604389] (camera) StderrLine: {'line': b'  /home/nvidia/vtol_ws/src/camera/package.xml\n'}
+[3.604494] (camera) StderrLine: {'line': b'  /home/nvidia/vtol_ws/build/camera/ament_cmake_core/package.cmake) returned\n'}
+[3.604594] (camera) StderrLine: {'line': b'  error code 1\n'}
+[3.604695] (camera) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[3.604789] (camera) StderrLine: {'line': b'  /opt/ros/humble/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:49 (_ament_package_xml)\n'}
+[3.604885] (camera) StderrLine: {'line': b'  /opt/ros/humble/share/ament_cmake_core/cmake/core/ament_package.cmake:63 (ament_package_xml)\n'}
+[3.604985] (camera) StderrLine: {'line': b'  CMakeLists.txt:21 (ament_package)\n'}
+[3.605080] (camera) StderrLine: {'line': b'\n'}
+[3.605173] (camera) StderrLine: {'line': b'\n'}
+[3.605266] (camera) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[3.605369] (camera) StdoutLine: {'line': b'See also "/home/nvidia/vtol_ws/build/camera/CMakeFiles/CMakeOutput.log".\n'}
+[3.608827] (-) TimerEvent: {}
+[3.625850] (camera) CommandEnded: {'returncode': 1}
+[3.652739] (camera) JobEnded: {'identifier': 'camera', 'rc': 1}
+[3.677906] (tag_detector) StdoutLine: {'line': b'-- Found sensor_msgs: 4.9.1 (/opt/ros/humble/share/sensor_msgs/cmake)\n'}
+[3.708934] (-) TimerEvent: {}
+[3.760710] (tag_detector) StderrLine: {'line': b'Traceback (most recent call last):\n'}
+[3.761242] (tag_detector) StderrLine: {'line': b'  File "/opt/ros/humble/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py", line 22, in <module>\n'}
+[3.761424] (tag_detector) StderrLine: {'line': b'    from catkin_pkg.package import parse_package_string\n'}
+[3.761552] (tag_detector) StderrLine: {'line': b"ModuleNotFoundError: No module named 'catkin_pkg'\n"}
+[3.766769] (tag_detector) StderrLine: {'line': b'CMake Error at /opt/ros/humble/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:95 (message):\n'}
+[3.767012] (tag_detector) StderrLine: {'line': b'  execute_process(/home/nvidia/miniconda3/envs/nim/bin/python3\n'}
+[3.767305] (tag_detector) StderrLine: {'line': b'  /opt/ros/humble/share/ament_cmake_core/cmake/core/package_xml_2_cmake.py\n'}
+[3.767445] (tag_detector) StderrLine: {'line': b'  /home/nvidia/vtol_ws/src/tag_detector/package.xml\n'}
+[3.767548] (tag_detector) StderrLine: {'line': b'  /home/nvidia/vtol_ws/build/tag_detector/ament_cmake_core/package.cmake)\n'}
+[3.767649] (tag_detector) StderrLine: {'line': b'  returned error code 1\n'}
+[3.767746] (tag_detector) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[3.767843] (tag_detector) StderrLine: {'line': b'  /opt/ros/humble/share/ament_cmake_core/cmake/core/ament_package_xml.cmake:49 (_ament_package_xml)\n'}
+[3.767940] (tag_detector) StderrLine: {'line': b'  /opt/ros/humble/share/ament_cmake_core/cmake/core/ament_package.cmake:63 (ament_package_xml)\n'}
+[3.768035] (tag_detector) StderrLine: {'line': b'  CMakeLists.txt:21 (ament_package)\n'}
+[3.768130] (tag_detector) StderrLine: {'line': b'\n'}
+[3.768220] (tag_detector) StderrLine: {'line': b'\n'}
+[3.768310] (tag_detector) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[3.768411] (tag_detector) StdoutLine: {'line': b'See also "/home/nvidia/vtol_ws/build/tag_detector/CMakeFiles/CMakeOutput.log".\n'}
+[3.787731] (tag_detector) JobEnded: {'identifier': 'tag_detector', 'rc': 'SIGINT'}
+[3.789307] (-) EventReactorShutdown: {}

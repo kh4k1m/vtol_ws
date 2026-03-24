@@ -1,0 +1,3 @@
+[console_scripts]
+mavlink_bridge_node = ardupilot_mavlink_bridge.mavlink_bridge_node:main
+

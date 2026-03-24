@@ -1,0 +1,37 @@
+[2.501s] Invoking command in '/home/nvidia/vtol_ws/src/ardupilot_mavlink_bridge': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/ardupilot_mavlink_bridge build --build-base /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build install --record /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/install.log --single-version-externally-managed install_data
+[2.939s] running egg_info
+[2.941s] creating ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info
+[2.941s] writing ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/PKG-INFO
+[2.942s] writing dependency_links to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/dependency_links.txt
+[2.943s] writing entry points to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/entry_points.txt
+[2.944s] writing requirements to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/requires.txt
+[2.944s] writing top-level names to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/top_level.txt
+[2.946s] writing manifest file '../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/SOURCES.txt'
+[2.950s] reading manifest file '../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/SOURCES.txt'
+[2.952s] writing manifest file '../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/SOURCES.txt'
+[2.953s] running build
+[2.953s] running build_py
+[2.954s] creating /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build
+[2.954s] creating /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib
+[2.955s] creating /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge
+[2.956s] copying ardupilot_mavlink_bridge/__init__.py -> /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge
+[2.956s] copying ardupilot_mavlink_bridge/mavlink_bridge_node.py -> /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge
+[2.960s] running install
+[2.962s] running install_lib
+[2.964s] creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge
+[2.965s] copying /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge/__init__.py -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge
+[2.965s] copying /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge/mavlink_bridge_node.py -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge
+[2.968s] byte-compiling /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge/__init__.py to __init__.cpython-310.pyc
+[2.969s] byte-compiling /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge/mavlink_bridge_node.py to mavlink_bridge_node.cpython-310.pyc
+[2.970s] running install_data
+[2.971s] creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index
+[2.971s] creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index/resource_index
+[2.971s] creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index/resource_index/packages
+[2.972s] copying resource/ardupilot_mavlink_bridge -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index/resource_index/packages
+[2.972s] copying package.xml -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge
+[2.973s] running install_egg_info
+[2.978s] Copying ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info to /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge-0.0.0-py3.10.egg-info
+[2.980s] running install_scripts
+[3.022s] Installing mavlink_bridge_node script to /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/ardupilot_mavlink_bridge
+[3.024s] writing list of installed files to '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/install.log'
+[3.151s] Invoked command in '/home/nvidia/vtol_ws/src/ardupilot_mavlink_bridge' returned '0': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/ardupilot_mavlink_bridge build --build-base /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build install --record /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/install.log --single-version-externally-managed install_data

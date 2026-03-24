@@ -1,0 +1,10 @@
+/home/nvidia/vtol_ws/build/tag_detector/CMakeFiles/uninstall.dir
+/home/nvidia/vtol_ws/build/tag_detector/CMakeFiles/tag_detector_uninstall.dir
+/home/nvidia/vtol_ws/build/tag_detector/CMakeFiles/tag_detector_node.dir
+/home/nvidia/vtol_ws/build/tag_detector/CMakeFiles/test.dir
+/home/nvidia/vtol_ws/build/tag_detector/CMakeFiles/edit_cache.dir
+/home/nvidia/vtol_ws/build/tag_detector/CMakeFiles/rebuild_cache.dir
+/home/nvidia/vtol_ws/build/tag_detector/CMakeFiles/list_install_components.dir
+/home/nvidia/vtol_ws/build/tag_detector/CMakeFiles/install.dir
+/home/nvidia/vtol_ws/build/tag_detector/CMakeFiles/install/local.dir
+/home/nvidia/vtol_ws/build/tag_detector/CMakeFiles/install/strip.dir

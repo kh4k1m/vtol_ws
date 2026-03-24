@@ -1,0 +1,409 @@
+[0.185s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.186s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=8, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0xffffa55962f0>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0xffffa5595c60>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0xffffa5595c60>>, mixin_verb=('build',))
+[0.457s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.457s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.458s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.458s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.458s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.458s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.458s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/nvidia/vtol_ws'
+[0.458s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.458s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.458s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.458s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.459s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.476s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.476s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.476s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.477s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.477s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.477s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.477s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.477s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.477s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.478s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.478s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.478s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.478s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.478s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.478s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.478s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[0.478s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[0.479s] Level 1:colcon.colcon_core.package_identification:_identify(src/ardupilot_mavlink_bridge) by extensions ['ignore', 'ignore_ament_install']
+[0.480s] Level 1:colcon.colcon_core.package_identification:_identify(src/ardupilot_mavlink_bridge) by extension 'ignore'
+[0.480s] Level 1:colcon.colcon_core.package_identification:_identify(src/ardupilot_mavlink_bridge) by extension 'ignore_ament_install'
+[0.480s] Level 1:colcon.colcon_core.package_identification:_identify(src/ardupilot_mavlink_bridge) by extensions ['colcon_pkg']
+[0.480s] Level 1:colcon.colcon_core.package_identification:_identify(src/ardupilot_mavlink_bridge) by extension 'colcon_pkg'
+[0.480s] Level 1:colcon.colcon_core.package_identification:_identify(src/ardupilot_mavlink_bridge) by extensions ['colcon_meta']
+[0.480s] Level 1:colcon.colcon_core.package_identification:_identify(src/ardupilot_mavlink_bridge) by extension 'colcon_meta'
+[0.480s] Level 1:colcon.colcon_core.package_identification:_identify(src/ardupilot_mavlink_bridge) by extensions ['ros']
+[0.480s] Level 1:colcon.colcon_core.package_identification:_identify(src/ardupilot_mavlink_bridge) by extension 'ros'
+[0.484s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ardupilot_mavlink_bridge' with type 'ros.ament_python' and name 'ardupilot_mavlink_bridge'
+[0.484s] Level 1:colcon.colcon_core.package_identification:_identify(src/bringup) by extensions ['ignore', 'ignore_ament_install']
+[0.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/bringup) by extension 'ignore'
+[0.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/bringup) by extension 'ignore_ament_install'
+[0.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/bringup) by extensions ['colcon_pkg']
+[0.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/bringup) by extension 'colcon_pkg'
+[0.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/bringup) by extensions ['colcon_meta']
+[0.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/bringup) by extension 'colcon_meta'
+[0.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/bringup) by extensions ['ros']
+[0.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/bringup) by extension 'ros'
+[0.486s] DEBUG:colcon.colcon_core.package_identification:Package 'src/bringup' with type 'ros.ament_python' and name 'bringup'
+[0.486s] Level 1:colcon.colcon_core.package_identification:_identify(src/camera) by extensions ['ignore', 'ignore_ament_install']
+[0.486s] Level 1:colcon.colcon_core.package_identification:_identify(src/camera) by extension 'ignore'
+[0.487s] Level 1:colcon.colcon_core.package_identification:_identify(src/camera) by extension 'ignore_ament_install'
+[0.487s] Level 1:colcon.colcon_core.package_identification:_identify(src/camera) by extensions ['colcon_pkg']
+[0.487s] Level 1:colcon.colcon_core.package_identification:_identify(src/camera) by extension 'colcon_pkg'
+[0.487s] Level 1:colcon.colcon_core.package_identification:_identify(src/camera) by extensions ['colcon_meta']
+[0.487s] Level 1:colcon.colcon_core.package_identification:_identify(src/camera) by extension 'colcon_meta'
+[0.487s] Level 1:colcon.colcon_core.package_identification:_identify(src/camera) by extensions ['ros']
+[0.487s] Level 1:colcon.colcon_core.package_identification:_identify(src/camera) by extension 'ros'
+[0.488s] DEBUG:colcon.colcon_core.package_identification:Package 'src/camera' with type 'ros.ament_cmake' and name 'camera'
+[0.488s] Level 1:colcon.colcon_core.package_identification:_identify(src/pose_bridge) by extensions ['ignore', 'ignore_ament_install']
+[0.488s] Level 1:colcon.colcon_core.package_identification:_identify(src/pose_bridge) by extension 'ignore'
+[0.488s] Level 1:colcon.colcon_core.package_identification:_identify(src/pose_bridge) by extension 'ignore_ament_install'
+[0.489s] Level 1:colcon.colcon_core.package_identification:_identify(src/pose_bridge) by extensions ['colcon_pkg']
+[0.489s] Level 1:colcon.colcon_core.package_identification:_identify(src/pose_bridge) by extension 'colcon_pkg'
+[0.489s] Level 1:colcon.colcon_core.package_identification:_identify(src/pose_bridge) by extensions ['colcon_meta']
+[0.489s] Level 1:colcon.colcon_core.package_identification:_identify(src/pose_bridge) by extension 'colcon_meta'
+[0.489s] Level 1:colcon.colcon_core.package_identification:_identify(src/pose_bridge) by extensions ['ros']
+[0.489s] Level 1:colcon.colcon_core.package_identification:_identify(src/pose_bridge) by extension 'ros'
+[0.490s] DEBUG:colcon.colcon_core.package_identification:Package 'src/pose_bridge' with type 'ros.ament_python' and name 'pose_bridge'
+[0.490s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_detector) by extensions ['ignore', 'ignore_ament_install']
+[0.490s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_detector) by extension 'ignore'
+[0.490s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_detector) by extension 'ignore_ament_install'
+[0.490s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_detector) by extensions ['colcon_pkg']
+[0.491s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_detector) by extension 'colcon_pkg'
+[0.491s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_detector) by extensions ['colcon_meta']
+[0.491s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_detector) by extension 'colcon_meta'
+[0.491s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_detector) by extensions ['ros']
+[0.491s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_detector) by extension 'ros'
+[0.492s] DEBUG:colcon.colcon_core.package_identification:Package 'src/tag_detector' with type 'ros.ament_cmake' and name 'tag_detector'
+[0.492s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_nav_stub) by extensions ['ignore', 'ignore_ament_install']
+[0.492s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_nav_stub) by extension 'ignore'
+[0.492s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_nav_stub) by extension 'ignore_ament_install'
+[0.492s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_nav_stub) by extensions ['colcon_pkg']
+[0.493s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_nav_stub) by extension 'colcon_pkg'
+[0.493s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_nav_stub) by extensions ['colcon_meta']
+[0.493s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_nav_stub) by extension 'colcon_meta'
+[0.493s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_nav_stub) by extensions ['ros']
+[0.493s] Level 1:colcon.colcon_core.package_identification:_identify(src/tag_nav_stub) by extension 'ros'
+[0.494s] DEBUG:colcon.colcon_core.package_identification:Package 'src/tag_nav_stub' with type 'ros.ament_python' and name 'tag_nav_stub'
+[0.494s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.494s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.494s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.494s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.494s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.555s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.555s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.558s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 5 installed packages in /home/nvidia/vtol_ws/install
+[0.559s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 275 installed packages in /opt/ros/humble
+[0.561s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.621s] Level 5:colcon.colcon_core.verb:set package 'ardupilot_mavlink_bridge' build argument 'cmake_args' from command line to 'None'
+[0.622s] Level 5:colcon.colcon_core.verb:set package 'ardupilot_mavlink_bridge' build argument 'cmake_target' from command line to 'None'
+[0.622s] Level 5:colcon.colcon_core.verb:set package 'ardupilot_mavlink_bridge' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.622s] Level 5:colcon.colcon_core.verb:set package 'ardupilot_mavlink_bridge' build argument 'cmake_clean_cache' from command line to 'False'
+[0.622s] Level 5:colcon.colcon_core.verb:set package 'ardupilot_mavlink_bridge' build argument 'cmake_clean_first' from command line to 'False'
+[0.622s] Level 5:colcon.colcon_core.verb:set package 'ardupilot_mavlink_bridge' build argument 'cmake_force_configure' from command line to 'False'
+[0.622s] Level 5:colcon.colcon_core.verb:set package 'ardupilot_mavlink_bridge' build argument 'ament_cmake_args' from command line to 'None'
+[0.622s] Level 5:colcon.colcon_core.verb:set package 'ardupilot_mavlink_bridge' build argument 'catkin_cmake_args' from command line to 'None'
+[0.622s] Level 5:colcon.colcon_core.verb:set package 'ardupilot_mavlink_bridge' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.622s] DEBUG:colcon.colcon_core.verb:Building package 'ardupilot_mavlink_bridge' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge', 'merge_install': False, 'path': '/home/nvidia/vtol_ws/src/ardupilot_mavlink_bridge', 'symlink_install': False, 'test_result_base': None}
+[0.623s] Level 5:colcon.colcon_core.verb:set package 'bringup' build argument 'cmake_args' from command line to 'None'
+[0.623s] Level 5:colcon.colcon_core.verb:set package 'bringup' build argument 'cmake_target' from command line to 'None'
+[0.623s] Level 5:colcon.colcon_core.verb:set package 'bringup' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.623s] Level 5:colcon.colcon_core.verb:set package 'bringup' build argument 'cmake_clean_cache' from command line to 'False'
+[0.623s] Level 5:colcon.colcon_core.verb:set package 'bringup' build argument 'cmake_clean_first' from command line to 'False'
+[0.623s] Level 5:colcon.colcon_core.verb:set package 'bringup' build argument 'cmake_force_configure' from command line to 'False'
+[0.623s] Level 5:colcon.colcon_core.verb:set package 'bringup' build argument 'ament_cmake_args' from command line to 'None'
+[0.623s] Level 5:colcon.colcon_core.verb:set package 'bringup' build argument 'catkin_cmake_args' from command line to 'None'
+[0.623s] Level 5:colcon.colcon_core.verb:set package 'bringup' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.623s] DEBUG:colcon.colcon_core.verb:Building package 'bringup' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/vtol_ws/build/bringup', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/vtol_ws/install/bringup', 'merge_install': False, 'path': '/home/nvidia/vtol_ws/src/bringup', 'symlink_install': False, 'test_result_base': None}
+[0.623s] Level 5:colcon.colcon_core.verb:set package 'camera' build argument 'cmake_args' from command line to 'None'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'camera' build argument 'cmake_target' from command line to 'None'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'camera' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'camera' build argument 'cmake_clean_cache' from command line to 'False'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'camera' build argument 'cmake_clean_first' from command line to 'False'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'camera' build argument 'cmake_force_configure' from command line to 'False'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'camera' build argument 'ament_cmake_args' from command line to 'None'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'camera' build argument 'catkin_cmake_args' from command line to 'None'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'camera' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.624s] DEBUG:colcon.colcon_core.verb:Building package 'camera' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/vtol_ws/build/camera', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/vtol_ws/install/camera', 'merge_install': False, 'path': '/home/nvidia/vtol_ws/src/camera', 'symlink_install': False, 'test_result_base': None}
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'pose_bridge' build argument 'cmake_args' from command line to 'None'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'pose_bridge' build argument 'cmake_target' from command line to 'None'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'pose_bridge' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'pose_bridge' build argument 'cmake_clean_cache' from command line to 'False'
+[0.624s] Level 5:colcon.colcon_core.verb:set package 'pose_bridge' build argument 'cmake_clean_first' from command line to 'False'
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'pose_bridge' build argument 'cmake_force_configure' from command line to 'False'
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'pose_bridge' build argument 'ament_cmake_args' from command line to 'None'
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'pose_bridge' build argument 'catkin_cmake_args' from command line to 'None'
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'pose_bridge' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.625s] DEBUG:colcon.colcon_core.verb:Building package 'pose_bridge' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/vtol_ws/build/pose_bridge', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/vtol_ws/install/pose_bridge', 'merge_install': False, 'path': '/home/nvidia/vtol_ws/src/pose_bridge', 'symlink_install': False, 'test_result_base': None}
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'tag_detector' build argument 'cmake_args' from command line to 'None'
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'tag_detector' build argument 'cmake_target' from command line to 'None'
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'tag_detector' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'tag_detector' build argument 'cmake_clean_cache' from command line to 'False'
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'tag_detector' build argument 'cmake_clean_first' from command line to 'False'
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'tag_detector' build argument 'cmake_force_configure' from command line to 'False'
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'tag_detector' build argument 'ament_cmake_args' from command line to 'None'
+[0.625s] Level 5:colcon.colcon_core.verb:set package 'tag_detector' build argument 'catkin_cmake_args' from command line to 'None'
+[0.626s] Level 5:colcon.colcon_core.verb:set package 'tag_detector' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.626s] DEBUG:colcon.colcon_core.verb:Building package 'tag_detector' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/vtol_ws/build/tag_detector', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/vtol_ws/install/tag_detector', 'merge_install': False, 'path': '/home/nvidia/vtol_ws/src/tag_detector', 'symlink_install': False, 'test_result_base': None}
+[0.626s] Level 5:colcon.colcon_core.verb:set package 'tag_nav_stub' build argument 'cmake_args' from command line to 'None'
+[0.626s] Level 5:colcon.colcon_core.verb:set package 'tag_nav_stub' build argument 'cmake_target' from command line to 'None'
+[0.626s] Level 5:colcon.colcon_core.verb:set package 'tag_nav_stub' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.626s] Level 5:colcon.colcon_core.verb:set package 'tag_nav_stub' build argument 'cmake_clean_cache' from command line to 'False'
+[0.626s] Level 5:colcon.colcon_core.verb:set package 'tag_nav_stub' build argument 'cmake_clean_first' from command line to 'False'
+[0.626s] Level 5:colcon.colcon_core.verb:set package 'tag_nav_stub' build argument 'cmake_force_configure' from command line to 'False'
+[0.626s] Level 5:colcon.colcon_core.verb:set package 'tag_nav_stub' build argument 'ament_cmake_args' from command line to 'None'
+[0.626s] Level 5:colcon.colcon_core.verb:set package 'tag_nav_stub' build argument 'catkin_cmake_args' from command line to 'None'
+[0.626s] Level 5:colcon.colcon_core.verb:set package 'tag_nav_stub' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.626s] DEBUG:colcon.colcon_core.verb:Building package 'tag_nav_stub' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/nvidia/vtol_ws/build/tag_nav_stub', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/nvidia/vtol_ws/install/tag_nav_stub', 'merge_install': False, 'path': '/home/nvidia/vtol_ws/src/tag_nav_stub', 'symlink_install': False, 'test_result_base': None}
+[0.627s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.629s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.629s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/nvidia/vtol_ws/src/ardupilot_mavlink_bridge' with build type 'ament_python'
+[0.629s] Level 1:colcon.colcon_core.shell:create_environment_hook('ardupilot_mavlink_bridge', 'ament_prefix_path')
+[0.633s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.633s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge/hook/ament_prefix_path.ps1'
+[0.634s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge/hook/ament_prefix_path.dsv'
+[0.635s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge/hook/ament_prefix_path.sh'
+[0.636s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.636s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.642s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/nvidia/vtol_ws/src/bringup' with build type 'ament_python'
+[0.642s] Level 1:colcon.colcon_core.shell:create_environment_hook('bringup', 'ament_prefix_path')
+[0.643s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/bringup/share/bringup/hook/ament_prefix_path.ps1'
+[0.644s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/bringup/share/bringup/hook/ament_prefix_path.dsv'
+[0.645s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/bringup/share/bringup/hook/ament_prefix_path.sh'
+[0.646s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.646s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.650s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/nvidia/vtol_ws/src/camera' with build type 'ament_cmake'
+[0.651s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/nvidia/vtol_ws/src/camera'
+[0.651s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.651s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.656s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/nvidia/vtol_ws/src/pose_bridge' with build type 'ament_python'
+[0.657s] Level 1:colcon.colcon_core.shell:create_environment_hook('pose_bridge', 'ament_prefix_path')
+[0.657s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge/hook/ament_prefix_path.ps1'
+[0.658s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge/hook/ament_prefix_path.dsv'
+[0.659s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge/hook/ament_prefix_path.sh'
+[0.660s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.660s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.664s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/nvidia/vtol_ws/src/tag_detector' with build type 'ament_cmake'
+[0.664s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/nvidia/vtol_ws/src/tag_detector'
+[0.665s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.665s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.670s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/nvidia/vtol_ws/src/tag_nav_stub' with build type 'ament_python'
+[0.670s] Level 1:colcon.colcon_core.shell:create_environment_hook('tag_nav_stub', 'ament_prefix_path')
+[0.670s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/tag_nav_stub/share/tag_nav_stub/hook/ament_prefix_path.ps1'
+[0.671s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/tag_nav_stub/share/tag_nav_stub/hook/ament_prefix_path.dsv'
+[0.672s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/tag_nav_stub/share/tag_nav_stub/hook/ament_prefix_path.sh'
+[0.673s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.673s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.106s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/nvidia/vtol_ws/src/ardupilot_mavlink_bridge'
+[1.107s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.107s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.543s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/nvidia/vtol_ws/src/bringup'
+[1.544s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.544s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.560s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/vtol_ws/build/camera': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake /home/nvidia/vtol_ws/src/camera -DCMAKE_INSTALL_PREFIX=/home/nvidia/vtol_ws/install/camera
+[1.989s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/nvidia/vtol_ws/src/pose_bridge'
+[1.990s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.990s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.999s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/vtol_ws/build/tag_detector': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake /home/nvidia/vtol_ws/src/tag_detector -DCMAKE_INSTALL_PREFIX=/home/nvidia/vtol_ws/install/tag_detector
+[2.467s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/nvidia/vtol_ws/src/tag_nav_stub'
+[2.467s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.467s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.500s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/vtol_ws/build/camera' returned '0': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake /home/nvidia/vtol_ws/src/camera -DCMAKE_INSTALL_PREFIX=/home/nvidia/vtol_ws/install/camera
+[2.501s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/vtol_ws/build/camera': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --build /home/nvidia/vtol_ws/build/camera -- -j8 -l8
+[2.910s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/vtol_ws/build/tag_detector' returned '0': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake /home/nvidia/vtol_ws/src/tag_detector -DCMAKE_INSTALL_PREFIX=/home/nvidia/vtol_ws/install/tag_detector
+[2.911s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/vtol_ws/build/tag_detector': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --build /home/nvidia/vtol_ws/build/tag_detector -- -j8 -l8
+[3.108s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/vtol_ws/src/bringup': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/bringup build --build-base /home/nvidia/vtol_ws/build/bringup/build install --record /home/nvidia/vtol_ws/build/bringup/install.log --single-version-externally-managed install_data
+[3.146s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/vtol_ws/src/ardupilot_mavlink_bridge': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/ardupilot_mavlink_bridge build --build-base /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build install --record /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/install.log --single-version-externally-managed install_data
+[3.151s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/vtol_ws/src/pose_bridge': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/pose_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/pose_bridge build --build-base /home/nvidia/vtol_ws/build/pose_bridge/build install --record /home/nvidia/vtol_ws/build/pose_bridge/install.log --single-version-externally-managed install_data
+[3.191s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/vtol_ws/src/tag_nav_stub': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/tag_nav_stub/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/tag_nav_stub build --build-base /home/nvidia/vtol_ws/build/tag_nav_stub/build install --record /home/nvidia/vtol_ws/build/tag_nav_stub/install.log --single-version-externally-managed install_data
+[3.702s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/bringup' for CMake module files
+[3.703s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/bringup' for CMake config files
+[3.705s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/bringup/lib'
+[3.706s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/bringup/bin'
+[3.706s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/bringup/lib/pkgconfig/bringup.pc'
+[3.706s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/bringup/lib/python3.10/site-packages'
+[3.706s] Level 1:colcon.colcon_core.shell:create_environment_hook('bringup', 'pythonpath')
+[3.707s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/bringup/share/bringup/hook/pythonpath.ps1'
+[3.708s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/bringup/share/bringup/hook/pythonpath.dsv'
+[3.709s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/vtol_ws/src/bringup' returned '0': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/bringup build --build-base /home/nvidia/vtol_ws/build/bringup/build install --record /home/nvidia/vtol_ws/build/bringup/install.log --single-version-externally-managed install_data
+[3.710s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/bringup/share/bringup/hook/pythonpath.sh'
+[3.712s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/bringup/bin'
+[3.713s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(bringup)
+[3.713s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/bringup/share/bringup/package.ps1'
+[3.715s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/vtol_ws/install/bringup/share/bringup/package.dsv'
+[3.717s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/bringup/share/bringup/package.sh'
+[3.719s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/bringup/share/bringup/package.bash'
+[3.720s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/bringup/share/bringup/package.zsh'
+[3.721s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/vtol_ws/install/bringup/share/colcon-core/packages/bringup)
+[3.743s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/pose_bridge' for CMake module files
+[3.744s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/vtol_ws/src/pose_bridge' returned '0': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/pose_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/pose_bridge build --build-base /home/nvidia/vtol_ws/build/pose_bridge/build install --record /home/nvidia/vtol_ws/build/pose_bridge/install.log --single-version-externally-managed install_data
+[3.745s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/pose_bridge' for CMake config files
+[3.746s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/pose_bridge/lib'
+[3.747s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/pose_bridge/bin'
+[3.747s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/pose_bridge/lib/pkgconfig/pose_bridge.pc'
+[3.747s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages'
+[3.748s] Level 1:colcon.colcon_core.shell:create_environment_hook('pose_bridge', 'pythonpath')
+[3.748s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge/hook/pythonpath.ps1'
+[3.750s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge/hook/pythonpath.dsv'
+[3.751s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge/hook/pythonpath.sh'
+[3.753s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/pose_bridge/bin'
+[3.753s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(pose_bridge)
+[3.754s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge/package.ps1'
+[3.755s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge/package.dsv'
+[3.756s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge/package.sh'
+[3.757s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge/package.bash'
+[3.758s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge/package.zsh'
+[3.759s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/vtol_ws/install/pose_bridge/share/colcon-core/packages/pose_bridge)
+[3.763s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge' for CMake module files
+[3.764s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/vtol_ws/src/ardupilot_mavlink_bridge' returned '0': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/ardupilot_mavlink_bridge build --build-base /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build install --record /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/install.log --single-version-externally-managed install_data
+[3.765s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge' for CMake config files
+[3.766s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib'
+[3.767s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/bin'
+[3.767s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/pkgconfig/ardupilot_mavlink_bridge.pc'
+[3.768s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages'
+[3.769s] Level 1:colcon.colcon_core.shell:create_environment_hook('ardupilot_mavlink_bridge', 'pythonpath')
+[3.769s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge/hook/pythonpath.ps1'
+[3.770s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge/hook/pythonpath.dsv'
+[3.771s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge/hook/pythonpath.sh'
+[3.773s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/bin'
+[3.773s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(ardupilot_mavlink_bridge)
+[3.774s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge/package.ps1'
+[3.775s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge/package.dsv'
+[3.776s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge/package.sh'
+[3.777s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge/package.bash'
+[3.778s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge/package.zsh'
+[3.778s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/colcon-core/packages/ardupilot_mavlink_bridge)
+[3.801s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_nav_stub' for CMake module files
+[3.802s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/vtol_ws/src/tag_nav_stub' returned '0': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/tag_nav_stub/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/tag_nav_stub build --build-base /home/nvidia/vtol_ws/build/tag_nav_stub/build install --record /home/nvidia/vtol_ws/build/tag_nav_stub/install.log --single-version-externally-managed install_data
+[3.803s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_nav_stub' for CMake config files
+[3.804s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_nav_stub/lib'
+[3.804s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_nav_stub/bin'
+[3.804s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_nav_stub/lib/pkgconfig/tag_nav_stub.pc'
+[3.805s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages'
+[3.805s] Level 1:colcon.colcon_core.shell:create_environment_hook('tag_nav_stub', 'pythonpath')
+[3.805s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/tag_nav_stub/share/tag_nav_stub/hook/pythonpath.ps1'
+[3.806s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/tag_nav_stub/share/tag_nav_stub/hook/pythonpath.dsv'
+[3.807s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/tag_nav_stub/share/tag_nav_stub/hook/pythonpath.sh'
+[3.808s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_nav_stub/bin'
+[3.808s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(tag_nav_stub)
+[3.809s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_nav_stub/share/tag_nav_stub/package.ps1'
+[3.810s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/vtol_ws/install/tag_nav_stub/share/tag_nav_stub/package.dsv'
+[3.811s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_nav_stub/share/tag_nav_stub/package.sh'
+[3.812s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_nav_stub/share/tag_nav_stub/package.bash'
+[3.812s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_nav_stub/share/tag_nav_stub/package.zsh'
+[3.813s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/vtol_ws/install/tag_nav_stub/share/colcon-core/packages/tag_nav_stub)
+[11.822s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/vtol_ws/build/camera' returned '0': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --build /home/nvidia/vtol_ws/build/camera -- -j8 -l8
+[11.840s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/vtol_ws/build/camera': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --install /home/nvidia/vtol_ws/build/camera
+[11.860s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(camera)
+[11.861s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera' for CMake module files
+[11.861s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/vtol_ws/build/camera' returned '0': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --install /home/nvidia/vtol_ws/build/camera
+[11.862s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera' for CMake config files
+[11.862s] Level 1:colcon.colcon_core.shell:create_environment_hook('camera', 'cmake_prefix_path')
+[11.863s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/camera/share/camera/hook/cmake_prefix_path.ps1'
+[11.864s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/camera/share/camera/hook/cmake_prefix_path.dsv'
+[11.864s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/camera/share/camera/hook/cmake_prefix_path.sh'
+[11.865s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera/lib'
+[11.865s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera/bin'
+[11.865s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera/lib/pkgconfig/camera.pc'
+[11.866s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera/lib/python3.10/site-packages'
+[11.866s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera/bin'
+[11.867s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/camera/share/camera/package.ps1'
+[11.868s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/vtol_ws/install/camera/share/camera/package.dsv'
+[11.868s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/camera/share/camera/package.sh'
+[11.869s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/camera/share/camera/package.bash'
+[11.870s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/camera/share/camera/package.zsh'
+[11.870s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/vtol_ws/install/camera/share/colcon-core/packages/camera)
+[11.871s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(camera)
+[11.871s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera' for CMake module files
+[11.872s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera' for CMake config files
+[11.872s] Level 1:colcon.colcon_core.shell:create_environment_hook('camera', 'cmake_prefix_path')
+[11.873s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/camera/share/camera/hook/cmake_prefix_path.ps1'
+[11.873s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/camera/share/camera/hook/cmake_prefix_path.dsv'
+[11.874s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/camera/share/camera/hook/cmake_prefix_path.sh'
+[11.875s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera/lib'
+[11.875s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera/bin'
+[11.875s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera/lib/pkgconfig/camera.pc'
+[11.875s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera/lib/python3.10/site-packages'
+[11.876s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/camera/bin'
+[11.876s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/camera/share/camera/package.ps1'
+[11.877s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/vtol_ws/install/camera/share/camera/package.dsv'
+[11.878s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/camera/share/camera/package.sh'
+[11.879s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/camera/share/camera/package.bash'
+[11.879s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/camera/share/camera/package.zsh'
+[11.880s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/vtol_ws/install/camera/share/colcon-core/packages/camera)
+[19.390s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/vtol_ws/build/tag_detector' returned '0': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --build /home/nvidia/vtol_ws/build/tag_detector -- -j8 -l8
+[19.392s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/nvidia/vtol_ws/build/tag_detector': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --install /home/nvidia/vtol_ws/build/tag_detector
+[19.422s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(tag_detector)
+[19.423s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector' for CMake module files
+[19.423s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/nvidia/vtol_ws/build/tag_detector' returned '0': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --install /home/nvidia/vtol_ws/build/tag_detector
+[19.424s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector' for CMake config files
+[19.424s] Level 1:colcon.colcon_core.shell:create_environment_hook('tag_detector', 'cmake_prefix_path')
+[19.425s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/hook/cmake_prefix_path.ps1'
+[19.426s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/hook/cmake_prefix_path.dsv'
+[19.426s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/hook/cmake_prefix_path.sh'
+[19.427s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector/lib'
+[19.427s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector/bin'
+[19.427s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector/lib/pkgconfig/tag_detector.pc'
+[19.428s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector/lib/python3.10/site-packages'
+[19.428s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector/bin'
+[19.429s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/package.ps1'
+[19.429s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/package.dsv'
+[19.430s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/package.sh'
+[19.431s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/package.bash'
+[19.431s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/package.zsh'
+[19.432s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/vtol_ws/install/tag_detector/share/colcon-core/packages/tag_detector)
+[19.433s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(tag_detector)
+[19.433s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector' for CMake module files
+[19.434s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector' for CMake config files
+[19.434s] Level 1:colcon.colcon_core.shell:create_environment_hook('tag_detector', 'cmake_prefix_path')
+[19.434s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/hook/cmake_prefix_path.ps1'
+[19.435s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/hook/cmake_prefix_path.dsv'
+[19.436s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/hook/cmake_prefix_path.sh'
+[19.436s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector/lib'
+[19.437s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector/bin'
+[19.437s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector/lib/pkgconfig/tag_detector.pc'
+[19.437s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector/lib/python3.10/site-packages'
+[19.437s] Level 1:colcon.colcon_core.environment:checking '/home/nvidia/vtol_ws/install/tag_detector/bin'
+[19.438s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/package.ps1'
+[19.439s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/package.dsv'
+[19.439s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/package.sh'
+[19.440s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/package.bash'
+[19.441s] INFO:colcon.colcon_core.shell:Creating package script '/home/nvidia/vtol_ws/install/tag_detector/share/tag_detector/package.zsh'
+[19.441s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/nvidia/vtol_ws/install/tag_detector/share/colcon-core/packages/tag_detector)
+[19.442s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[19.442s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[19.442s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[19.443s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[19.452s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[19.452s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[19.452s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[19.476s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[19.476s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/nvidia/vtol_ws/install/local_setup.ps1'
+[19.478s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/nvidia/vtol_ws/install/_local_setup_util_ps1.py'
+[19.480s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/nvidia/vtol_ws/install/setup.ps1'
+[19.482s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/nvidia/vtol_ws/install/local_setup.sh'
+[19.483s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/nvidia/vtol_ws/install/_local_setup_util_sh.py'
+[19.484s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/nvidia/vtol_ws/install/setup.sh'
+[19.485s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/nvidia/vtol_ws/install/local_setup.bash'
+[19.486s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/nvidia/vtol_ws/install/setup.bash'
+[19.487s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/nvidia/vtol_ws/install/local_setup.zsh'
+[19.488s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/nvidia/vtol_ws/install/setup.zsh'

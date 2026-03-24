@@ -1,0 +1,35 @@
+running egg_info
+creating ../../build/pose_bridge/pose_bridge.egg-info
+writing ../../build/pose_bridge/pose_bridge.egg-info/PKG-INFO
+writing dependency_links to ../../build/pose_bridge/pose_bridge.egg-info/dependency_links.txt
+writing entry points to ../../build/pose_bridge/pose_bridge.egg-info/entry_points.txt
+writing requirements to ../../build/pose_bridge/pose_bridge.egg-info/requires.txt
+writing top-level names to ../../build/pose_bridge/pose_bridge.egg-info/top_level.txt
+writing manifest file '../../build/pose_bridge/pose_bridge.egg-info/SOURCES.txt'
+reading manifest file '../../build/pose_bridge/pose_bridge.egg-info/SOURCES.txt'
+writing manifest file '../../build/pose_bridge/pose_bridge.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/nvidia/vtol_ws/build/pose_bridge/build
+creating /home/nvidia/vtol_ws/build/pose_bridge/build/lib
+creating /home/nvidia/vtol_ws/build/pose_bridge/build/lib/pose_bridge
+copying pose_bridge/pose_bridge_node.py -> /home/nvidia/vtol_ws/build/pose_bridge/build/lib/pose_bridge
+copying pose_bridge/__init__.py -> /home/nvidia/vtol_ws/build/pose_bridge/build/lib/pose_bridge
+running install
+running install_lib
+creating /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge
+copying /home/nvidia/vtol_ws/build/pose_bridge/build/lib/pose_bridge/pose_bridge_node.py -> /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge
+copying /home/nvidia/vtol_ws/build/pose_bridge/build/lib/pose_bridge/__init__.py -> /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge
+byte-compiling /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge/pose_bridge_node.py to pose_bridge_node.cpython-310.pyc
+byte-compiling /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/nvidia/vtol_ws/install/pose_bridge/share/ament_index
+creating /home/nvidia/vtol_ws/install/pose_bridge/share/ament_index/resource_index
+creating /home/nvidia/vtol_ws/install/pose_bridge/share/ament_index/resource_index/packages
+copying resource/pose_bridge -> /home/nvidia/vtol_ws/install/pose_bridge/share/ament_index/resource_index/packages
+copying package.xml -> /home/nvidia/vtol_ws/install/pose_bridge/share/pose_bridge
+running install_egg_info
+Copying ../../build/pose_bridge/pose_bridge.egg-info to /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge-0.0.0-py3.10.egg-info
+running install_scripts
+Installing pose_bridge_node script to /home/nvidia/vtol_ws/install/pose_bridge/lib/pose_bridge
+writing list of installed files to '/home/nvidia/vtol_ws/build/pose_bridge/install.log'

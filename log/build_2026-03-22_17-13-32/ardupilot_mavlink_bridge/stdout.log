@@ -1,0 +1,35 @@
+running egg_info
+creating ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info
+writing ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/PKG-INFO
+writing dependency_links to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/dependency_links.txt
+writing entry points to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/entry_points.txt
+writing requirements to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/requires.txt
+writing top-level names to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/top_level.txt
+writing manifest file '../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/SOURCES.txt'
+reading manifest file '../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/SOURCES.txt'
+writing manifest file '../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build
+creating /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib
+creating /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge
+copying ardupilot_mavlink_bridge/__init__.py -> /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge
+copying ardupilot_mavlink_bridge/mavlink_bridge_node.py -> /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge
+running install
+running install_lib
+creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge
+copying /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge/__init__.py -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge
+copying /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge/mavlink_bridge_node.py -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge
+byte-compiling /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge/mavlink_bridge_node.py to mavlink_bridge_node.cpython-310.pyc
+running install_data
+creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index
+creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index/resource_index
+creating /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index/resource_index/packages
+copying resource/ardupilot_mavlink_bridge -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ament_index/resource_index/packages
+copying package.xml -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/share/ardupilot_mavlink_bridge
+running install_egg_info
+Copying ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info to /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge-0.0.0-py3.10.egg-info
+running install_scripts
+Installing mavlink_bridge_node script to /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/ardupilot_mavlink_bridge
+writing list of installed files to '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/install.log'

@@ -1,0 +1,21 @@
+[2.494s] Invoking command in '/home/nvidia/vtol_ws/src/pose_bridge': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/pose_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/pose_bridge build --build-base /home/nvidia/vtol_ws/build/pose_bridge/build install --record /home/nvidia/vtol_ws/build/pose_bridge/install.log --single-version-externally-managed install_data
+[2.919s] running egg_info
+[2.921s] writing ../../build/pose_bridge/pose_bridge.egg-info/PKG-INFO
+[2.921s] writing dependency_links to ../../build/pose_bridge/pose_bridge.egg-info/dependency_links.txt
+[2.922s] writing entry points to ../../build/pose_bridge/pose_bridge.egg-info/entry_points.txt
+[2.922s] writing requirements to ../../build/pose_bridge/pose_bridge.egg-info/requires.txt
+[2.923s] writing top-level names to ../../build/pose_bridge/pose_bridge.egg-info/top_level.txt
+[2.927s] reading manifest file '../../build/pose_bridge/pose_bridge.egg-info/SOURCES.txt'
+[2.929s] writing manifest file '../../build/pose_bridge/pose_bridge.egg-info/SOURCES.txt'
+[2.930s] running build
+[2.930s] running build_py
+[2.930s] running install
+[2.931s] running install_lib
+[2.937s] running install_data
+[2.938s] running install_egg_info
+[2.942s] removing '/home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge-0.0.0-py3.10.egg-info' (and everything under it)
+[2.943s] Copying ../../build/pose_bridge/pose_bridge.egg-info to /home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages/pose_bridge-0.0.0-py3.10.egg-info
+[2.945s] running install_scripts
+[2.984s] Installing pose_bridge_node script to /home/nvidia/vtol_ws/install/pose_bridge/lib/pose_bridge
+[2.985s] writing list of installed files to '/home/nvidia/vtol_ws/build/pose_bridge/install.log'
+[3.087s] Invoked command in '/home/nvidia/vtol_ws/src/pose_bridge' returned '0': CONDA_PROMPT_MODIFIER=(nim) PYTHONPATH=/home/nvidia/vtol_ws/build/pose_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/pose_bridge build --build-base /home/nvidia/vtol_ws/build/pose_bridge/build install --record /home/nvidia/vtol_ws/build/pose_bridge/install.log --single-version-externally-managed install_data

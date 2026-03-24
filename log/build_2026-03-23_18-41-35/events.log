@@ -1,0 +1,53 @@
+[0.000000] (-) TimerEvent: {}
+[0.000436] (-) JobUnselected: {'identifier': 'bringup'}
+[0.001035] (-) JobUnselected: {'identifier': 'camera'}
+[0.001369] (-) JobUnselected: {'identifier': 'pose_bridge'}
+[0.001696] (-) JobUnselected: {'identifier': 'tag_detector'}
+[0.001801] (-) JobUnselected: {'identifier': 'tag_nav_stub'}
+[0.001876] (ardupilot_mavlink_bridge) JobQueued: {'identifier': 'ardupilot_mavlink_bridge', 'dependencies': OrderedDict()}
+[0.001948] (ardupilot_mavlink_bridge) JobStarted: {'identifier': 'ardupilot_mavlink_bridge'}
+[0.098818] (-) TimerEvent: {}
+[0.199188] (-) TimerEvent: {}
+[0.299537] (-) TimerEvent: {}
+[0.399916] (-) TimerEvent: {}
+[0.500292] (-) TimerEvent: {}
+[0.600633] (-) TimerEvent: {}
+[0.700964] (-) TimerEvent: {}
+[0.801319] (-) TimerEvent: {}
+[0.901677] (-) TimerEvent: {}
+[1.002072] (-) TimerEvent: {}
+[1.102461] (-) TimerEvent: {}
+[1.202829] (-) TimerEvent: {}
+[1.303238] (-) TimerEvent: {}
+[1.328252] (ardupilot_mavlink_bridge) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/ardupilot_mavlink_bridge', 'build', '--build-base', '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build', 'install', '--record', '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/nvidia/vtol_ws/src/ardupilot_mavlink_bridge', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'VSCODE_CWD': '/home/nvidia', 'VSCODE_ESM_ENTRYPOINT': 'vs/workbench/api/node/extensionHostProcess', 'CONDA_PROMPT_MODIFIER': '(nim)', 'USER': 'nvidia', 'SSH_CLIENT': '192.168.0.56 52507 22', 'VSCODE_NLS_CONFIG': '{"userLocale":"en","osLocale":"en","resolvedLanguage":"en","defaultMessagesFile":"/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/out/nls.messages.json","locale":"en","availableLanguages":{}}', 'CI': '1', 'VSCODE_HANDLES_UNCAUGHT_ERRORS': 'true', 'XDG_SESSION_TYPE': 'tty', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/local/cuda-12.6/lib64:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.6/lib64:', 'BROWSER': '/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/helpers/browser.sh', 'MOTD_SHOWN': 'pam', 'HOME': '/home/nvidia', 'CONDA_SHLVL': '1', 'OLDPWD': '/home/nvidia/vtol_ws', 'VSCODE_IPC_HOOK_CLI': '/run/user/1000/vscode-ipc-18e09148-2a44-4365-85ae-71a3aedf5eb5.sock', 'JETSON_L4T': '36.4.7', 'ROS_PYTHON_VERSION': '3', 'JETSON_MODEL': 'NVIDIA Jetson Orin NX Engineering Reference Developer Kit', 'NO_COLOR': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLCON_PREFIX_PATH': '/home/nvidia/vtol_ws/install', 'ROS_DISTRO': 'humble', 'OVSX_REGISTRY_URL': 'https://open-vsx.org', 'LOGNAME': 'nvidia', 'FORCE_COLOR': '0', 'JETSON_MODULE': 'NVIDIA Jetson Orin NX (16GB ram)', 'JETSON_SERIAL_NUMBER': '1420825014689', 'VSCODE_HANDLES_SIGPIPE': 'true', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'TERM': 'dumb', 'XDG_SESSION_ID': '4', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/nvidia/.local/bin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/opt/ros/humble/bin:/home/nvidia/miniconda3/envs/nim/bin:/home/nvidia/miniconda3/condabin:/usr/local/cuda-12.6/bin:/home/nvidia/.cursor-server/bin/linux-arm64/b29eb4ee5f9f6d1cb2afbc09070198d3ea6ad760/bin/remote-cli:/home/nvidia/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'VSCODE_AGENT_FOLDER': '/home/nvidia/.cursor-server', 'XDG_RUNTIME_DIR': '/run/user/1000', 'CURSOR_AGENT': '1', 'LANG': 'en_US.UTF-8', 'LS_COLORS': '', 'JETSON_SOC': 'tegra234', 'AMENT_PREFIX_PATH': '/home/nvidia/vtol_ws/install/tag_nav_stub:/home/nvidia/vtol_ws/install/tag_detector:/home/nvidia/vtol_ws/install/pose_bridge:/home/nvidia/vtol_ws/install/camera:/home/nvidia/vtol_ws/install/bringup:/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge:/opt/ros/humble', 'CONDA_PYTHON_EXE': '/home/nvidia/miniconda3/bin/python', 'SHELL': '/bin/bash', 'VSCODE_SERVER_SHUTDOWN_TIMEOUT': '300', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'CONDA_DEFAULT_ENV': 'nim', 'JETSON_CUDA_ARCH_BIN': '8.7', 'PWD': '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge', 'LC_ALL': 'en_US.UTF-8', 'CONDA_EXE': '/home/nvidia/miniconda3/bin/conda', 'SSH_CONNECTION': '192.168.0.56 52507 192.168.0.79 22', 'XDG_DATA_DIRS': '/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/home/nvidia/vtol_ws/install/tag_nav_stub/lib/python3.10/site-packages:/home/nvidia/vtol_ws/install/pose_bridge/lib/python3.10/site-packages:/home/nvidia/vtol_ws/install/bringup/lib/python3.10/site-packages:/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:/usr/lib/python3.10/dist-packages:', 'CONDA_PREFIX': '/home/nvidia/miniconda3/envs/nim', 'COLCON': '1', '_ZO_DOCTOR': '0', 'JETSON_JETPACK': '', 'CMAKE_PREFIX_PATH': '/home/nvidia/vtol_ws/install/tag_detector:/home/nvidia/vtol_ws/install/camera', 'JETSON_P_NUMBER': 'p3767-0000'}, 'shell': False}
+[1.403404] (-) TimerEvent: {}
+[1.503803] (-) TimerEvent: {}
+[1.604198] (-) TimerEvent: {}
+[1.704594] (-) TimerEvent: {}
+[1.798443] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running egg_info\n'}
+[1.799770] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'writing ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/PKG-INFO\n'}
+[1.800403] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'writing dependency_links to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/dependency_links.txt\n'}
+[1.800753] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'writing entry points to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/entry_points.txt\n'}
+[1.801000] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'writing requirements to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/requires.txt\n'}
+[1.801219] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'writing top-level names to ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/top_level.txt\n'}
+[1.804725] (-) TimerEvent: {}
+[1.805288] (ardupilot_mavlink_bridge) StdoutLine: {'line': b"reading manifest file '../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/SOURCES.txt'\n"}
+[1.806771] (ardupilot_mavlink_bridge) StdoutLine: {'line': b"writing manifest file '../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info/SOURCES.txt'\n"}
+[1.807233] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running build\n'}
+[1.807413] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running build_py\n'}
+[1.807799] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'copying ardupilot_mavlink_bridge/mavlink_bridge_node.py -> /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge\n'}
+[1.808123] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running install\n'}
+[1.808832] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running install_lib\n'}
+[1.811066] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'copying /home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/build/lib/ardupilot_mavlink_bridge/mavlink_bridge_node.py -> /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge\n'}
+[1.812495] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'byte-compiling /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge/mavlink_bridge_node.py to mavlink_bridge_node.cpython-310.pyc\n'}
+[1.815892] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running install_data\n'}
+[1.816203] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running install_egg_info\n'}
+[1.819831] (ardupilot_mavlink_bridge) StdoutLine: {'line': b"removing '/home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge-0.0.0-py3.10.egg-info' (and everything under it)\n"}
+[1.820250] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'Copying ../../build/ardupilot_mavlink_bridge/ardupilot_mavlink_bridge.egg-info to /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/python3.10/site-packages/ardupilot_mavlink_bridge-0.0.0-py3.10.egg-info\n'}
+[1.821803] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'running install_scripts\n'}
+[1.858577] (ardupilot_mavlink_bridge) StdoutLine: {'line': b'Installing mavlink_bridge_node script to /home/nvidia/vtol_ws/install/ardupilot_mavlink_bridge/lib/ardupilot_mavlink_bridge\n'}
+[1.859139] (ardupilot_mavlink_bridge) StdoutLine: {'line': b"writing list of installed files to '/home/nvidia/vtol_ws/build/ardupilot_mavlink_bridge/install.log'\n"}
+[1.904925] (-) TimerEvent: {}
+[1.943684] (ardupilot_mavlink_bridge) CommandEnded: {'returncode': 0}
+[1.961963] (ardupilot_mavlink_bridge) JobEnded: {'identifier': 'ardupilot_mavlink_bridge', 'rc': 0}
+[1.962909] (-) EventReactorShutdown: {}

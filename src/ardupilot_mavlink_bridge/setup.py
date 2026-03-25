@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'mavlink_bridge_node = ardupilot_mavlink_bridge.mavlink_bridge_node:main'
+            'mavlink_bridge_node = ardupilot_mavlink_bridge.mavlink_bridge_node:main',
+            'telemetry_logger_node = ardupilot_mavlink_bridge.telemetry_logger_node:main'
         ],
     },
 )

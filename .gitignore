@@ -1,0 +1,16 @@
+# ROS2 workspace directories
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+
+# Flight data and videos
+*.csv
+*.mp4
+flight_video_bag_*/

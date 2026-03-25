@@ -1,4 +1,0 @@
-Invoking command in '/home/nvidia/vtol_ws/build/camera': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --build /home/nvidia/vtol_ws/build/camera -- -j8 -l8
-Invoked command in '/home/nvidia/vtol_ws/build/camera' returned '0': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --build /home/nvidia/vtol_ws/build/camera -- -j8 -l8
-Invoking command in '/home/nvidia/vtol_ws/build/camera': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --install /home/nvidia/vtol_ws/build/camera
-Invoked command in '/home/nvidia/vtol_ws/build/camera' returned '0': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake --install /home/nvidia/vtol_ws/build/camera

@@ -1,2 +1,0 @@
-Invoking command in '/home/nvidia/vtol_ws/build/camera': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake /home/nvidia/vtol_ws/src/camera -DCMAKE_INSTALL_PREFIX=/home/nvidia/vtol_ws/install/camera
-Invoked command in '/home/nvidia/vtol_ws/build/camera' returned '1': CMAKE_PREFIX_PATH=/home/nvidia/vtol_ws/install/tag_nav_stub:/opt/ros/humble CONDA_PROMPT_MODIFIER=(nim) /usr/bin/cmake /home/nvidia/vtol_ws/src/camera -DCMAKE_INSTALL_PREFIX=/home/nvidia/vtol_ws/install/camera

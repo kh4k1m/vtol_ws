@@ -1,0 +1,9 @@
+tag_localizer:
+  ros__parameters:
+    map_frame: "map"
+    camera_frame: "camera_link"
+    base_link_frame: "base_link"
+    markers:
+      - '{"id": 34, "size_m": 0.04, "pose": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}'
+      - '{"id": 1, "size_m": 0.16, "pose": [2.0, 0.0, 1.0, 0.0, 0.0, 0.0]}'
+      - '{"id": 55, "size_m": 0.80, "pose": [5.0, 5.0, 0.0, 0.0, 0.0, 0.0]}'

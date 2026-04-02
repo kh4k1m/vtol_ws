@@ -17,13 +17,10 @@ setup(
     maintainer_email='cvwiseworkk@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
-    extras_require={
-        'test': [
-            'pytest',
-        ],
-    },
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'mission_manager_node = tag_nav_stub.mission_manager_node:main'
         ],
     },
 )

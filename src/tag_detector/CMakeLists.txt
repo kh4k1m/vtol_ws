@@ -9,11 +9,12 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(marker_interfaces REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
 
 add_executable(tag_detector_node src/tag_detector_node.cpp)
-ament_target_dependencies(tag_detector_node rclcpp sensor_msgs geometry_msgs cv_bridge OpenCV)
+ament_target_dependencies(tag_detector_node rclcpp sensor_msgs geometry_msgs cv_bridge OpenCV marker_interfaces)
 
 install(TARGETS
   tag_detector_node

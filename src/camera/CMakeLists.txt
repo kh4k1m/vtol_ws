@@ -15,8 +15,12 @@ find_package(OpenCV REQUIRED)
 add_executable(camera_node src/camera_node.cpp)
 ament_target_dependencies(camera_node rclcpp sensor_msgs std_msgs cv_bridge OpenCV)
 
+add_executable(video_recorder_node src/video_recorder_node.cpp)
+ament_target_dependencies(video_recorder_node rclcpp sensor_msgs std_msgs cv_bridge OpenCV)
+
 install(TARGETS
   camera_node
+  video_recorder_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

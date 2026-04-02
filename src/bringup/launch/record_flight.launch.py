@@ -2,11 +2,10 @@ import os
 import time
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.actions import ExecuteProcess
 
 def generate_launch_description():
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-    bag_path = f'/home/nvidia/vtol_ws/flight_video_bag_{timestamp}'
+    video_path = f'/home/nvidia/vtol_ws/flight_video_{timestamp}.mp4'
 
     return LaunchDescription([
         # Запуск камеры
@@ -33,9 +32,15 @@ def generate_launch_description():
             ]
         ),
 
-        # Запись видео в rosbag
-        ExecuteProcess(
-            cmd=['ros2', 'bag', 'record', '-o', bag_path, '/camera/image_raw'],
-            output='screen'
+        # Запись видео в MP4 и сохранение таймстемпов кадров
+        Node(
+            package='camera',
+            executable='video_recorder_node',
+            name='video_recorder_node',
+            output='screen',
+            parameters=[
+                {'output_path': video_path},
+                {'fps': 30.0}
+            ]
         )
     ])

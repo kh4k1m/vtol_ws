@@ -9,14 +9,13 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
 
 add_executable(camera_node src/camera_node.cpp)
-ament_target_dependencies(camera_node rclcpp sensor_msgs std_msgs cv_bridge OpenCV)
+ament_target_dependencies(camera_node rclcpp sensor_msgs std_msgs OpenCV)
 
 add_executable(video_recorder_node src/video_recorder_node.cpp)
-ament_target_dependencies(video_recorder_node rclcpp sensor_msgs std_msgs cv_bridge OpenCV)
+ament_target_dependencies(video_recorder_node rclcpp sensor_msgs std_msgs OpenCV)
 
 install(TARGETS
   camera_node

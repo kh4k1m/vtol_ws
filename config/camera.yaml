@@ -1,0 +1,22 @@
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [2941.0, 0.0, 977.0, 
+         0.0, 2934.0, 567.0, 
+         0.0, 0.0, 1.0]
+
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [-0.07626819355983554, 0.4996358213639364, 0.0019553139751148944, 0.0016349494242613198, -1.703305244612242]
+
+image_width: 1920
+image_height: 1080
+
+# Преобразование из base_link в camera_optical_frame.
+# Поза down_camera_link в Gazebo: 0 0 -0.13 0 1.5708 0.
+# Здесь дополнительно учтён переход к optical frame OpenCV:
+# x - вправо, y - вниз, z - по направлению взгляда.
+camera_offset:
+  translation: [0.0, 0.0, -0.13]
+  rotation: [180.0, 0.0, -90.0]

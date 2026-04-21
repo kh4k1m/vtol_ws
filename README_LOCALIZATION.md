@@ -8,13 +8,13 @@ This system provides GPS-denied visual localization using an AprilTag/ArUco fiel
 2. **`tag_detector`**: Detects all visible markers, estimates their pose relative to the camera, and publishes `MarkerDetectionArray`.
 3. **`tag_localizer`**: Loads a YAML map of marker positions. Computes the vehicle's global pose in the `map` (ENU) frame by fusing detections.
 4. **`ardupilot_mavlink_bridge`**: Converts the ENU pose to NED and sends `VISION_POSITION_ESTIMATE` to ArduPilot.
-5. **`tag_nav_stub` (Mission Manager)**: A high-level state machine that orchestrates flight scenarios based on the current localizer status.
+5. **`flight_manager` (Mission Manager)**: A high-level state machine that waits for stable visual localization, commands GUIDED/ARM/TAKEOFF/LAND through the MAVLink bridge, and monitors the scenario end-to-end.
 
 ## Scenarios
 
-### Scenario A: Takeoff and Land on Pad 34
-- **Launch**: `ros2 launch bringup scenario_takeoff_land_pad34.launch.py`
-- **Description**: The drone searches for the near-field pad marker (ID 34), acquires it, aligns, and lands.
+### Scenario A: Takeoff to 7m and Land
+- **Launch**: `ros2 launch bringup scenario_takeoff_land_7m.launch.py`
+- **Description**: The drone waits for stable AprilTag-based localization, switches to GUIDED, arms, climbs to 7 meters, holds briefly, and then lands with `QLAND`.
 
 ### Scenario B: Ascend (34 -> 1 -> 55)
 - **Launch**: `ros2 launch bringup scenario_ascend_34_1_55.launch.py`
@@ -34,6 +34,9 @@ This system provides GPS-denied visual localization using an AprilTag/ArUco fiel
 
 ### SITL Simulation
 1. Place the marker models in Gazebo according to `full_map.yaml`.
-2. Run `ros2 launch bringup scenario_full_marker_route.launch.py`.
-3. A simulation harness should read `/mission_state` and send GUIDED setpoints to ArduPilot.
-4. Listen to `/photo_trigger` to capture simulated images when requested by the mission manager.
+2. Start ArduPilot with the base vehicle profile plus the vision overlay:
+   `python3 ~/ardupilot/Tools/autotest/sim_vehicle.py -v ArduPlane --model JSON --add-param-file=$HOME/SITL_Models/Gazebo/config/alti_transition_quad.param --add-param-file=$HOME/SITL_Models/Gazebo/config/alti_transition_quad_vision_nav.param --console --map`
+   If you switch between manual GPS-based tests and vision-only tests, start SITL with `-w` (or remove the saved EEPROM) so persisted parameters do not override the selected profile.
+3. Run `ros2 launch bringup scenario_takeoff_land_7m.launch.py`.
+4. The `flight_manager` node reads `/localizer_status` and `/ap/relative_alt`, then issues `GUIDED`, `ARM`, takeoff, and `QLAND` commands through `ardupilot_mavlink_bridge`.
+5. Keep manual and bench tests on the base `alti_transition_quad.param` only, so ordinary `QLOITER` behavior stays intact even if visual localization is not ready yet.

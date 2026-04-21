@@ -1,9 +1,57 @@
 #include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
-#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/msg/image.hpp>
+#include <std_msgs/msg/header.hpp>
 #include <opencv2/opencv.hpp>
+#include <stdexcept>
 #include <thread>
+
+namespace
+{
+cv::Mat ensure_bgr8(const cv::Mat &frame)
+{
+    if (frame.empty()) {
+        throw std::runtime_error("Cannot publish an empty frame");
+    }
+
+    if (frame.type() == CV_8UC3) {
+        return frame;
+    }
+
+    cv::Mat converted;
+    if (frame.type() == CV_8UC1) {
+        cv::cvtColor(frame, converted, cv::COLOR_GRAY2BGR);
+    } else if (frame.type() == CV_8UC4) {
+        cv::cvtColor(frame, converted, cv::COLOR_BGRA2BGR);
+    } else {
+        throw std::runtime_error("Unsupported camera frame format");
+    }
+
+    return converted;
+}
+
+sensor_msgs::msg::Image mat_to_image_message(
+    const cv::Mat &frame,
+    const std_msgs::msg::Header &header)
+{
+    cv::Mat bgr = ensure_bgr8(frame);
+
+    sensor_msgs::msg::Image msg;
+    msg.header = header;
+    msg.height = static_cast<sensor_msgs::msg::Image::_height_type>(bgr.rows);
+    msg.width = static_cast<sensor_msgs::msg::Image::_width_type>(bgr.cols);
+    msg.encoding = sensor_msgs::image_encodings::BGR8;
+    msg.is_bigendian = false;
+    msg.step = static_cast<sensor_msgs::msg::Image::_step_type>(bgr.step);
+
+    const auto *data_begin = bgr.data;
+    const auto *data_end = data_begin + (bgr.step * bgr.rows);
+    msg.data.assign(data_begin, data_end);
+
+    return msg;
+}
+}  // namespace
 
 class CameraNode : public rclcpp::Node
 {
@@ -40,20 +88,28 @@ private:
     {
         cv::Mat frame;
         if (cap_.read(frame) && !frame.empty()) {
-            std_msgs::msg::Header header;
-            header.stamp = this->now();
-            header.frame_id = "camera_link";
-            
-            // Convert OpenCV Mat to ROS Image message
-            sensor_msgs::msg::Image::SharedPtr img_msg = cv_bridge::CvImage(header, "bgr8", frame).toImageMsg();
-            image_pub_->publish(*img_msg);
-            
-            // Publish mock CameraInfo
-            auto info_msg = sensor_msgs::msg::CameraInfo();
-            info_msg.header = header;
-            info_msg.height = frame.rows;
-            info_msg.width = frame.cols;
-            info_pub_->publish(info_msg);
+            try {
+                std_msgs::msg::Header header;
+                header.stamp = this->now();
+                header.frame_id = "camera_optical_frame";
+
+                sensor_msgs::msg::Image img_msg = mat_to_image_message(frame, header);
+                image_pub_->publish(img_msg);
+
+                // Publish mock CameraInfo
+                auto info_msg = sensor_msgs::msg::CameraInfo();
+                info_msg.header = header;
+                info_msg.height = img_msg.height;
+                info_msg.width = img_msg.width;
+                info_pub_->publish(info_msg);
+            } catch (const std::exception &e) {
+                RCLCPP_ERROR_THROTTLE(
+                    this->get_logger(),
+                    *this->get_clock(),
+                    1000,
+                    "Failed to publish camera frame: %s",
+                    e.what());
+            }
         } else {
             RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 1000, "Failed to capture frame or stream ended.");
             // Optionally, try to reconnect here

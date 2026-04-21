@@ -1,17 +1,123 @@
 #include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <marker_interfaces/msg/marker_detection_array.hpp>
-#include <cv_bridge/cv_bridge.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/objdetect/aruco_dictionary.hpp>
 #include <opencv2/objdetect/aruco_detector.hpp>
 #include <opencv2/calib3d.hpp>
+#include <map>
+#include <stdexcept>
+
+namespace
+{
+cv::Mat image_msg_to_bgr(const sensor_msgs::msg::Image &msg)
+{
+    if (msg.width == 0 || msg.height == 0 || msg.step == 0) {
+        throw std::runtime_error("Received image with invalid geometry");
+    }
+
+    const auto required_bytes = static_cast<size_t>(msg.step) * msg.height;
+    if (msg.data.size() < required_bytes) {
+        throw std::runtime_error("Image data buffer is smaller than width/height/step");
+    }
+
+    if (msg.encoding == sensor_msgs::image_encodings::BGR8) {
+        cv::Mat wrapped(
+            static_cast<int>(msg.height),
+            static_cast<int>(msg.width),
+            CV_8UC3,
+            const_cast<unsigned char *>(msg.data.data()),
+            msg.step);
+        return wrapped.clone();
+    }
+
+    cv::Mat converted;
+    if (msg.encoding == sensor_msgs::image_encodings::RGB8) {
+        cv::Mat wrapped(
+            static_cast<int>(msg.height),
+            static_cast<int>(msg.width),
+            CV_8UC3,
+            const_cast<unsigned char *>(msg.data.data()),
+            msg.step);
+        cv::cvtColor(wrapped, converted, cv::COLOR_RGB2BGR);
+        return converted;
+    }
+
+    if (msg.encoding == sensor_msgs::image_encodings::MONO8) {
+        cv::Mat wrapped(
+            static_cast<int>(msg.height),
+            static_cast<int>(msg.width),
+            CV_8UC1,
+            const_cast<unsigned char *>(msg.data.data()),
+            msg.step);
+        cv::cvtColor(wrapped, converted, cv::COLOR_GRAY2BGR);
+        return converted;
+    }
+
+    if (msg.encoding == sensor_msgs::image_encodings::BGRA8) {
+        cv::Mat wrapped(
+            static_cast<int>(msg.height),
+            static_cast<int>(msg.width),
+            CV_8UC4,
+            const_cast<unsigned char *>(msg.data.data()),
+            msg.step);
+        cv::cvtColor(wrapped, converted, cv::COLOR_BGRA2BGR);
+        return converted;
+    }
+
+    if (msg.encoding == sensor_msgs::image_encodings::RGBA8) {
+        cv::Mat wrapped(
+            static_cast<int>(msg.height),
+            static_cast<int>(msg.width),
+            CV_8UC4,
+            const_cast<unsigned char *>(msg.data.data()),
+            msg.step);
+        cv::cvtColor(wrapped, converted, cv::COLOR_RGBA2BGR);
+        return converted;
+    }
+
+    throw std::runtime_error("Unsupported image encoding: " + msg.encoding);
+}
+}  // namespace
 
 class TagDetectorNode : public rclcpp::Node
 {
 public:
     TagDetectorNode() : Node("tag_detector_node")
     {
+        // Declare parameters
+        this->declare_parameter<std::vector<double>>("camera_matrix_data", {2941.0, 0.0, 977.0, 0.0, 2934.0, 567.0, 0.0, 0.0, 1.0});
+        this->declare_parameter<std::vector<double>>("distortion_coefficients_data", {-0.076268, 0.499635, 0.001955, 0.001634, -1.703305});
+        this->declare_parameter<double>("default_marker_size", 0.8);
+        this->declare_parameter<std::vector<int64_t>>("marker_ids", {3, 4, 5, 10, 11});
+        this->declare_parameter<std::vector<double>>("marker_sizes", {0.8, 0.8, 0.8, 1.5, 0.2});
+
+        // Read parameters
+        auto cam_data = this->get_parameter("camera_matrix_data").as_double_array();
+        auto dist_data = this->get_parameter("distortion_coefficients_data").as_double_array();
+        default_marker_size_ = this->get_parameter("default_marker_size").as_double();
+        auto m_ids = this->get_parameter("marker_ids").as_integer_array();
+        auto m_sizes = this->get_parameter("marker_sizes").as_double_array();
+
+        RCLCPP_INFO(this->get_logger(), "Loaded camera matrix with %zu elements", cam_data.size());
+
+        // Build camera matrix and distortion safely
+        cameraMatrix_ = cv::Mat::eye(3, 3, CV_64F);
+        if (cam_data.size() >= 9) {
+            for (int i = 0; i < 9; ++i) cameraMatrix_.at<double>(i / 3, i % 3) = cam_data[i];
+        } else {
+            RCLCPP_ERROR(this->get_logger(), "Invalid camera_matrix_data size! Using identity matrix.");
+        }
+        
+        distCoeffs_ = cv::Mat::zeros(5, 1, CV_64F);
+        for (size_t i = 0; i < std::min((size_t)5, dist_data.size()); ++i) distCoeffs_.at<double>(i) = dist_data[i];
+
+        // Build marker sizes map
+        for (size_t i = 0; i < std::min(m_ids.size(), m_sizes.size()); ++i) {
+            marker_sizes_[m_ids[i]] = m_sizes[i];
+        }
+
         auto qos = rclcpp::SensorDataQoS();
 
         image_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
@@ -24,50 +130,52 @@ public:
         cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
         detector_ = std::make_shared<cv::aruco::ArucoDetector>(dictionary, detectorParams);
 
-        RCLCPP_INFO(this->get_logger(), "Tag detector node started. Using original resolution and Sony A6700 intrinsics.");
+        RCLCPP_INFO(this->get_logger(), "Tag detector node started with dynamic parameters.");
     }
 
 private:
     void image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     {
         try {
-            cv::Mat frame = cv_bridge::toCvShare(msg, "bgr8")->image;
+            if (msg->width == 0 || msg->height == 0 || msg->step == 0) {
+                RCLCPP_WARN(this->get_logger(), "Received invalid image: %ux%u, step %u", msg->width, msg->height, msg->step);
+                return;
+            }
+
+            cv::Mat frame = image_msg_to_bgr(*msg);
+            
+            if (frame.empty()) {
+                RCLCPP_WARN(this->get_logger(), "Received empty image frame!");
+                return;
+            }
             
             std::vector<int> markerIds;
             std::vector<std::vector<cv::Point2f>> markerCorners, rejectedCandidates;
             
-            detector_->detectMarkers(frame, markerCorners, markerIds, rejectedCandidates);
+            try {
+                detector_->detectMarkers(frame, markerCorners, markerIds, rejectedCandidates);
+            } catch (const cv::Exception& e) {
+                RCLCPP_ERROR(this->get_logger(), "detectMarkers exception: %s", e.what());
+                return;
+            }
 
             if (!markerIds.empty()) {
                 marker_interfaces::msg::MarkerDetectionArray msg_array;
                 msg_array.header.stamp = msg->header.stamp;
-                msg_array.header.frame_id = "camera_link";
-
-                // ИСПОЛЬЗУЕМ КАЛИБРОВКУ SONY A6700
-                // Оригинальное разрешение: 1920x1080
-                // Параметры: [fx, fy, cx, cy] = [2941, 2934, 977, 567]
-                // Дисторсия: [k1, k2, p1, p2, k3] = [-0.076268, 0.499635, 0.001955, 0.001634, -1.703305]
-                
-                double fx = 2941.0;
-                double fy = 2934.0;
-                double cx = 977.0;
-                double cy = 567.0;
-
-                cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << fx, 0, cx, 0, fy, cy, 0, 0, 1);
-                cv::Mat distCoeffs = (cv::Mat_<double>(5, 1) << -0.07626819355983554, 0.4996358213639364, 0.0019553139751148944, 0.0016349494242613198, -1.703305244612242);
+                msg_array.header.frame_id = msg->header.frame_id.empty() ? "camera_optical_frame" : msg->header.frame_id;
 
                 for (size_t i = 0; i < markerIds.size(); ++i) {
                     marker_interfaces::msg::MarkerDetection det_msg;
                     det_msg.id = markerIds[i];
                     
-                    if (det_msg.id == 34 || det_msg.id == 6) det_msg.size_m = 0.04f;
-                    else if (det_msg.id >= 1 && det_msg.id <= 4) det_msg.size_m = 0.16f;
-                    else if (det_msg.id == 0) det_msg.size_m = 0.20f;
-                    else if (det_msg.id >= 55 && det_msg.id <= 57) det_msg.size_m = 0.80f;
-                    else continue;
+                    // Get size from map or use default
+                    if (marker_sizes_.count(det_msg.id)) {
+                        det_msg.size_m = marker_sizes_[det_msg.id];
+                    } else {
+                        det_msg.size_m = default_marker_size_;
+                    }
 
                     float half_size = det_msg.size_m / 2.0f;
-                    // ОРИГИНАЛЬНЫЙ ПОРЯДОК ТОЧЕК
                     std::vector<cv::Point3f> obj_points = {
                         cv::Point3f(-half_size,  half_size, 0),
                         cv::Point3f( half_size,  half_size, 0),
@@ -76,8 +184,18 @@ private:
                     };
 
                     cv::Mat rvec, tvec;
-                    // ОРИГИНАЛЬНЫЙ SOLVEPNP
-                    bool success = cv::solvePnP(obj_points, markerCorners[i], cameraMatrix, distCoeffs, rvec, tvec, false, cv::SOLVEPNP_IPPE_SQUARE);
+                    bool success = false;
+                    try {
+                        // ИСПРАВЛЕНИЕ: Гарантируем, что cameraMatrix_ и distCoeffs_ имеют правильный тип и размер
+                        cv::Mat camMat, dist;
+                        cameraMatrix_.convertTo(camMat, CV_64F);
+                        distCoeffs_.convertTo(dist, CV_64F);
+                        
+                        success = cv::solvePnP(obj_points, markerCorners[i], camMat, dist, rvec, tvec, false, cv::SOLVEPNP_IPPE_SQUARE);
+                    } catch (const cv::Exception& e) {
+                        RCLCPP_ERROR(this->get_logger(), "solvePnP exception: %s", e.what());
+                        continue;
+                    }
 
                     if (success) {
                         cv::Mat rotationMatrix;
@@ -133,14 +251,21 @@ private:
                     detections_pub_->publish(msg_array);
                 }
             }
-        } catch (cv_bridge::Exception& e) {
-            RCLCPP_ERROR(this->get_logger(), "cv_bridge exception: %s", e.what());
+        } catch (const cv::Exception& e) {
+            RCLCPP_ERROR(this->get_logger(), "OpenCV exception in callback: %s", e.what());
+        } catch (const std::exception& e) {
+            RCLCPP_ERROR(this->get_logger(), "Image conversion exception in callback: %s", e.what());
         }
     }
 
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
     rclcpp::Publisher<marker_interfaces::msg::MarkerDetectionArray>::SharedPtr detections_pub_;
     std::shared_ptr<cv::aruco::ArucoDetector> detector_;
+
+    cv::Mat cameraMatrix_;
+    cv::Mat distCoeffs_;
+    double default_marker_size_;
+    std::map<int, double> marker_sizes_;
 };
 
 int main(int argc, char * argv[])

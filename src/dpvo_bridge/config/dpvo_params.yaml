@@ -1,0 +1,26 @@
+dpvo_node:
+  ros__parameters:
+    image_topic: /camera/image_raw
+    camera_info_topic: /camera/camera_info
+    pose_topic: /dpvo/pose
+    path_topic: /dpvo/path
+    frame_id: dpvo_map
+    weights_path: /ABS/PATH/TO/dpvo.pth
+    config_path: /ABS/PATH/TO/DPVO/config/default.yaml
+    config_overrides: []
+    use_cuda: true
+    undistort: true
+    publish_path: true
+    max_path_length: 2000
+    process_every_n: 1
+    log_every_n: 30
+    enable_viz: false
+
+trajectory_logger_node:
+  ros__parameters:
+    gps_topic: /gps/fix
+    pose_topic: /dpvo/pose
+    output_csv: /tmp/dpvo_vs_gps.csv
+    max_gps_buffer: 5000
+    max_time_delta_sec: 0.25
+    flush_every_n: 20

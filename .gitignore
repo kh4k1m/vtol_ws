@@ -14,3 +14,9 @@ __pycache__/
 *.csv
 *.mp4
 flight_video_bag_*/
+logs/
+*.tlog
+*.tlog.raw
+*.parm
+eeprom.bin
+terrain/

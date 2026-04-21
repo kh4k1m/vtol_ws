@@ -1,0 +1,30 @@
+logger:
+  # Настройки записи rosbag (основной формат для симуляций в ROS)
+  rosbag:
+    record: true
+    # Сжатие данных (zstd отлично сжимает, экономя место)
+    compression_format: "zstd"
+    compression_mode: "message"
+    # Топики для записи в bag (телеметрия, tf, gps, позы и т.д.)
+    topics:
+      - /camera/camera_info
+      - /tf
+      - /tf_static
+      # --- Данные MAVROS (Автопилот) ---
+      - /mavros/state
+      - /mavros/imu/data          # Отфильтрованные данные IMU (ориентация)
+      - /mavros/imu/data_raw      # СЫРЫЕ данные IMU (ускорения и гироскопы - КРИТИЧЕСКИ ВАЖНО для VIO/EKF)
+      - /mavros/imu/mag           # Магнитометр (компас)
+      - /mavros/global_position/global
+      - /mavros/global_position/raw/fix  # Сырые данные GPS
+      - /mavros/local_position/pose
+      - /mavros/local_position/velocity_body
+      # --- Данные DPVO (если запущен на борту) ---
+      - /dpvo/pose
+      - /dpvo/path
+
+  # Настройки записи видео (вместо сырых картинок пишем сжатый MP4)
+  video:
+    record: true
+    topic: "/camera/image_raw"
+    fps: 30.0

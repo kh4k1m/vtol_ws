@@ -7,6 +7,14 @@
   <maintainer email="cvwiseworkk@gmail.com">nvidia</maintainer>
   <license>TODO: License declaration</license>
 
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>rosgraph_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>ardupilot_mavlink_bridge</exec_depend>
+  <exec_depend>flight_manager</exec_depend>
+  <exec_depend>tag_detector</exec_depend>
+  <exec_depend>tag_localizer</exec_depend>
+
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>

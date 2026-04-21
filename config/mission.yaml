@@ -1,0 +1,4 @@
+mission:
+  # Настройки автономной миссии (взлет и посадка)
+  target_altitude_m: 7.0
+  hover_duration_sec: 3.0

@@ -1,10 +1,83 @@
 #include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/msg/image.hpp>
-#include <cv_bridge/cv_bridge.h>
 #include <opencv2/opencv.hpp>
-#include <string>
-#include <fstream>
 #include <chrono>
+#include <fstream>
+#include <stdexcept>
+#include <string>
+
+namespace
+{
+cv::Mat image_msg_to_bgr(const sensor_msgs::msg::Image &msg)
+{
+    if (msg.width == 0 || msg.height == 0 || msg.step == 0) {
+        throw std::runtime_error("Received image with invalid geometry");
+    }
+
+    const auto required_bytes = static_cast<size_t>(msg.step) * msg.height;
+    if (msg.data.size() < required_bytes) {
+        throw std::runtime_error("Image data buffer is smaller than width/height/step");
+    }
+
+    if (msg.encoding == sensor_msgs::image_encodings::BGR8) {
+        cv::Mat wrapped(
+            static_cast<int>(msg.height),
+            static_cast<int>(msg.width),
+            CV_8UC3,
+            const_cast<unsigned char *>(msg.data.data()),
+            msg.step);
+        return wrapped.clone();
+    }
+
+    cv::Mat converted;
+    if (msg.encoding == sensor_msgs::image_encodings::RGB8) {
+        cv::Mat wrapped(
+            static_cast<int>(msg.height),
+            static_cast<int>(msg.width),
+            CV_8UC3,
+            const_cast<unsigned char *>(msg.data.data()),
+            msg.step);
+        cv::cvtColor(wrapped, converted, cv::COLOR_RGB2BGR);
+        return converted;
+    }
+
+    if (msg.encoding == sensor_msgs::image_encodings::MONO8) {
+        cv::Mat wrapped(
+            static_cast<int>(msg.height),
+            static_cast<int>(msg.width),
+            CV_8UC1,
+            const_cast<unsigned char *>(msg.data.data()),
+            msg.step);
+        cv::cvtColor(wrapped, converted, cv::COLOR_GRAY2BGR);
+        return converted;
+    }
+
+    if (msg.encoding == sensor_msgs::image_encodings::BGRA8) {
+        cv::Mat wrapped(
+            static_cast<int>(msg.height),
+            static_cast<int>(msg.width),
+            CV_8UC4,
+            const_cast<unsigned char *>(msg.data.data()),
+            msg.step);
+        cv::cvtColor(wrapped, converted, cv::COLOR_BGRA2BGR);
+        return converted;
+    }
+
+    if (msg.encoding == sensor_msgs::image_encodings::RGBA8) {
+        cv::Mat wrapped(
+            static_cast<int>(msg.height),
+            static_cast<int>(msg.width),
+            CV_8UC4,
+            const_cast<unsigned char *>(msg.data.data()),
+            msg.step);
+        cv::cvtColor(wrapped, converted, cv::COLOR_RGBA2BGR);
+        return converted;
+    }
+
+    throw std::runtime_error("Unsupported image encoding: " + msg.encoding);
+}
+}  // namespace
 
 class VideoRecorderNode : public rclcpp::Node
 {
@@ -44,7 +117,7 @@ private:
     void image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
     {
         try {
-            cv::Mat frame = cv_bridge::toCvCopy(msg, "bgr8")->image;
+            cv::Mat frame = image_msg_to_bgr(*msg);
             
             if (!video_writer_.isOpened()) {
                 int fourcc = cv::VideoWriter::fourcc('m', 'p', '4', 'v');
@@ -67,8 +140,10 @@ private:
             
             frame_count_++;
             
-        } catch (cv_bridge::Exception& e) {
-            RCLCPP_ERROR(this->get_logger(), "cv_bridge exception: %s", e.what());
+        } catch (const cv::Exception& e) {
+            RCLCPP_ERROR(this->get_logger(), "OpenCV exception: %s", e.what());
+        } catch (const std::exception& e) {
+            RCLCPP_ERROR(this->get_logger(), "Image conversion exception: %s", e.what());
         }
     }
 

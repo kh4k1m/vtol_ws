@@ -39,8 +39,8 @@ def getPos(T_tag):
 def getRotation(T_Tag, useRadians=False):
     '''Get the vehicle's current rotation in Euler XYZ degrees'''
     if useRadians:
-        return numpy.array(mat2euler(T_Tag[0:3][0:3], 'sxyz'))
-    return numpy.array(numpy.rad2deg(mat2euler(T_Tag[0:3][0:3], 'sxyz')))
+        return numpy.array(mat2euler(T_Tag[0:3, 0:3], 'sxyz'))
+    return numpy.array(numpy.rad2deg(mat2euler(T_Tag[0:3, 0:3], 'sxyz')))
 
 
 def isclose(x, y, rtol=1.e-5, atol=1.e-8):
@@ -92,6 +92,7 @@ class tagDB:
         # Initialize a 9-state Kalman filter (x,y,z, vx,vy,vz, ax,ay,az)
         self.kalman = KalmanFilter(9, 3)  # 9 state variables, 3 measurements
         self.kalman.x = numpy.zeros((9, 1))  # Initial state [x,y,z, vx,vy,vz, ax,ay,az]
+        self.kalman_initialized = False
 
         # State transition matrix - update position with velocity and acceleration
         self.kalman.F = numpy.eye(9)
@@ -166,15 +167,27 @@ class tagDB:
             # Generate position, rotation in ArduPilot format, zscore to remove outliers
             timeSeriesPos = numpy.array([getPos(T) for T in self.T_VehToWorld])
             timeSeriesRot = numpy.array([getRotation(T, True) for T in self.T_VehToWorld])
-            self.reportedPos = self.zscoreFilter(timeSeriesPos)
-            self.reportedRot = self.zscoreFilter(timeSeriesRot)
+            measured_pos = self.zscoreFilter(timeSeriesPos)
+            measured_rot = self.zscoreFilter(timeSeriesRot)
         else:
-            self.reportedPos = getPos(self.T_VehToWorld[-1])
-            self.reportedRot = getRotation(self.T_VehToWorld[-1], True)
+            measured_pos = getPos(self.T_VehToWorld[-1])
+            measured_rot = getRotation(self.T_VehToWorld[-1], True)
+
+        self.reportedPos = measured_pos
+        self.reportedRot = measured_rot
+
+        if not self.kalman_initialized:
+            self.kalman.x[:] = 0.0
+            self.kalman.x[0:3, 0] = measured_pos
+            self.kalman_initialized = True
+            self.reportedVelocity = numpy.zeros(3)
+            if self.debug:
+                print(f"Position: {self.reportedPos.round(3)}, Velocity: {self.reportedVelocity.round(3)}")
+            return
 
         # Kalman filter for position and velocity
         if len(self.timestamps) > 1:
-            deltaT = self.timestamps[-1] - self.timestamps[-2]
+            deltaT = max(self.timestamps[-1] - self.timestamps[-2], 1e-3)
         else:
             deltaT = 0.01  # Default small time step if no previous timestamp exists
 
@@ -187,7 +200,7 @@ class tagDB:
         self.kalman.predict()
 
         # Update with measurement (position)
-        self.kalman.update(self.reportedPos)
+        self.kalman.update(measured_pos)
 
         # Extract position and velocity from state
         self.reportedPos = numpy.array([
@@ -216,16 +229,28 @@ class tagDB:
         Returns:
         tuple: The the last position if it's not an outlier, else the 2nd last position.
         """
-        timeseries = numpy.array(timeseries)
+        timeseries = numpy.asarray(timeseries, dtype=float)
+        if timeseries.size == 0:
+            return None
 
         # Calculate mean and standard deviation for each coordinate
         mean_pos = numpy.mean(timeseries, axis=0)
         std_pos = numpy.std(timeseries, axis=0)
+        safe_std = numpy.where(std_pos < 1e-6, 1.0, std_pos)
 
         # return the last-most position that is not an outlier
         for pos in reversed(timeseries):
-            if all(numpy.abs((pos - mean_pos) / std_pos) < self.threshold):
+            z_scores = numpy.divide(
+                pos - mean_pos,
+                safe_std,
+                out=numpy.zeros_like(mean_pos, dtype=float),
+                where=safe_std > 0,
+            )
+            if numpy.all(numpy.abs(z_scores) < self.threshold):
                 return pos
+
+        # Fall back to the most recent observation if all samples look identical or noisy.
+        return timeseries[-1]
 
     def getTagdb(self):
         '''get coords of all tags by axis'''
@@ -249,8 +274,6 @@ class tagDB:
         # projected forward to t
         if len(self.tagDuplicatesT) == 0 and len(self.tagPlacement) != 0:
             print("WARNING: No tags in view")
-        elif len(self.tagDuplicatesT) == 1:
-            print("WARNING: Only 1 duplicate tag in view")
 
         if len(self.tagDuplicatesT) > 0:
             bestTransform = numpy.array(numpy.eye((4)))

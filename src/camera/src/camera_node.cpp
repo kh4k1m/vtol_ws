@@ -66,10 +66,24 @@ public:
         image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("/camera/image_raw", qos);
         info_pub_ = this->create_publisher<sensor_msgs::msg::CameraInfo>("/camera/camera_info", qos);
 
-        RCLCPP_INFO(this->get_logger(), "Connecting to Ethernet camera at: %s", video_source.c_str());
+        RCLCPP_INFO(this->get_logger(), "Connecting to camera at: %s", video_source.c_str());
 
         // Open the video stream
-        cap_.open(video_source, cv::CAP_FFMPEG);
+        if (video_source.find("/dev/video") == 0) {
+            // Для локальных USB-камер используем V4L2
+            cap_.open(video_source, cv::CAP_V4L2);
+            if (cap_.isOpened()) {
+                // Жестко просим 1920x1080 и 30 FPS на уровне железа камеры
+                cap_.set(cv::CAP_PROP_FRAME_WIDTH, 1920);
+                cap_.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
+                cap_.set(cv::CAP_PROP_FPS, 30);
+                // Запрашиваем формат MJPG, так как по USB 1080p@30fps обычно идет в нем
+                cap_.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
+            }
+        } else {
+            // Для RTSP и других сетевых потоков
+            cap_.open(video_source, cv::CAP_FFMPEG);
+        }
         if (!cap_.isOpened()) {
             RCLCPP_ERROR(this->get_logger(), "Failed to open video source: %s", video_source.c_str());
             return;

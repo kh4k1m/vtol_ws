@@ -18,7 +18,16 @@ def generate_launch_description():
     # 2. Читаем конфиги камеры и маркеров
     camera_config_path = os.path.join(workspace_dir, 'config', 'camera.yaml')
     with open(camera_config_path, 'r') as f:
-        camera_config = yaml.safe_load(f)
+        camera_config_full = yaml.safe_load(f)
+        
+    # Поддержка профилей для разных разрешений
+    if 'active_profile' in camera_config_full:
+        active_profile = camera_config_full['active_profile']
+        camera_config = camera_config_full['profiles'][active_profile]
+        camera_offset = camera_config_full.get('camera_offset', {})
+    else:
+        camera_config = camera_config_full
+        camera_offset = camera_config_full.get('camera_offset', {})
         
     markers_config_path = os.path.join(workspace_dir, 'config', 'markers.yaml')
     with open(markers_config_path, 'r') as f:
@@ -88,7 +97,14 @@ def generate_launch_description():
                 executable='camera_node',
                 name='camera_node',
                 output='screen',
-                parameters=[{'video_source': flight_config.get('real_video_source')}]
+                parameters=[{
+                    'video_source': flight_config.get('real_video_source'),
+                    'image_width': camera_config.get('image_width', 1920),
+                    'image_height': camera_config.get('image_height', 1080),
+                    'fps': 30.0,
+                    'camera_matrix_data': camera_config['camera_matrix']['data'],
+                    'distortion_coefficients_data': camera_config['distortion_coefficients']['data']
+                }]
             )
         )
     elif environment == 'from_log':

@@ -58,26 +58,55 @@ class CameraNode : public rclcpp::Node
 public:
     CameraNode() : Node("camera_node")
     {
-        // Declare parameter for the camera URL (RTSP, HTTP, or even local /dev/video0)
+        // Declare parameters
         this->declare_parameter<std::string>("video_source", "rtsp://192.168.1.100:554/stream");
+        this->declare_parameter<int>("image_width", 1920);
+        this->declare_parameter<int>("image_height", 1080);
+        this->declare_parameter<double>("fps", 30.0);
+        this->declare_parameter<std::vector<double>>("camera_matrix_data", std::vector<double>(9, 0.0));
+        this->declare_parameter<std::vector<double>>("distortion_coefficients_data", std::vector<double>(5, 0.0));
+
         std::string video_source = this->get_parameter("video_source").as_string();
+        image_width_ = this->get_parameter("image_width").as_int();
+        image_height_ = this->get_parameter("image_height").as_int();
+        double fps = this->get_parameter("fps").as_double();
+        
+        std::vector<double> K_data = this->get_parameter("camera_matrix_data").as_double_array();
+        std::vector<double> D_data = this->get_parameter("distortion_coefficients_data").as_double_array();
+
+        // Initialize CameraInfo message
+        camera_info_msg_.height = image_height_;
+        camera_info_msg_.width = image_width_;
+        camera_info_msg_.distortion_model = "plumb_bob";
+        camera_info_msg_.d = D_data;
+        
+        if (K_data.size() == 9) {
+            std::copy(K_data.begin(), K_data.end(), camera_info_msg_.k.begin());
+            // Basic projection matrix P (assuming no rotation/translation)
+            camera_info_msg_.p = {
+                K_data[0], K_data[1], K_data[2], 0.0,
+                K_data[3], K_data[4], K_data[5], 0.0,
+                K_data[6], K_data[7], K_data[8], 0.0
+            };
+        }
 
         auto qos = rclcpp::SensorDataQoS();
         image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("/camera/image_raw", qos);
         info_pub_ = this->create_publisher<sensor_msgs::msg::CameraInfo>("/camera/camera_info", qos);
 
-        RCLCPP_INFO(this->get_logger(), "Connecting to camera at: %s", video_source.c_str());
+        RCLCPP_INFO(this->get_logger(), "Connecting to camera at: %s (Resolution: %dx%d)", 
+                    video_source.c_str(), image_width_, image_height_);
 
         // Open the video stream
         if (video_source.find("/dev/video") == 0) {
             // Для локальных USB-камер используем V4L2
             cap_.open(video_source, cv::CAP_V4L2);
             if (cap_.isOpened()) {
-                // Жестко просим 1920x1080 и 30 FPS на уровне железа камеры
-                cap_.set(cv::CAP_PROP_FRAME_WIDTH, 1920);
-                cap_.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
-                cap_.set(cv::CAP_PROP_FPS, 30);
-                // Запрашиваем формат MJPG, так как по USB 1080p@30fps обычно идет в нем
+                // Жестко просим разрешение и FPS на уровне железа камеры
+                cap_.set(cv::CAP_PROP_FRAME_WIDTH, image_width_);
+                cap_.set(cv::CAP_PROP_FRAME_HEIGHT, image_height_);
+                cap_.set(cv::CAP_PROP_FPS, fps);
+                // Запрашиваем формат MJPG
                 cap_.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
             }
         } else {
@@ -110,12 +139,9 @@ private:
                 sensor_msgs::msg::Image img_msg = mat_to_image_message(frame, header);
                 image_pub_->publish(img_msg);
 
-                // Publish mock CameraInfo
-                auto info_msg = sensor_msgs::msg::CameraInfo();
-                info_msg.header = header;
-                info_msg.height = img_msg.height;
-                info_msg.width = img_msg.width;
-                info_pub_->publish(info_msg);
+                // Publish real CameraInfo
+                camera_info_msg_.header = header;
+                info_pub_->publish(camera_info_msg_);
             } catch (const std::exception &e) {
                 RCLCPP_ERROR_THROTTLE(
                     this->get_logger(),
@@ -134,6 +160,9 @@ private:
     rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr info_pub_;
     rclcpp::TimerBase::SharedPtr timer_;
     cv::VideoCapture cap_;
+    sensor_msgs::msg::CameraInfo camera_info_msg_;
+    int image_width_;
+    int image_height_;
 };
 
 int main(int argc, char * argv[])

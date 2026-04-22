@@ -12,7 +12,7 @@ flight_config:
   navigation: "none"
 
   # Настройки подключения к автопилоту (MAVLink Bridge - для управления)
-  real_connection: "/dev/ttyACM0"
+  real_connection: "/dev/ttyACM1
   gazebo_connection: "tcp:127.0.0.1:5762"
   log_connection: "tcp:127.0.0.1:5762" # SITL для прогона логов
 

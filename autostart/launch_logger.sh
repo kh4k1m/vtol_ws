@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Вызывается из systemd или вручную. Поднимает только logger.
-set -euo pipefail
+set -eo pipefail
 WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # Сборка vtol_ws под Humble; другой дистрибутив: export ROS_DISTRO=...
 ROS_DISTRO="${ROS_DISTRO:-humble}"

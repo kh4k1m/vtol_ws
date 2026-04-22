@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Вызывается из systemd или вручную. Поднимает только flight.
-set -euo pipefail
+# Без nounset (-u): /opt/ros/.../setup.bash обращается к необъявленным переменным.
+set -eo pipefail
 WS="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # Сборка vtol_ws под Humble; другой дистрибутив: export ROS_DISTRO=jazzy
 ROS_DISTRO="${ROS_DISTRO:-humble}"

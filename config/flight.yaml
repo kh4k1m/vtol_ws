@@ -1,9 +1,9 @@
 flight_config:
   # 1. Источник данных (Среда)
-  # "real"     - Работа с реальным дроном (RTSP камера, подключение к автопилоту)
+  # "real"     - Работа с реальным дроном (камера: USB /dev/video* или сеть RTSP, + автопилот)
   # "gazebo"   - Работа с симулятором (Gazebo камера, SITL)
   # "from_log" - Воспроизведение из логов (камера и телеметрия идут из rosbag/mp4)
-  environment: "gazebo"
+  environment: "real"
 
   # 2. Алгоритм навигации
   # "tags" - Полет по AprilTag маркерам (включает автоматический взлет и посадку)
@@ -22,7 +22,7 @@ flight_config:
   mavros_real_connection: "udp://127.0.0.1:14550@"
   mavros_gazebo_connection: "udp://127.0.0.1:14550@14555"
 
-  # Настройки камеры
-  real_video_source: "rtsp://192.168.1.110:8554/live"
+  # Камера в режиме real: USB (UVC) — путь V4L2, например /dev/video0; при сетевом стриме — rtsp://...
+  real_video_source: "/dev/video0"
   gazebo_camera_topic: "/world/runway/model/alti_transition_quad/link/down_camera_link/sensor/down_camera_sensor/image"
   gazebo_camera_info_topic: "/world/runway/model/alti_transition_quad/link/down_camera_link/sensor/down_camera_sensor/camera_info"

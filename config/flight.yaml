@@ -9,7 +9,7 @@ flight_config:
   # "tags" - Полет по AprilTag маркерам (включает автоматический взлет и посадку)
   # "dpvo" - Полет по визуальной одометрии DPVO (публикует позу и пишет CSV лог)
   # "none" - Только сбор данных (камера + mavros), без запуска алгоритмов навигации
-  navigation: "dpvo"
+  navigation: "none"
 
   # Настройки подключения к автопилоту (MAVLink Bridge - для управления)
   real_connection: "/dev/ttyACM1"

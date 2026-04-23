@@ -19,8 +19,8 @@ logger:
       - /mavros/global_position/raw/fix  # Сырые данные GPS
       - /mavros/local_position/pose
       - /mavros/local_position/velocity_body
-      # --- Данные DPVO (если запущен на борту) ---
-      - /dpvo/pose
+      # --- DPVO: поза публикуется в /vision_pose_enu (см. flight.launch + mavlink bridge) ---
+      - /vision_pose_enu
       - /dpvo/path
 
   # Настройки записи видео (вместо сырых картинок пишем сжатый MP4)
@@ -28,3 +28,6 @@ logger:
     record: true
     topic: "/camera/image_raw"
     fps: 30.0
+    # Разбивать видео на куски по 60 секунд. 
+    # Это спасет видео от полного повреждения при жестком отключении питания Джетсона.
+    chunk_duration_sec: 60.0

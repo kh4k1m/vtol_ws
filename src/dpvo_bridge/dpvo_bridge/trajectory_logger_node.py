@@ -25,13 +25,15 @@ class TrajectoryLoggerNode(Node):
 
         self.declare_parameter(
             "gps_topic",
-            "/gps/fix",
-            ParameterDescriptor(description="GPS topic with sensor_msgs/NavSatFix."),
+            "/mavros/global_position/raw/fix",
+            ParameterDescriptor(
+                description="NavSatFix (у нас с mavlink_bridge, не /gps/fix).",
+            ),
         )
         self.declare_parameter(
             "pose_topic",
-            "/dpvo/pose",
-            ParameterDescriptor(description="Predicted pose topic with geometry_msgs/PoseStamped."),
+            "/vision_pose_enu",
+            ParameterDescriptor(description="PoseStamped от DPVO (как в flight.launch)."),
         )
         self.declare_parameter("output_csv", "/tmp/dpvo_vs_gps.csv")
         self.declare_parameter("max_gps_buffer", 5000)

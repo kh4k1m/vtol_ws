@@ -1,4 +1,5 @@
 import os
+import time
 import yaml
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -142,7 +143,12 @@ def generate_launch_description():
             )
         ])
     elif navigation == 'dpvo':
-        # Полет по DPVO (публикует позу и пишет CSV лог)
+        # Полет по DPVO (публикует позу в /vision_pose_enu и пишет CSV DPVO vs GPS)
+        _dpvo_csv = os.path.join(
+            workspace_dir, 'logs', 'dpvo_vs_gps_{}.csv'.format(
+                time.strftime('%Y%m%d-%H%M%S')
+            )
+        )
         launch_entities.extend([
             Node(
                 package='dpvo_bridge',
@@ -163,17 +169,17 @@ def generate_launch_description():
                     'enable_viz': False,
                 }],
             ),
-            # Узел для сохранения CSV с предсказанной позицией DPVO и GPS
+            # GPS с борта идёт из mavlink_bridge: /mavros/global_position/raw/fix (НЕ /gps/fix)
             Node(
                 package='dpvo_bridge',
                 executable='trajectory_logger_node',
                 name='trajectory_logger_node',
                 output='screen',
                 parameters=[{
-                    'gps_topic': '/gps/fix',
+                    'gps_topic': '/mavros/global_position/raw/fix',
                     'pose_topic': '/vision_pose_enu',
-                    'output_csv': os.path.join(workspace_dir, 'logs', 'dpvo_vs_gps.csv'),
-                    'max_time_delta_sec': 0.25,
+                    'output_csv': _dpvo_csv,
+                    'max_time_delta_sec': 0.5,
                 }],
             )
         ])

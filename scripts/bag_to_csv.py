@@ -40,6 +40,17 @@ def resolve_bag_uri(path: str) -> str:
     raise SystemExit("Ожидается каталог rosbag2 или путь к .db3 файлу: {!r}".format(path))
 
 
+def require_bag_metadata(bag_uri: str) -> None:
+    meta = os.path.join(bag_uri, "metadata.yaml")
+    if not os.path.isfile(meta):
+        raise SystemExit(
+            "В {!r} нет metadata.yaml. Полный rosbag2 — это каталог с .db3 и metadata.yaml; "
+            "без файла метаданных rosbag2_sqlite3 часто падает с «SQLite error (10): disk I/O error». "
+            "Скопируйте metadata с машины записи или восстановите его (путь к .db3 в relative_file_paths)."
+            .format(bag_uri)
+        )
+
+
 def flatten_dict(
     d: Any,
     parent: str = "",
@@ -142,6 +153,7 @@ def main() -> None:
     args = ap.parse_args()
 
     bag_uri = resolve_bag_uri(args.bag)
+    require_bag_metadata(bag_uri)
     out_dir = args.output_dir or (bag_uri + "_csv")
     os.makedirs(out_dir, exist_ok=True)
     print("Bag:", bag_uri, "->", out_dir)

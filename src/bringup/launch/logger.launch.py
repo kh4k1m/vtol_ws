@@ -55,7 +55,8 @@ def generate_launch_description():
                 output='screen',
                 parameters=[
                     {'output_path': video_path},
-                    {'fps': float(video_cfg.get('fps', 30.0))}
+                    {'fps': float(video_cfg.get('fps', 30.0))},
+                    {'chunk_duration_sec': float(video_cfg.get('chunk_duration_sec', 60.0))}
                 ],
                 remappings=[
                     ('/camera/image_raw', video_cfg.get('topic', '/camera/image_raw'))

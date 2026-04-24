@@ -711,49 +711,8 @@ class MavlinkBridgeNode(Node):
         ]
 
     def send_ekf_origin(self):
-        if not getattr(self, 'is_fully_connected', False) or self.master is None:
-            return
-            
-        if self.origin_sent_count >= 5:
-            return
-            
-        self.origin_sent_count += 1
-        self.get_logger().info(
-            f'Sending EKF origin/home seed (attempt {self.origin_sent_count}/5): '
-            f'lat={self.origin_lat_deg}, lon={self.origin_lon_deg}, alt={self.origin_alt_m}'
-        )
-        
-        target_system = self.master.target_system
-        target_component = self.master.target_component
-        origin_lat = int(round(float(self.origin_lat_deg) * 1e7))
-        origin_lon = int(round(float(self.origin_lon_deg) * 1e7))
-        origin_alt_mm = int(round(float(self.origin_alt_m) * 1000.0))
-        
-        try:
-            self.master.mav.set_gps_global_origin_send(
-                target_system,
-                origin_lat,
-                origin_lon,
-                origin_alt_mm,
-                int(self._monotonic_now() * 1e6)
-            )
-            self.master.mav.command_int_send(
-                target_system,
-                target_component,
-                mavutil.mavlink.MAV_FRAME_GLOBAL,
-                mavutil.mavlink.MAV_CMD_DO_SET_HOME,
-                0,
-                0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                origin_lat,
-                origin_lon,
-                float(self.origin_alt_m),
-            )
-        except Exception as e:
-            self.get_logger().error(f'Failed to send EKF Origin: {e}')
+        # Отключено: мы только читаем логи, не прописываем EKF Origin принудительно.
+        pass
 
     def _normalize_mode_name(self, mode):
         return mode.strip().upper()

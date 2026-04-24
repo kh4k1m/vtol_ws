@@ -2,6 +2,8 @@ logger:
   # Настройки записи rosbag (основной формат для симуляций в ROS)
   rosbag:
     record: true
+    # Используем старый надежный sqlite3, он пишет на диск сразу, в отличие от mcap
+    storage_id: "sqlite3"
     # Сжатие данных (zstd отлично сжимает, экономя место)
     compression_format: "zstd"
     compression_mode: "message"

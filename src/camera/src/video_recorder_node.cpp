@@ -160,7 +160,12 @@ private:
             csv_file_ << frame_count_ << "," 
                       << msg->header.stamp.sec << "," 
                       << msg->header.stamp.nanosec << ","
-                      << chunk_index_ << std::endl;
+                      << chunk_index_ << "\n";
+            
+            // Обязательно сбрасываем буфер на диск! Иначе при прерывании файл будет пустым
+            if (frame_count_ % 10 == 0) {
+                csv_file_.flush();
+            }
             
             frame_count_++;
             

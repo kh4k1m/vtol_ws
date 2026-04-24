@@ -33,11 +33,11 @@ except ImportError as e:
 
 def resolve_bag_uri(path: str) -> str:
     p = os.path.abspath(path)
-    if os.path.isfile(p) and p.endswith(".db3"):
+    if os.path.isfile(p) and (p.endswith(".db3") or p.endswith(".mcap")):
         return os.path.dirname(p)
     if os.path.isdir(p):
         return p
-    raise SystemExit("Ожидается каталог rosbag2 или путь к .db3 файлу: {!r}".format(path))
+    raise SystemExit("Ожидается каталог rosbag2 или путь к .db3/.mcap файлу: {!r}".format(path))
 
 
 def require_bag_metadata(bag_uri: str) -> None:
@@ -102,7 +102,14 @@ def flatten_value(
 def read_all_messages(
     bag_uri: str,
 ) -> Tuple[Dict[str, str], List[Tuple[str, int, bytes]]]:
-    storage_options = rosbag2_py.StorageOptions(uri=bag_uri, storage_id="sqlite3")
+    # Автоопределение формата (mcap или sqlite3) по содержимому папки
+    storage_id = "sqlite3"
+    for f in os.listdir(bag_uri):
+        if f.endswith(".mcap"):
+            storage_id = "mcap"
+            break
+            
+    storage_options = rosbag2_py.StorageOptions(uri=bag_uri, storage_id=storage_id)
     converter_options = rosbag2_py.ConverterOptions(
         input_serialization_format="cdr",
         output_serialization_format="cdr",

@@ -25,12 +25,15 @@ def generate_launch_description():
         rosbag_cfg = config['rosbag']
         topics = " ".join(rosbag_cfg.get('topics', []))
         
-        cmd = ['ros2', 'bag', 'record', '-s', 'mcap', '-o', bag_path]
+        # По умолчанию используем mcap (эффективный бинарный формат)
+        storage_id = rosbag_cfg.get('storage_id', 'mcap')
+        cmd = ['ros2', 'bag', 'record', '-s', storage_id, '-o', bag_path]
         
-        # Добавляем сжатие, если указано
+        # Добавляем сжатие только если мы НЕ используем mcap 
+        # (mcap поддерживает сжатие внутри себя, и флаги message/file ломают запуск)
         comp_format = rosbag_cfg.get('compression_format', '')
         comp_mode = rosbag_cfg.get('compression_mode', '')
-        if comp_format and comp_mode:
+        if comp_format and comp_mode and storage_id != 'mcap':
             cmd.extend(['--compression-format', comp_format, '--compression-mode', comp_mode])
             
         cmd.append(topics)

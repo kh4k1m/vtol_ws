@@ -23,9 +23,9 @@ class MavlinkBridgeNode(Node):
 
         self.declare_parameter('connection_string', '/dev/ttyACM0')
         self.declare_parameter('baudrate', 115200)
-        self.declare_parameter('origin_lat_deg', -35.363261)
-        self.declare_parameter('origin_lon_deg', 149.16523)
-        self.declare_parameter('origin_alt_m', 584.0)
+        self.declare_parameter('origin_lat_deg', 56.507948)
+        self.declare_parameter('origin_lon_deg', 40.262659)
+        self.declare_parameter('origin_alt_m', 0.0)
         self.declare_parameter('vision_timestamp_mode', 'message_stamp')
         self.declare_parameter('vision_debug_log_period_sec', 2.0)
         self.declare_parameter('odometry_resend_rate_hz', 20.0)

@@ -65,10 +65,13 @@ class MavlinkBridgeNode(Node):
 
         self.get_logger().info(f'Connecting to ArduPilot on {conn_str} at {baud} baud...')
 
+        self.conn_str = conn_str
+        self.baud = baud
         self.master = None
         self.autopilot_system_id = None
         self.autopilot_component_id = None
         self.last_heartbeat_monotonic = 0.0
+        self.is_fully_connected = False
         self.latest_mode = 'UNKNOWN'
         self.latest_armed = False
         self.latest_external_nav_ready = False
@@ -82,17 +85,6 @@ class MavlinkBridgeNode(Node):
             'EKF2': False,
             'EKF3': False,
         }
-
-        try:
-            self.master = mavutil.mavlink_connection(conn_str, baud=baud)
-            self.master.wait_heartbeat(timeout=5)
-            self.autopilot_system_id = int(self.master.target_system)
-            self.autopilot_component_id = int(self.master.target_component)
-            self.last_heartbeat_monotonic = time.monotonic()
-            self.get_logger().info(f'Successfully connected to ArduPilot (System ID: {self.master.target_system})')
-        except Exception as e:
-            self.get_logger().error(f'Failed to connect to ArduPilot: {e}')
-            self.master = None
 
         qos_profile = QoSProfile(
             reliability=QoSReliabilityPolicy.BEST_EFFORT,
@@ -130,6 +122,7 @@ class MavlinkBridgeNode(Node):
             f'hold timeout: {self.odometry_resend_hold_timeout_sec:.2f}s'
         )
 
+        self.connection_timer = self.create_timer(1.0, self.check_connection)
         self.timer = self.create_timer(1.0, self.send_ekf_origin)
         self.read_timer = self.create_timer(0.01, self.read_mavlink) # Увеличили частоту чтения для IMU
         self.status_timer = self.create_timer(0.5, self.publish_status)
@@ -154,12 +147,36 @@ class MavlinkBridgeNode(Node):
         self.last_odometry_time_usec = 0
         self.cached_odometry = None
 
+    def check_connection(self):
+        now = self._monotonic_now()
+        # Если связь была, но heartbeat давно не приходил - считаем, что отключились
+        if self.is_fully_connected and (now - self.last_heartbeat_monotonic) > 5.0:
+            self.get_logger().warning("Lost connection to ArduPilot (heartbeat timeout). Reconnecting...")
+            if self.master is not None:
+                try:
+                    self.master.close()
+                except:
+                    pass
+            self.master = None
+            self.is_fully_connected = False
+            self.autopilot_system_id = None
+            
+        # Если нет объекта соединения, пытаемся открыть порт
+        if self.master is None:
+            try:
+                self.master = mavutil.mavlink_connection(self.conn_str, baud=self.baud)
+                self.get_logger().info(f"Opened connection to {self.conn_str}, waiting for heartbeat...")
+                self.last_heartbeat_monotonic = now # Даем время на получение первого heartbeat
+            except Exception as e:
+                self.get_logger().error(f"Failed to open connection: {e}")
+                self.master = None
+
+    def request_data_streams(self):
         if self.master is not None:
-            # Запрашиваем потоки данных
+            self.get_logger().info("Requesting MAVLink data streams...")
             self.request_data_stream(mavutil.mavlink.MAV_DATA_STREAM_POSITION, 10)
             self.request_data_stream(mavutil.mavlink.MAV_DATA_STREAM_EXTRA1, 50) # Для IMU (RAW_IMU)
             self.request_data_stream(mavutil.mavlink.MAV_DATA_STREAM_EXTENDED_STATUS, 10) # Для GPS
-            # Дополнительно запрашиваем ALL, чтобы точно получить все нужные пакеты
             self.request_data_stream(mavutil.mavlink.MAV_DATA_STREAM_ALL, 10)
 
     def request_data_stream(self, stream_id, rate):
@@ -354,7 +371,7 @@ class MavlinkBridgeNode(Node):
         return monotonic_now, int(monotonic_now * 1e6)
 
     def is_connected(self):
-        return self.master is not None and (self._monotonic_now() - self.last_heartbeat_monotonic) < 3.0
+        return self.is_fully_connected and (self._monotonic_now() - self.last_heartbeat_monotonic) < 3.0
 
     def publish_status(self):
         self.connected_pub.publish(Bool(data=self.is_connected()))
@@ -369,16 +386,29 @@ class MavlinkBridgeNode(Node):
             return
 
         while True:
-            msg = self.master.recv_match(blocking=False)
-            if not msg:
-                break
+            try:
+                msg = self.master.recv_match(blocking=False)
+                if not msg:
+                    break
 
-            self._handle_mavlink_message(msg)
+                self._handle_mavlink_message(msg)
+            except Exception as e:
+                self.get_logger().debug(f"MAVLink read error (might be disconnected): {e}")
+                break
 
     def _handle_mavlink_message(self, msg):
         msg_type = msg.get_type()
 
         if msg_type == 'HEARTBEAT':
+            # Если мы еще не "полностью подключены", первый heartbeat от автопилота инициализирует нас
+            if not self.is_fully_connected and msg.get_srcComponent() == 1:
+                self.autopilot_system_id = int(msg.get_srcSystem())
+                self.autopilot_component_id = int(msg.get_srcComponent())
+                self.is_fully_connected = True
+                self.origin_sent_count = 0 # Сбрасываем счетчик EKF Origin
+                self.get_logger().info(f'Successfully connected to ArduPilot (System ID: {self.autopilot_system_id})')
+                self.request_data_streams()
+
             if not self._is_primary_autopilot_message(msg):
                 return
             self.last_heartbeat_monotonic = self._monotonic_now()
@@ -681,14 +711,13 @@ class MavlinkBridgeNode(Node):
         ]
 
     def send_ekf_origin(self):
-        if self.master is None:
+        if not getattr(self, 'is_fully_connected', False) or self.master is None:
+            return
+            
+        if self.origin_sent_count >= 5:
             return
             
         self.origin_sent_count += 1
-        if self.origin_sent_count > 5:
-            self.timer.cancel()
-            return
-            
         self.get_logger().info(
             f'Sending EKF origin/home seed (attempt {self.origin_sent_count}/5): '
             f'lat={self.origin_lat_deg}, lon={self.origin_lon_deg}, alt={self.origin_alt_m}'

@@ -25,7 +25,7 @@ def generate_launch_description():
         rosbag_cfg = config['rosbag']
         topics = " ".join(rosbag_cfg.get('topics', []))
         
-        cmd = ['ros2', 'bag', 'record', '-o', bag_path]
+        cmd = ['ros2', 'bag', 'record', '-s', 'mcap', '-o', bag_path]
         
         # Добавляем сжатие, если указано
         comp_format = rosbag_cfg.get('compression_format', '')

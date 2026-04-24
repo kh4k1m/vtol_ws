@@ -112,6 +112,18 @@ def generate_launch_description():
         connection_string = flight_config.get('log_connection')
         # В режиме from_log мы не запускаем драйвер камеры и мост Gazebo, 
         # так как картинки и телеметрия будут публиковаться из rosbag и video_player.py
+        launch_entities.append(
+            Node(
+                package='bringup',
+                executable='video_player',
+                name='video_player_node',
+                output='screen',
+                parameters=[{
+                    'video_dir': os.path.join(workspace_dir, 'logs'),
+                    'fps': 30.0,
+                }]
+            )
+        )
 
     # === АЛГОРИТМ НАВИГАЦИИ (NAVIGATION) ===
     if navigation == 'tags':

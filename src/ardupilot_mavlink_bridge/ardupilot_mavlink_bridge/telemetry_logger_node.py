@@ -1,130 +1,136 @@
+"""CSV logger for ArduPilot telemetry.
+
+Previously this node opened its own pymavlink connection in parallel
+with ``mavlink_bridge_node`` - which would race for the same serial
+port. Now it consumes the ROS topics already published by the bridge:
+
+* /ap/imu/raw          (sensor_msgs/Imu)
+* /ap/gps/fix          (sensor_msgs/NavSatFix)
+* /ap/relative_alt     (std_msgs/Float64)
+* /ap/flight_mode      (std_msgs/String)
+* /ap/armed            (std_msgs/Bool)
+
+This means it can run alongside the regular bridge with no extra setup,
+and adding new fields requires only a ROS subscription instead of
+keeping a separate MAVLink stream-rate request alive.
+"""
+
+from __future__ import annotations
+
+import csv
+import math
+import os
+import time
+
 import rclpy
 from rclpy.node import Node
-from pymavlink import mavutil
-import time
-import csv
-import os
+from rclpy.qos import qos_profile_sensor_data
+from sensor_msgs.msg import Imu, NavSatFix
+from std_msgs.msg import Bool, Float64, String
+
 
 class TelemetryLoggerNode(Node):
     def __init__(self):
         super().__init__('telemetry_logger_node')
 
-        self.declare_parameter('connection_string', '/dev/ttyACM0')
-        self.declare_parameter('baudrate', 115200)
-        self.declare_parameter('log_dir', '/home/nvidia/vtol_ws/')
+        default_log_dir = os.environ.get(
+            'VTOL_WS_ROOT', os.path.expanduser('~/vtol_ws')
+        )
+        self.declare_parameter('log_dir', default_log_dir)
+        self.declare_parameter('log_rate_hz', 10.0)
 
-        conn_str = self.get_parameter('connection_string').get_parameter_value().string_value
-        baud = self.get_parameter('baudrate').get_parameter_value().integer_value
         log_dir = self.get_parameter('log_dir').get_parameter_value().string_value
+        log_rate_hz = max(0.1, float(self.get_parameter('log_rate_hz').value))
 
-        self.get_logger().info(f'Connecting to ArduPilot on {conn_str} at {baud} baud (READ ONLY)...')
-        
-        try:
-            self.master = mavutil.mavlink_connection(conn_str, baud=baud)
-            self.master.wait_heartbeat(timeout=5)
-            self.get_logger().info(f'Successfully connected to ArduPilot (System ID: {self.master.target_system})')
-        except Exception as e:
-            self.get_logger().error(f'Failed to connect to ArduPilot: {e}')
-            self.master = None
-            return
-
-        # Create CSV file
-        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        os.makedirs(log_dir, exist_ok=True)
+        timestamp = time.strftime('%Y%m%d-%H%M%S')
         self.csv_filename = os.path.join(log_dir, f'flight_data_{timestamp}.csv')
         self.csv_file = open(self.csv_filename, 'w', newline='')
         self.csv_writer = csv.writer(self.csv_file)
-        
-        # Write header
-        self.csv_writer.writerow([
-            'timestamp', 'ros_time',
-            'roll', 'pitch', 'yaw', 
-            'lat', 'lon', 'alt', 'relative_alt',
-            'vx', 'vy', 'vz',
-            'heading', 'airspeed', 'groundspeed',
-            'voltage', 'current', 'battery_remaining'
-        ])
-        
+        self.csv_writer.writerow(
+            [
+                'monotonic',
+                'ros_time',
+                'lin_acc_x',
+                'lin_acc_y',
+                'lin_acc_z',
+                'gyro_x',
+                'gyro_y',
+                'gyro_z',
+                'lat',
+                'lon',
+                'alt_msl',
+                'relative_alt',
+                'flight_mode',
+                'armed',
+            ]
+        )
+        self.csv_file.flush()
         self.get_logger().info(f'Logging telemetry to {self.csv_filename}')
 
-        # State variables to keep latest data
-        self.attitude = {'roll': 0.0, 'pitch': 0.0, 'yaw': 0.0}
-        self.global_pos = {'lat': 0, 'lon': 0, 'alt': 0, 'relative_alt': 0, 'vx': 0, 'vy': 0, 'vz': 0, 'hdg': 0}
-        self.vfr_hud = {'airspeed': 0.0, 'groundspeed': 0.0, 'heading': 0}
-        self.battery = {'voltage': 0.0, 'current': 0.0, 'remaining': 0}
+        self.latest_imu: Imu = None
+        self.latest_gps: NavSatFix = None
+        self.relative_alt = math.nan
+        self.flight_mode = ''
+        self.armed = False
 
-        # Request data streams
-        self.request_data_stream(mavutil.mavlink.MAV_DATA_STREAM_EXTRA1, 10) # ATTITUDE
-        self.request_data_stream(mavutil.mavlink.MAV_DATA_STREAM_POSITION, 10) # GLOBAL_POSITION_INT
-        self.request_data_stream(mavutil.mavlink.MAV_DATA_STREAM_EXTRA2, 10) # VFR_HUD
-        self.request_data_stream(mavutil.mavlink.MAV_DATA_STREAM_EXTENDED_STATUS, 2) # SYS_STATUS
-
-        # Start reading loop in a timer (fast enough to catch messages)
-        self.timer = self.create_timer(0.01, self.read_mavlink)
-        self.log_timer = self.create_timer(0.1, self.log_data) # Log at 10Hz
-
-    def request_data_stream(self, stream_id, rate):
-        if self.master is None: return
-        self.master.mav.request_data_stream_send(
-            self.master.target_system,
-            self.master.target_component,
-            stream_id,
-            rate,
-            1 # Start
+        self.create_subscription(Imu, '/ap/imu/raw', self._imu_cb, qos_profile_sensor_data)
+        self.create_subscription(NavSatFix, '/ap/gps/fix', self._gps_cb, qos_profile_sensor_data)
+        self.create_subscription(
+            Float64, '/ap/relative_alt', self._rel_alt_cb, qos_profile_sensor_data
         )
+        self.create_subscription(String, '/ap/flight_mode', self._mode_cb, 10)
+        self.create_subscription(Bool, '/ap/armed', self._armed_cb, 10)
 
-    def read_mavlink(self):
-        if self.master is None: return
-        
-        while True:
-            msg = self.master.recv_match(blocking=False)
-            if not msg:
-                break
-                
-            msg_type = msg.get_type()
-            
-            if msg_type == 'ATTITUDE':
-                self.attitude['roll'] = msg.roll
-                self.attitude['pitch'] = msg.pitch
-                self.attitude['yaw'] = msg.yaw
-            elif msg_type == 'GLOBAL_POSITION_INT':
-                self.global_pos['lat'] = msg.lat / 1e7
-                self.global_pos['lon'] = msg.lon / 1e7
-                self.global_pos['alt'] = msg.alt / 1000.0
-                self.global_pos['relative_alt'] = msg.relative_alt / 1000.0
-                self.global_pos['vx'] = msg.vx / 100.0
-                self.global_pos['vy'] = msg.vy / 100.0
-                self.global_pos['vz'] = msg.vz / 100.0
-                self.global_pos['hdg'] = msg.hdg / 100.0
-            elif msg_type == 'VFR_HUD':
-                self.vfr_hud['airspeed'] = msg.airspeed
-                self.vfr_hud['groundspeed'] = msg.groundspeed
-                self.vfr_hud['heading'] = msg.heading
-            elif msg_type == 'SYS_STATUS':
-                self.battery['voltage'] = msg.voltage_battery / 1000.0
-                self.battery['current'] = msg.current_battery / 100.0
-                self.battery['remaining'] = msg.battery_remaining
+        self.timer = self.create_timer(1.0 / log_rate_hz, self._tick)
 
-    def log_data(self):
-        if self.master is None: return
-        
-        now = time.time()
+    def _imu_cb(self, msg: Imu):
+        self.latest_imu = msg
+
+    def _gps_cb(self, msg: NavSatFix):
+        self.latest_gps = msg
+
+    def _rel_alt_cb(self, msg: Float64):
+        self.relative_alt = float(msg.data)
+
+    def _mode_cb(self, msg: String):
+        self.flight_mode = str(msg.data)
+
+    def _armed_cb(self, msg: Bool):
+        self.armed = bool(msg.data)
+
+    def _tick(self):
         ros_time = self.get_clock().now().nanoseconds / 1e9
-        
-        self.csv_writer.writerow([
-            now, ros_time,
-            self.attitude['roll'], self.attitude['pitch'], self.attitude['yaw'],
-            self.global_pos['lat'], self.global_pos['lon'], self.global_pos['alt'], self.global_pos['relative_alt'],
-            self.global_pos['vx'], self.global_pos['vy'], self.global_pos['vz'],
-            self.vfr_hud['heading'], self.vfr_hud['airspeed'], self.vfr_hud['groundspeed'],
-            self.battery['voltage'], self.battery['current'], self.battery['remaining']
-        ])
-        # Flush to ensure data is saved even if crashed
+        imu = self.latest_imu
+        gps = self.latest_gps
+        self.csv_writer.writerow(
+            [
+                time.monotonic(),
+                ros_time,
+                getattr(getattr(imu, 'linear_acceleration', None), 'x', float('nan')) if imu else float('nan'),
+                getattr(getattr(imu, 'linear_acceleration', None), 'y', float('nan')) if imu else float('nan'),
+                getattr(getattr(imu, 'linear_acceleration', None), 'z', float('nan')) if imu else float('nan'),
+                getattr(getattr(imu, 'angular_velocity', None), 'x', float('nan')) if imu else float('nan'),
+                getattr(getattr(imu, 'angular_velocity', None), 'y', float('nan')) if imu else float('nan'),
+                getattr(getattr(imu, 'angular_velocity', None), 'z', float('nan')) if imu else float('nan'),
+                gps.latitude if gps else float('nan'),
+                gps.longitude if gps else float('nan'),
+                gps.altitude if gps else float('nan'),
+                self.relative_alt,
+                self.flight_mode,
+                int(bool(self.armed)),
+            ]
+        )
         self.csv_file.flush()
 
     def destroy_node(self):
         if hasattr(self, 'csv_file') and self.csv_file:
-            self.csv_file.close()
+            try:
+                self.csv_file.close()
+            except Exception:
+                pass
         super().destroy_node()
+
 
 def main(args=None):
     rclpy.init(args=args)
@@ -135,7 +141,9 @@ def main(args=None):
         pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()

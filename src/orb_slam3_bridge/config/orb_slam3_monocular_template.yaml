@@ -1,0 +1,55 @@
+%YAML:1.0
+# Monocular ORB-SLAM3 settings template.
+# Adjust the camera intrinsics, distortion and image size to match your sensor.
+# All keys must remain flat (Camera1.fx, not Camera1: { fx: ... }) - that is
+# how ORB-SLAM3's settings parser expects them.
+
+File.version: "1.0"
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters - REPLACE with values from /camera/camera_info or your calibration
+#--------------------------------------------------------------------------------------------
+Camera.type: "PinHole"
+
+Camera1.fx: 458.654
+Camera1.fy: 457.296
+Camera1.cx: 367.215
+Camera1.cy: 248.375
+
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
+
+Camera.width: 752
+Camera.height: 480
+
+# Camera frames per second
+Camera.fps: 30
+
+# Color order of the images (0: BGR, 1: RGB. ignored if grayscale)
+Camera.RGB: 1
+
+#--------------------------------------------------------------------------------------------
+# ORB Parameters
+#--------------------------------------------------------------------------------------------
+ORBextractor.nFeatures: 1250
+ORBextractor.scaleFactor: 1.2
+ORBextractor.nLevels: 8
+ORBextractor.iniThFAST: 20
+ORBextractor.minThFAST: 7
+
+#--------------------------------------------------------------------------------------------
+# Viewer Parameters (only used when enable_viewer:=true)
+#--------------------------------------------------------------------------------------------
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -1.8
+Viewer.ViewpointF: 500.0
+Viewer.imageViewScale: 1.0

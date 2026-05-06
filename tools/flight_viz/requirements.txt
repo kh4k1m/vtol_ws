@@ -1,0 +1,13 @@
+# Минимальные зависимости flight_viz.
+plotly>=5.18.0
+numpy>=1.21
+PyYAML>=6.0
+
+# Чтение rosbag2 (.db3 / .mcap) без зависимости от ROS-окружения.
+# Нужно для запуска из conda env: системный rosbag2_py подгружает
+# несовместимые с conda libsqlite3/libstdc++ и падает с "disk I/O error".
+# rosbags - чисто-питоновский backend, не требует ros source.
+rosbags>=0.10.0
+
+# Опционально, для PNG-экспорта (--format png):
+kaleido>=0.2.1

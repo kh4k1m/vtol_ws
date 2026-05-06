@@ -1,0 +1,80 @@
+%YAML:1.0
+# IMU-Monocular ORB-SLAM3 settings template.
+#
+# This is the recommended mode for VTOL since the metric scale is recovered
+# from the IMU. Tune the IMU noise/walk values to roughly match your IMU
+# (the values below are reasonable defaults for an automotive-grade MEMS IMU
+# such as the one inside Pixhawk/Cube).
+#
+# IMPORTANT: Tbc / Tcb is the rigid transform between the IMU body frame
+# (FLU - x forward, y left, z up) and the camera optical frame (x right,
+# y down, z forward). Replace it with the actual extrinsics of your rig.
+
+File.version: "1.0"
+
+#--------------------------------------------------------------------------------------------
+# Camera
+#--------------------------------------------------------------------------------------------
+Camera.type: "PinHole"
+
+Camera1.fx: 458.654
+Camera1.fy: 457.296
+Camera1.cx: 367.215
+Camera1.cy: 248.375
+
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
+
+Camera.width: 752
+Camera.height: 480
+
+Camera.fps: 30
+Camera.RGB: 1
+
+#--------------------------------------------------------------------------------------------
+# IMU - replace with values matching your sensor
+#--------------------------------------------------------------------------------------------
+# Default rig: camera looking down, FLU body frame.
+# Tbc places the camera in the IMU body frame; rows are [R | t], last row [0 0 0 1].
+# This template assumes the camera is mounted forward-facing aligned with body x.
+IMU.T_b_c1: !!opencv-matrix
+  rows: 4
+  cols: 4
+  dt: f
+  data: [ 0.0,  0.0, 1.0, 0.10,
+         -1.0,  0.0, 0.0, 0.00,
+          0.0, -1.0, 0.0, 0.00,
+          0.0,  0.0, 0.0, 1.00]
+
+IMU.NoiseGyro: 1.7e-3
+IMU.NoiseAcc: 2.0e-2
+IMU.GyroWalk: 1.9e-5
+IMU.AccWalk: 3.0e-3
+IMU.Frequency: 200.0
+IMU.InsertKFsWhenLost: 1
+
+#--------------------------------------------------------------------------------------------
+# ORB
+#--------------------------------------------------------------------------------------------
+ORBextractor.nFeatures: 1500
+ORBextractor.scaleFactor: 1.2
+ORBextractor.nLevels: 8
+ORBextractor.iniThFAST: 20
+ORBextractor.minThFAST: 7
+
+#--------------------------------------------------------------------------------------------
+# Viewer
+#--------------------------------------------------------------------------------------------
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -1.8
+Viewer.ViewpointF: 500.0
+Viewer.imageViewScale: 1.0

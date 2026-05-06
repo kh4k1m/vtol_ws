@@ -1,0 +1,6 @@
+float64[] lats
+float64[] lons
+float64[] alts
+---
+bool success
+string message

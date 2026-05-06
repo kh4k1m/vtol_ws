@@ -9,7 +9,9 @@
 
   <depend>rclpy</depend>
   <depend>flight_interfaces</depend>
+  <depend>marker_interfaces</depend>
   <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>std_srvs</depend>
 

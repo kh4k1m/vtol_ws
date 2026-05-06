@@ -16,6 +16,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/MarkerMapEntry.msg"
   "msg/MarkerMap.msg"
   "msg/LocalizerStatus.msg"
+  "msg/NavStatus.msg"
   DEPENDENCIES std_msgs geometry_msgs
 )
 

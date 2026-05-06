@@ -20,6 +20,12 @@ setup(
     entry_points={
         'console_scripts': [
             'mission_manager_node = flight_manager.mission_manager_node:main',
+            'vision_fusion_node = flight_manager.vision_fusion_node:main',
+            'single_source_router_node = flight_manager.single_source_router_node:main',
+            'tf_broadcaster_node = flight_manager.tf_broadcaster_node:main',
+            'gps_takeoff_land_node = flight_manager.gps_takeoff_land_node:main',
+            'gps_waypoints_node = flight_manager.gps_waypoints_node:main',
+            'gps_range_test_node = flight_manager.gps_range_test_node:main',
         ],
     },
 )

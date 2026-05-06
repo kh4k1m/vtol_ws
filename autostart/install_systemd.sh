@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Ставит два сервиса в systemd и включает автозапуск при загрузке.
+# Ставит systemd-сервис vtol-flight (logging встроено в flight.launch.py).
 # Запуск:  cd ~/vtol_ws && sudo bash autostart/install_systemd.sh
 set -euo pipefail
 
@@ -17,9 +17,14 @@ USER_HOME="$(getent passwd "${RUN_USER}" | cut -d: -f6)"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WS="$(cd "${SCRIPT_DIR}/.." && pwd)"
 FLIGHT="${WS}/autostart/launch_flight.sh"
-LOGGER="${WS}/autostart/launch_logger.sh"
-chmod 755 "${FLIGHT}" "${LOGGER}"
-chown "${RUN_USER}:${RUN_GROUP}" "${FLIGHT}" "${LOGGER}" 2>/dev/null || true
+chmod 755 "${FLIGHT}"
+chown "${RUN_USER}:${RUN_GROUP}" "${FLIGHT}" 2>/dev/null || true
+
+# Чистим устаревший vtol-logger от прежних установок.
+if systemctl list-unit-files | grep -q '^vtol-logger\.service'; then
+  systemctl disable --now vtol-logger.service 2>/dev/null || true
+  rm -f /etc/systemd/system/vtol-logger.service
+fi
 
 write_unit() {
   local file="$1" body="$2"
@@ -49,33 +54,12 @@ StandardError=journal
 WantedBy=multi-user.target
 "
 
-write_unit "/etc/systemd/system/vtol-logger.service" "[Unit]
-Description=VTOL ros2 launch bringup logger.launch.py
-After=network-online.target vtol-flight.service
-Wants=network-online.target vtol-flight.service
-
-[Service]
-Type=simple
-User=${RUN_USER}
-Group=${RUN_GROUP}
-WorkingDirectory=${WS}
-Environment=HOME=${USER_HOME}
-Environment=ROS_LOG_DIR=${USER_HOME}/.ros/log
-ExecStart=${LOGGER}
-Restart=on-failure
-RestartSec=5
-StandardOutput=journal
-StandardError=journal
-
-[Install]
-WantedBy=multi-user.target
-"
-
 systemctl daemon-reload
-systemctl enable --now vtol-flight.service vtol-logger.service
+systemctl enable --now vtol-flight.service
 
 echo ""
-echo "Готово. Сервисы: vtol-flight, vtol-logger (запуск от пользователя ${RUN_USER})"
+echo "Готово. Сервис: vtol-flight (запуск от пользователя ${RUN_USER})"
+echo "Логирование контролируется блоком logging в config/flight.yaml."
 echo "Статус:   sudo systemctl status vtol-flight.service"
 echo "Логи:     sudo journalctl -u vtol-flight.service -f"
-echo "Отключить автозагрузку: sudo systemctl disable vtol-flight.service vtol-logger.service"
+echo "Отключить автозагрузку: sudo systemctl disable vtol-flight.service"

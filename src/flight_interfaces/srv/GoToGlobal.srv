@@ -1,0 +1,7 @@
+float64 lat_deg
+float64 lon_deg
+float64 alt_m
+float64 yaw_deg
+---
+bool success
+string message

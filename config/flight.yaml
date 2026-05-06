@@ -1,28 +1,152 @@
 flight_config:
   # 1. Источник данных (Среда)
-  # "real"     - Работа с реальным дроном (камера: USB /dev/video* или сеть RTSP, + автопилот)
-  # "gazebo"   - Работа с симулятором (Gazebo камера, SITL)
-  # "from_log" - Воспроизведение из логов (камера и телеметрия идут из rosbag/mp4)
-  environment: "real"
+  # "real"     - реальный дрон (камера: USB /dev/video* или RTSP, + автопилот по UART)
+  # "gazebo"   - SITL: камера и автопилот через Gazebo
+  # "from_log" - воспроизведение из логов (rosbag/mp4 + SITL для прогона)
+  environment: "gazebo"
 
   # 2. Алгоритм навигации
-  # "tags" - Полет по AprilTag маркерам (включает автоматический взлет и посадку)
-  # "dpvo" - Полет по визуальной одометрии DPVO (публикует позу и пишет CSV лог)
-  # "none" - Только сбор данных (камера + mavros), без запуска алгоритмов навигации
-  navigation: "none"
+  # "tags"      - полёт по AprilTag меткам (взлёт/посадка автоматически)
+  # "dpvo"      - полёт по визуальной одометрии DPVO (поза + CSV лог)
+  # "orb_slam3" - полёт по ORB-SLAM3 (mono / imu-mono)
+  # "hybrid"    - метки + VO с автопереключением и маппингом
+  # "none"      - сбор данных (камера + bridge), без алгоритмов навигации
+  navigation: "tags"
 
-  # Настройки подключения к автопилоту (MAVLink Bridge - для управления)
+  # 3. Источник VO для navigation == "hybrid"
+  # "dpvo" или "orb_slam3"
+  vo_backend: "dpvo"
+
+  # 4. Настройки ORB-SLAM3 (используются при navigation == "orb_slam3"
+  # либо vo_backend == "orb_slam3")
+  orb_slam3:
+    # MONOCULAR | IMU_MONOCULAR
+    sensor_type: "MONOCULAR"
+    # Empty -> $ORB_SLAM3_ROOT/Vocabulary/ORBvoc.txt
+    vocabulary_path: ""
+    # Empty -> orb_slam3_bridge/config/orb_slam3_<sensor_type>_template.yaml
+    # Иначе путь относительно $VTOL_WS_ROOT либо абсолютный.
+    settings_path: ""
+    enable_viewer: false
+
+  # Настройки подключения к автопилоту (MAVLink Bridge)
   real_connection: "/dev/ttyACM1"
   gazebo_connection: "tcp:127.0.0.1:5762"
-  log_connection: "tcp:127.0.0.1:5762" # SITL для прогона логов
+  log_connection: "tcp:127.0.0.1:5762"
 
-  # Настройки подключения MAVROS (для чтения телеметрии IMU/GPS в логгер)
-  # ВНИМАНИЕ: Если на реальном дроне порт /dev/ttyACM0 занят, используйте MAVProxy 
-  # для раздачи телеметрии по UDP (например, udp://127.0.0.1:14550@)
-  mavros_real_connection: "udp://127.0.0.1:14550@"
-  mavros_gazebo_connection: "udp://127.0.0.1:14550@14555"
-
-  # Камера в режиме real: USB (UVC) — путь V4L2, например /dev/video0; при сетевом стриме — rtsp://...
+  # Камера в режиме real: USB (UVC) - V4L2 путь, например /dev/video0;
+  # либо сетевой rtsp://...
   real_video_source: "/dev/video0"
   gazebo_camera_topic: "/world/runway/model/alti_transition_quad/link/down_camera_link/sensor/down_camera_sensor/image"
   gazebo_camera_info_topic: "/world/runway/model/alti_transition_quad/link/down_camera_link/sensor/down_camera_sensor/camera_info"
+
+  # 5. Режим работы стека (управление полётом + логирование)
+  #
+  # ПРИМЕЧАНИЕ: тонкий тюнинг tag_localizer (anchor strategy, pose_solver,
+  # sliding_window и т.д.) вынесен в отдельный файл config/tags_detector.yaml.
+  # Этот файл подгружается launch'ем только при navigation == "tags" |
+  # "hybrid"; если он отсутствует — используются in-code дефолты.
+  #
+  # Управление и запись данных - две независимые оси, но для удобства они
+  # объединены в один selector. Что меняется в каждом режиме:
+  #
+  # "log_only"     - НЕ управляем полётом по визуалке: /vision_pose_enu
+  #                  публикуется (тегами/DPVO/ORB-SLAM3), но bridge НЕ
+  #                  форвардит её в ArduPilot ODOMETRY. mission_manager
+  #                  не запускается. Летим по GPS вручную / через QGC, а
+  #                  на земле сравниваем что бы предсказала визуалка.
+  #                  Полная запись логов для последующего replay'я через
+  #                  любой VO-бэкенд.
+  #
+  # "fly_and_log"  - боевой полёт: visual -> bridge -> EKF, mission_manager
+  #                  работает, ВСЕ данные пишутся для пост-разбора.
+  #                  Дефолт для реальных вылетов.
+  #
+  # "fly_only"     - то же что fly_and_log, но БЕЗ записи. Для коротких
+  #                  итераций в SITL (десятки запусков подряд - не засирать
+  #                  диск).
+  #
+  # "log_subset"   - летим как fly_and_log, но пишем только группы топиков
+  #                  из logging.subset_groups (например только /ap/* без
+  #                  тяжёлых /camera/image_raw).
+  mode: "log_only"
+
+  logging:
+    # Корень для всех сессий, относительно $VTOL_WS_ROOT.
+    # Реальный путь сессии: <log_root>/<session_prefix>_<timestamp>/
+    log_root: "logs"
+    session_prefix: "session"
+
+    # --- ROSBAG для replay --------------------------------------------------
+    rosbag:
+      enabled: true
+      # mcap пишет инкрементально и не корраптится при KILL -9 (рекомендую).
+      # sqlite3 - старый формат, нужен graceful shutdown иначе bag пустой.
+      storage_id: "sqlite3"
+      # Сжатие. Передавать только для sqlite3 (mcap сжимает сам).
+      # Допустимо: "" | "zstd"
+      compression: ""
+
+      # Какой набор групп пишется. См. groups/profiles ниже.
+      # "auto"   - подставится профиль по mode (рекомендуется)
+      # "custom" - использовать subset_groups
+      profile: "auto"
+
+      # Группы топиков. Длинные списки повторно используются в profiles.
+      # При profile=auto будет выбран соответствующий mode пресет.
+      #
+      # Группа "image" по умолчанию НЕ включена ни в один профиль:
+      # /camera/image_raw - это ~180 МБ/с при 1080p30 BGR8 и забивает диск
+      # на минутах. Кадры пишутся в MP4 через video_recorder_node, а
+      # синхронизированные timestamps - в <output>_timestamps.csv.
+      # При replay'е video_player.py читает CSV и восстанавливает оригинальные
+      # header.stamp, чтобы кадры синхронизировались с IMU из того же bag'а.
+      # Если очень нужно сырое Image в bag (для отладки CV-pipeline без MP4),
+      # допишите [image] в нужный профиль вручную.
+      groups:
+        core:    [/tf, /tf_static, /clock, /camera/camera_info]
+        ap:      [/ap/imu/raw, /ap/imu/data, /ap/attitude,
+                  /ap/gps/fix, /ap/relative_alt,
+                  /ap/armed, /ap/connected, /ap/external_nav_ready,
+                  /ap/flight_mode]
+        vision:  [/vision_pose_enu, /nav/status]
+        tags:    [/tag_detections, /localizer_status,
+                  /tag_localizer/pose, /tag_localizer/nav_status]
+        vo:      [/dpvo/pose, /dpvo/nav_status, /dpvo/path,
+                  /orb_slam3/pose, /orb_slam3/nav_status, /orb_slam3/path]
+        image:   [/camera/image_raw]
+        mission: [/mission_state]
+
+      profiles:
+        log_only:    [core, ap, vision, tags, vo]
+        fly_and_log: [core, ap, vision, tags, vo, mission]
+        fly_only:    []
+        log_subset:  []
+
+      # Используется при mode=log_subset либо profile=custom.
+      subset_groups: [core, ap, vision]
+
+    # --- VIDEO --------------------------------------------------------------
+    # MP4 на порядок-два компактнее сырого Image в bag и пишется чанками,
+    # чтобы power-off не корраптил всю запись. Параллельно создаётся
+    # <output>_timestamps.csv с оригинальным header.stamp каждого кадра -
+    # это позволяет позже воспроизвести полёт с теми же timestamps,
+    # синхронно с IMU/GPS из bag'а.
+    #
+    # Replay-сценарий (например, прогнать DPVO по записанной сессии):
+    #   1) ros2 bag play <session>/bag --clock 100  # IMU/GPS/TF/...
+    #   2) ros2 launch bringup video_test.launch.py session_dir:=<session>
+    #   3) запустить нужный навигационный нод (dpvo / orb_slam3 / tag).
+    video:
+      enabled: true
+      topic: "/camera/image_raw"
+      fps: 30.0
+      # Чанки спасают видео от полного повреждения при power-off Jetson.
+      chunk_duration_sec: 60.0
+
+    # --- TELEMETRY CSV ------------------------------------------------------
+    # Параллельный сток в плоский CSV. Не зависит от целостности bag,
+    # удобно для tabular-анализа и quick-look в pandas/Excel.
+    telemetry_csv:
+      enabled: true
+      rate_hz: 10.0

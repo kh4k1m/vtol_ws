@@ -22,6 +22,7 @@ import numpy as np
 import rclpy
 from cv_bridge import CvBridge
 from geometry_msgs.msg import PoseStamped
+from marker_interfaces.msg import NavStatus
 from nav_msgs.msg import Path as PathMsg
 from rcl_interfaces.msg import ParameterDescriptor
 from rclpy.node import Node
@@ -51,7 +52,11 @@ class DPVONode(Node):
         )
         self.declare_parameter("pose_topic", "/dpvo/pose")
         self.declare_parameter("path_topic", "/dpvo/path")
+        self.declare_parameter("nav_status_topic", "/dpvo/nav_status")
         self.declare_parameter("frame_id", "dpvo_map")
+        self.declare_parameter("position_std_m", 0.20)
+        self.declare_parameter("rotation_std_rad", 0.10)
+        self.declare_parameter("velocity_std_m_s", 0.50)
         self.declare_parameter("weights_path", "")
         self.declare_parameter("config_path", "")
         self.declare_parameter("config_overrides", [])
@@ -67,7 +72,11 @@ class DPVONode(Node):
         self.camera_info_topic = self.get_parameter("camera_info_topic").get_parameter_value().string_value
         self.pose_topic = self.get_parameter("pose_topic").get_parameter_value().string_value
         self.path_topic = self.get_parameter("path_topic").get_parameter_value().string_value
+        self.nav_status_topic = self.get_parameter("nav_status_topic").get_parameter_value().string_value
         self.frame_id = self.get_parameter("frame_id").get_parameter_value().string_value
+        self.position_std_m = float(self.get_parameter("position_std_m").value)
+        self.rotation_std_rad = float(self.get_parameter("rotation_std_rad").value)
+        self.velocity_std_m_s = float(self.get_parameter("velocity_std_m_s").value)
         self.weights_path = self.get_parameter("weights_path").get_parameter_value().string_value
         self.config_path = self.get_parameter("config_path").get_parameter_value().string_value
         self.config_overrides = list(
@@ -84,6 +93,7 @@ class DPVONode(Node):
         self.bridge = CvBridge()
         self.pose_pub = self.create_publisher(PoseStamped, self.pose_topic, 10)
         self.path_pub = self.create_publisher(PathMsg, self.path_topic, 10)
+        self.nav_status_pub = self.create_publisher(NavStatus, self.nav_status_topic, 10)
         self.path_msg = PathMsg()
         self.path_msg.header.frame_id = self.frame_id
 
@@ -219,6 +229,7 @@ class DPVONode(Node):
         pose_msg.pose.orientation.z = float(pose_vec[5])
         pose_msg.pose.orientation.w = float(pose_vec[6])
         self.pose_pub.publish(pose_msg)
+        self._publish_nav_status(msg.header.stamp)
 
         if self.publish_path:
             self.path_msg.header.stamp = msg.header.stamp
@@ -232,6 +243,19 @@ class DPVONode(Node):
                 "Published DPVO pose frame=%d xyz=(%.3f, %.3f, %.3f)"
                 % (self.processed_counter, pose_vec[0], pose_vec[1], pose_vec[2])
             )
+
+    def _publish_nav_status(self, stamp) -> None:
+        status = NavStatus()
+        status.header.stamp = stamp
+        status.source = "dpvo"
+        status.state = NavStatus.STATE_TRACKING
+        status.detail = "OK"
+        status.quality_score = 1.0
+        status.position_std_m = float(self.position_std_m)
+        status.rotation_std_rad = float(self.rotation_std_rad)
+        status.velocity_std_m_s = float(self.velocity_std_m_s)
+        status.has_velocity = False
+        self.nav_status_pub.publish(status)
 
     def _build_intrinsics(self, image_shape: Tuple[int, int, int]) -> np.ndarray:
         if self.camera_matrix is None:

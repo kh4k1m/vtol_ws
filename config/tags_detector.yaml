@@ -1,0 +1,139 @@
+# Tags detector + localizer pipeline configuration.
+#
+# This file is OPTIONAL: bringup/launch/flight.launch.py reads it only when
+# navigation == "tags" or "hybrid". If the file is missing, the localizer
+# starts with the in-code defaults documented below.
+#
+# We intentionally do NOT keep a hard-coded marker map any more
+# (the legacy src/tag_localizer/config/alti_transition_runway_pad_map.yaml
+# is gone). Map building is online:
+#
+#   1. The very first detected marker becomes the anchor: position (0,0,0)
+#      in the map frame. The map frame's orientation is set from the
+#      vehicle compass (yaw via /ap/attitude). The drone's GPS lat/lon at
+#      that moment is recorded to logs/maps/anchor_<session>.yaml so the
+#      session can be georeferenced afterwards.
+#
+#   2. Every other marker is added on the fly by tag_db once it has been
+#      seen consistently for `discovery.confirmation_frames` frames.
+#      Discovered markers are also appended to the on-disk map so a
+#      follow-up flight can start from a non-empty map if the operator
+#      wants persistence across sessions.
+#
+# Knock-on effects of removing the static map:
+#  - On day 1 of a brand-new site the drone MUST see at least one marker
+#    on the ground before it can fly visually (no map = no anchor). This
+#    matches every realistic field deployment so that's by design.
+#  - There is no longer a single "trusted" map source; every flight starts
+#    from whatever is on disk in `discovery.persist_map_path` (or empty).
+
+tags_detector:
+
+  anchor:
+    # How the localizer chooses the map origin on cold start.
+    #
+    #   "first_seen_with_gps"
+    #     Wait for at least one marker detection AND a fresh
+    #     /ap/gps/fix and /ap/attitude. Set:
+    #       map origin = position of the first marker (0,0,0)
+    #       map yaw    = compass yaw at anchor moment (so map X = East,
+    #                    Y = North, Z = Up - true ENU)
+    #     Record (anchor_lat, anchor_lon, anchor_alt, anchor_yaw_deg,
+    #     anchor_marker_id) into logs/maps/anchor_<session>.yaml.
+    #
+    #   "first_seen"
+    #     Same, but skip GPS+heading. Map orientation comes from the
+    #     marker rotation itself (faster to bootstrap, but the map frame
+    #     is not georeferenced and not repeatable across sessions).
+    #     Use as a fallback when running indoors or in a SITL world
+    #     without a working compass.
+    strategy: "first_seen_with_gps"
+
+    # Topics to wait for under "first_seen_with_gps". Override only if
+    # your bridge publishes under different names.
+    gps_topic: "/ap/gps/fix"
+    attitude_topic: "/ap/attitude"      # Vector3Stamped: roll, pitch, yaw [rad]
+
+    # If the GPS or attitude topic does not produce a sample within this
+    # many seconds AFTER the first marker is seen, fall back to plain
+    # "first_seen" (no georeferencing). 0 = never fall back, wait forever.
+    gps_wait_timeout_sec: 5.0
+
+    # Restrict anchor candidacy to a specific marker id. -1 = the very
+    # first marker the localizer happens to see becomes the anchor.
+    # Set this when you have a known landing pad marker that should
+    # always define the map origin.
+    anchor_marker_id: -1
+
+  discovery:
+    # When the localizer sees a marker that is not in the map AND the
+    # anchor is set, it accumulates observations of that marker in the
+    # map frame. After `confirmation_frames` consistent frames the
+    # marker is added to tag_db.tagPlacement and used for subsequent
+    # absolute-pose solves.
+    learn_unknown_tags: true
+    confirmation_frames: 5
+
+    # If non-empty, on every newly added marker the full current map is
+    # rewritten atomically to this YAML. Loaded back at next launch as
+    # the seed map. Set to "" to disable persistence (in-memory only).
+    # Path is relative to $VTOL_WS_ROOT.
+    persist_map_path: "logs/maps/discovered_map.yaml"
+
+  localizer:
+    # Per-frame pose estimator. See src/tag_localizer/tag_localizer/geo.py
+    # tagDB docstring for the full discussion.
+    #
+    #   "differential" - legacy. Frame_t pose = frame_{t-1} pose ∘ Δ
+    #     where Δ is picked from visible markers via a min reprojection
+    #     cost gate. Robust at low altitude with consistent tag sets,
+    #     drifts and silently drops every frame on high-altitude scenes
+    #     where per-tag PnP error exceeds cost_threshold_per_tag_m.
+    #
+    #   "absolute" - per-frame T_world_veh = median over visible known
+    #     tags of T_world_tag ∘ T_veh_tag^-1. Independent of previous
+    #     frame, no drift, recovers immediately after detection gaps.
+    #     Recommended default. Smoothing is provided by the Kalman
+    #     filter and the sliding window.
+    pose_solver: "absolute"
+
+    # Absolute-only: per-tag estimates further than this from the running
+    # median are treated as PnP outliers and dropped before the final
+    # median. Protects against a single distant tiny tag dragging the
+    # solve.
+    absolute_max_per_tag_spread_m: 3.0
+
+    # Differential-only: max mean reprojection error per visible tag (m).
+    # Frames above this are dropped. Has no effect when pose_solver
+    # is "absolute".
+    cost_threshold_per_tag_m: 0.5
+
+    # If detections stop for longer than this we drop the Kalman state so
+    # we don't extrapolate forward with stale velocity at re-acquisition.
+    detection_gap_reset_sec: 0.6
+
+    # Stability gate inside localizer_node: a pose is published on
+    # /tag_localizer/pose only when XY/Z stddev across the last
+    # stable_window_size accepted tagDB poses is at or below the
+    # thresholds. Loose values pass through high-altitude PnP noise into
+    # /vision_pose_enu; tight values cap publication to low-altitude
+    # frames. Defaults below are a compromise tuned with
+    # tools.localizer_replay against our scene (cm tags + 1.5 m tags).
+    stable_window_size: 10
+    stable_xy_stddev_m: 1.0
+    stable_z_stddev_m: 2.0
+
+    # Sliding-window length inside tag_db. With pose_solver=absolute the
+    # window directly averages per-frame absolute estimates: larger ->
+    # smoother but laggier. 15 gives ~25% high-altitude coverage on the
+    # reference sessions.
+    sliding_window: 15
+
+    # Kalman tunables inside tag_db.
+    kalman_R_pos_m: 0.06   # measurement noise (m)
+    kalman_Q_pos: 0.01     # process noise position
+    kalman_Q_vel: 0.1      # process noise velocity
+    kalman_Q_accel: 0.05   # process noise acceleration
+
+    # z-score threshold for sliding-window outlier rejection.
+    z_score_threshold: 3.0

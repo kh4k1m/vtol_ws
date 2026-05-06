@@ -25,9 +25,9 @@ class TrajectoryLoggerNode(Node):
 
         self.declare_parameter(
             "gps_topic",
-            "/mavros/global_position/raw/fix",
+            "/ap/gps/fix",
             ParameterDescriptor(
-                description="NavSatFix (у нас с mavlink_bridge, не /gps/fix).",
+                description="NavSatFix published by ardupilot_mavlink_bridge.",
             ),
         )
         self.declare_parameter(

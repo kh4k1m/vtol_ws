@@ -56,16 +56,71 @@ def mag(x):
 class tagDB:
     '''Database of all detected tags'''
 
-    def __init__(self, debug=False, slidingWindow=5, extraOpt=False, R=0.06, Ppos=0.01, PVel=0.1, PAccel=0.05):
+    def __init__(
+        self,
+        debug=False,
+        slidingWindow=5,
+        extraOpt=False,
+        R=0.06,
+        Ppos=0.01,
+        PVel=0.1,
+        PAccel=0.05,
+        learn_unknown_tags=False,
+        z_score_threshold=3.0,
+        cost_threshold_per_tag_m=0.5,
+        pose_solver='differential',
+        absolute_max_per_tag_spread_m=3.0,
+    ):
         """
         Initialize the tag database with initial settings.
         :param debug: If True, print debug information.
         :param slidingWindow: Number of frames to keep in the sliding window for position filtering.
         :param extraOpt: If True, perform extra optimization on the best transform.
-        :param R: Measurement noise for position (default 0.04 m).
+        :param R: Measurement noise for position (default 0.06 m).
         :param Ppos: Process noise for position (default 0.01 m).
         :param PVel: Process noise for velocity (default 0.1 m/s).
-        :param PAccel: Process noise for acceleration (default 0.1 m/s^2).
+        :param PAccel: Process noise for acceleration (default 0.05 m/s^2).
+        :param learn_unknown_tags: If True, accumulate observations of
+            unknown tags and add them to ``tagPlacement`` after a few
+            consistent frames. Off by default - the dedicated
+            ``landmark_mapper_node`` should own discovery instead, so we
+            avoid two writers fighting over the same map.
+        :param z_score_threshold: Z-score above which a sample in the
+            sliding window is treated as an outlier and skipped by
+            ``zscoreFilter``. Default 3.0 (~99.7% retention for normal noise).
+        :param cost_threshold_per_tag_m: Maximum allowed mean reprojection
+            error (in metres) per visible tag in ``getBestTransform``. If
+            the best transform exceeds ``cost_threshold_per_tag_m * N_tags``
+            the frame is dropped (state not advanced). Default 0.5 m is
+            tuned for low-altitude (cm-scale) tags; on a high-altitude
+            scene with PnP noise of several metres per tag this threshold
+            silently drops most frames - increase to 2-5 m there.
+        :param pose_solver: How ``getBestTransform`` derives ``T_VehToWorld``
+            for the current frame:
+
+            * ``"differential"`` (default, legacy): pick a single tag whose
+              hypothesized vehicle->vehicle transform from the previous
+              frame minimises reprojection error across all visible tags,
+              then update as ``T_VehToWorld[t] = T_VehToWorld[t-1] @ inv(delta)``.
+              Works well at low altitude with consistent tag sets and
+              centimetre-scale PnP noise; accumulates drift on high-alt
+              scenes where the visible tag set churns and PnP noise per
+              tag is in metres.
+            * ``"absolute"``: for every visible known tag, derive a direct
+              ``T_world_veh = T_world_tag @ inv(T_veh_tag)`` from that tag
+              alone, then take the median XY/Z (and the rotation of the
+              tag closest to the median position) as the frame estimate.
+              Independent of the previous frame, so it does not accumulate
+              drift, recovers immediately after detection gaps and at
+              tag-set transitions. The Kalman filter and sliding window
+              still smooth the resulting per-frame poses.
+        :param absolute_max_per_tag_spread_m: Used only by the absolute
+            solver. After computing per-tag pose estimates we drop any
+            estimate whose distance to the running median exceeds this
+            many metres. Protects against single-tag PnP outliers (e.g.
+            a small distant tag at altitude). If, after filtering, fewer
+            than 1 estimate remains the frame is dropped. Set to a large
+            value (e.g. 1e6) to disable.
         """
         self.T_VehToWorld = deque(maxlen=slidingWindow+1)
         self.timestamps = deque(maxlen=slidingWindow+1)
@@ -73,6 +128,7 @@ class tagDB:
         self.tagnewT = {}
         self.tagDuplicatesT = {}
         self.debug = debug
+        self.learn_unknown_tags = bool(learn_unknown_tags)
 
         # reported current position, rotation and velocity
         self.reportedPos = numpy.array((0, 0, 0))
@@ -85,7 +141,14 @@ class tagDB:
         self.slidingWindow = slidingWindow
         self.extraOpt = extraOpt
         # Z-score threshold for outlier detection (95%)
-        self.threshold = 3
+        self.threshold = float(z_score_threshold)
+        self.cost_threshold_per_tag_m = float(cost_threshold_per_tag_m)
+        if pose_solver not in ('differential', 'absolute'):
+            raise ValueError(
+                f"pose_solver must be 'differential' or 'absolute', got {pose_solver!r}"
+            )
+        self.pose_solver = pose_solver
+        self.absolute_max_per_tag_spread_m = float(absolute_max_per_tag_spread_m)
         # Tag candidates. If they are present for 5 frames, add them to the database
         self.tagCandidates = deque(maxlen=5)
 
@@ -119,6 +182,17 @@ class tagDB:
         self.kalman.Q[0:3, 0:3] *= Ppos     # Position noise
         self.kalman.Q[3:6, 3:6] *= PVel     # Velocity noise 
         self.kalman.Q[6:9, 6:9] *= PAccel   # Acceleration noise
+
+    def reset_filter_state(self):
+        """Drop accumulated state so the next observation re-initializes
+        position/velocity from scratch. Use after a long detection gap
+        to avoid jumping forward with stale velocity/acceleration."""
+        self.T_VehToWorld.clear()
+        self.T_VehToWorld.append(numpy.array(numpy.eye(4)))
+        self.timestamps.clear()
+        self.kalman_initialized = False
+        self.tagCandidates.clear()
+        self.reportedVelocity = numpy.zeros(3)
 
     def printTags(self):
         '''Print all tags in the database'''
@@ -266,16 +340,128 @@ class tagDB:
             xcoord.append(tag[axis, 3])
         return xcoord
 
+    def _absolutePoseFromVisibleTags(self):
+        """Return ``T_world_veh`` derived independently from every visible
+        known tag, robustly aggregated across them.
+
+        For each tag that is both currently visible (in ``tagDuplicatesT``,
+        which holds ``T_veh_tag`` for known tags) and in the map
+        (``tagPlacement``, which holds ``T_world_tag``) we compute::
+
+            T_world_veh_tag = T_world_tag @ inv(T_veh_tag)
+
+        Each tag therefore yields a self-contained estimate of the
+        vehicle pose in the world frame, *without* depending on the
+        previous frame. We then take the per-axis median of the
+        positions for robustness against single-tag outliers, and pick
+        the rotation of the tag whose individual XYZ estimate sits
+        closest to that median.
+
+        Returns ``None`` if there are no visible known tags.
+        """
+        if not self.tagDuplicatesT:
+            return None
+
+        positions = []
+        rotations = []
+        used_ids = []
+        for tagid, T_veh_tag in self.tagDuplicatesT.items():
+            T_world_tag = self.tagPlacement.get(tagid)
+            if T_world_tag is None:
+                continue
+            try:
+                T_world_veh = T_world_tag @ numpy.linalg.inv(T_veh_tag)
+            except numpy.linalg.LinAlgError:
+                continue
+            pos = T_world_veh[0:3, 3]
+            if not numpy.all(numpy.isfinite(pos)):
+                continue
+            positions.append(pos)
+            rotations.append(T_world_veh[0:3, 0:3])
+            used_ids.append(tagid)
+
+        if not positions:
+            return None
+
+        positions_arr = numpy.asarray(positions)
+        median_pos = numpy.median(positions_arr, axis=0)
+        distances = numpy.linalg.norm(positions_arr - median_pos, axis=1)
+
+        # Robust outlier rejection: keep tag estimates within
+        # ``absolute_max_per_tag_spread_m`` of the running median.
+        # Because we use the median (not mean) as the seed, a single
+        # bad tag cannot drag the seed to itself - this just trims the
+        # tail before recomputing the median on the survivors.
+        if (
+            self.absolute_max_per_tag_spread_m > 0.0
+            and len(positions) >= 2
+        ):
+            keep = distances <= self.absolute_max_per_tag_spread_m
+            if not numpy.any(keep):
+                # All estimates are far from each other - solve is unreliable.
+                # Drop the frame rather than publish a wild pose.
+                if self.debug:
+                    print(
+                        f"absolute: rejecting frame, all {len(positions)} tag "
+                        f"estimates spread > {self.absolute_max_per_tag_spread_m}m "
+                        f"(spreads={distances.round(2).tolist()})"
+                    )
+                return None
+            if not numpy.all(keep):
+                kept_positions = positions_arr[keep]
+                kept_rotations = [r for r, k in zip(rotations, keep) if k]
+                kept_ids = [i for i, k in zip(used_ids, keep) if k]
+                positions_arr = kept_positions
+                rotations = kept_rotations
+                used_ids = kept_ids
+                median_pos = numpy.median(positions_arr, axis=0)
+                distances = numpy.linalg.norm(positions_arr - median_pos, axis=1)
+
+        # Pick the rotation whose corresponding position is closest to the
+        # median - simple and deterministic. (Quaternion averaging would be
+        # mathematically nicer but overkill given a Kalman filter follows.)
+        best_idx = int(numpy.argmin(distances))
+        best_rotation = rotations[best_idx]
+
+        T = numpy.eye(4)
+        T[0:3, 0:3] = best_rotation
+        T[0:3, 3] = median_pos
+
+        if self.debug:
+            print(
+                f"absolute pose from {len(positions_arr)} tag(s) {used_ids} -> "
+                f"pos={median_pos.round(3)}, anchor_tag={used_ids[best_idx]}, "
+                f"per-tag spread={float(numpy.max(distances)):.3f}m"
+            )
+        return T
+
     def getBestTransform(self, timestamp):
         '''Given the current self.tagDuplicatesT, what is the best fitting transform
         back to self.tagPlacement. timestamp is the time that the tags were captured'''
         # get the least cost transform from the common points at time t-1 to time t
         # cost is the sum of position error between the common points, with the t-1 points
         # projected forward to t
-        if len(self.tagDuplicatesT) == 0 and len(self.tagPlacement) != 0:
+        if (
+            len(self.tagDuplicatesT) == 0
+            and len(self.tagPlacement) != 0
+            and self.debug
+        ):
             print("WARNING: No tags in view")
 
-        if len(self.tagDuplicatesT) > 0:
+        # Absolute solver: derive T_world_veh from each visible tag
+        # independently, then aggregate. Skips the differential cost gate
+        # entirely - useful for high-altitude scenes where per-tag PnP
+        # noise is metre-scale and the cost gate drops every frame.
+        ran_absolute = False
+        if self.pose_solver == 'absolute' and len(self.tagDuplicatesT) > 0:
+            T_world_veh = self._absolutePoseFromVisibleTags()
+            if T_world_veh is not None:
+                self.T_VehToWorld.append(T_world_veh)
+                self.timestamps.append(timestamp)
+                self.generateReportedLoc()
+            ran_absolute = True
+
+        if not ran_absolute and len(self.tagDuplicatesT) > 0:
             bestTransform = numpy.array(numpy.eye((4)))
             lowestCost = 999
             # Use each tag pair as a guess for the correct transform - lowest cost wins
@@ -355,8 +541,15 @@ class tagDB:
                             print("Optimising with error {0:.3f}m".format(summeddist))
                         lowestCost = summeddist
                         bestTransform = new_transform
-            if lowestCost > 0.5 * len(self.tagDuplicatesT):
-                print("WARNING: bad position estimate. Ignoring this frame.")
+            if lowestCost > self.cost_threshold_per_tag_m * len(self.tagDuplicatesT):
+                if self.debug:
+                    print(
+                        "WARNING: bad position estimate "
+                        f"(cost={lowestCost:.3f}m, "
+                        f"limit={self.cost_threshold_per_tag_m * len(self.tagDuplicatesT):.3f}m, "
+                        f"n_tags={len(self.tagDuplicatesT)}). "
+                        "Ignoring this frame."
+                    )
             else:
                 # We have our least-cost transform
                 # TVeh(World <- veh_t) = TVeh(World <- veh_t-1) * TVeh(veh_t <- veh_t-1)^-1
@@ -373,6 +566,9 @@ class tagDB:
                 print("New Pos {0}, Rot = {2} with {1} tags".format(self.reportedPos.round(3),
                                                                     len(self.tagDuplicatesT),
                                                                     self.reportedRot.round(1)))
+        if not self.learn_unknown_tags:
+            return
+
         # finally add any new tags (veh frame) to database (in world reference frame)
         thisFrameCandidates = {}
         for tagid, tagT in self.tagnewT.items():

@@ -11,6 +11,9 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/SetMode.srv"
   "srv/Takeoff.srv"
+  "srv/GoToGlobal.srv"
+  "srv/UploadMission.srv"
+  "srv/SwitchEKFSource.srv"
 )
 
 ament_export_dependencies(rosidl_default_runtime)

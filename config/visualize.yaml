@@ -1,0 +1,178 @@
+visualize:
+  # Откуда брать данные. Если пусто - возьмётся самая свежая папка
+  # session_*/ из <log_root>/. Можно передать --session в CLI чтобы
+  # перебить значение отсюда.
+  session_dir: ""
+
+  # Куда писать HTML/PNG. Относительный путь резолвится от $VTOL_WS_ROOT.
+  output_dir: "logs/viz"
+
+  # html (plotly, интерактив) | png (нужен kaleido) | both
+  output_format: "html"
+
+  # Анкер для конвертации lat/lon -> локальные East/North метры.
+  # Если оставить null - возьмётся первый GPS-сэмпл сессии.
+  origin:
+    lat: null
+    lon: null
+    alt: null
+
+  # Список графиков. Порядок задаёт нумерацию файлов и пунктов в index.html.
+  plots:
+    # 1) Горизонтальный путь.
+    #    Все источники накладываются на один график.
+    #    GPS - синяя линия (truth).
+    #    Остальные источники - точки с зелёной/красной покраской по
+    #    tolerance_m относительно ближайшего по времени GPS-сэмпла.
+    #
+    # ВАЖНО про источники:
+    # - "vision" -> /vision_pose_enu - унифицированный "активный нав-выход",
+    #   который идёт в EKF (если mode != log_only). В режимах tags / dpvo /
+    #   orb_slam3 это пасс-тру одного источника через single_source_router_node;
+    #   в hybrid это мультиплекс из vision_fusion_node.
+    # - "tags"/"dpvo"/"orb_slam3" -> source-named топики, в которые источник
+    #   ВСЕГДА пишет напрямую (independent of mode/navigation). Поэтому в
+    #   navigation: tags ты увидишь samples и в "vision", и в "tags" - это
+    #   тот же поток до и после router'а. Когда источник не запущен (например
+    #   "dpvo" при navigation: tags) - его samples=0, это норма.
+    - type: "trajectory_xy"
+      title: "Горизонтальный путь (East/North)"
+      coords: "gps"   # gps -> lat/lon -> East/North; local -> сразу X/Y из позы
+      sources:
+        - name: "gps"
+          kind: "gps"
+          topic: "/ap/gps/fix"
+          color: "#1f77b4"
+          label: "GPS (truth)"
+        - name: "vision"
+          kind: "pose"
+          topic: "/vision_pose_enu"
+          reference: "gps"
+          tolerance_m: 2.0
+        - name: "tags"
+          kind: "pose"
+          topic: "/tag_localizer/pose"
+          reference: "gps"
+          tolerance_m: 1.5
+        - name: "dpvo"
+          kind: "pose"
+          topic: "/dpvo/pose"
+          reference: "gps"
+          tolerance_m: 5.0
+        - name: "orb_slam3"
+          kind: "pose"
+          topic: "/orb_slam3/pose"
+          reference: "gps"
+          tolerance_m: 5.0
+
+    # 2) Горизонтальный путь, ЧЕСТНО приведённый к одному фрейму.
+    #    GPS - правда (синий). Каждый предсказанный источник
+    #    (tags/dpvo/...) сдвигается жёсткой XY-трансляцией так, чтобы
+    #    его первая точка совпала с GPS в тот же момент времени.
+    #    Это убирает только постоянный offset фрейма (например, что
+    #    map-фрейм меток имеет origin не в точке взлёта), но НЕ скрывает
+    #    ни форму, ни дрейф. Никакого rescaling/min-max.
+    #    Применённый сдвиг показан в легенде.
+    #    Поставь align_xy: false у источника, чтобы увидеть raw overlay.
+    - type: "trajectory_xy_aligned"
+      title: "XY: GPS vs предсказание (XY anchored)"
+      reference: "gps"
+      predicted:
+        # vision = унифицированный выход для EKF; всегда в баге если хоть
+        # один источник запущен.
+        - name: "vision"
+          color: "#d62728"
+          label: "Active vision (/vision_pose_enu)"
+        # Source-named топики. В single-source режимах активный из них
+        # дублирует "vision" (тот же поток, иногда полезно сверить).
+        # Неактивные источники (например, dpvo при navigation: tags) -
+        # samples=0, точек на графике не будет.
+        - name: "tags"
+          color: "#2ca02c"
+          label: "AprilTag (/tag_localizer/pose)"
+        - name: "dpvo"
+          color: "#ff7f0e"
+          label: "DPVO (/dpvo/pose)"
+        - name: "orb_slam3"
+          color: "#9467bd"
+          label: "ORB-SLAM3 (/orb_slam3/pose)"
+
+    # 3) Высота во времени, цветные линии по источникам (overlay).
+    - type: "altitude_time"
+      title: "Высота над анкером"
+      sources:
+        - name: "gps"
+          color: "#1f77b4"
+          label: "GPS"
+        - name: "vision"
+          color: "#d62728"
+          label: "Active vision"
+        - name: "tags"
+          color: "#2ca02c"
+          label: "AprilTag"
+        - name: "dpvo"
+          color: "#ff7f0e"
+          label: "DPVO"
+
+    # 4) Z(t) ЧЕСТНОЕ сравнение: правда + предсказание на одной шкале
+    #    реальных метров. По умолчанию НИКАКОГО Z-выравнивания, чтобы
+    #    постоянная систематика (например, GPS=35 м, tags=15 м) была
+    #    сразу видна. Отдельная вторая ось показывает ошибку
+    #    (predicted - truth) во времени.
+    #    align_z: true для источника принудительно совмещает Z в t0
+    #    (если ты ЗНАЕШЬ что у фрейма меток origin реально смещён).
+    - type: "altitude_compare"
+      title: "Z(t): GPS vs предсказание (без Z-сдвига)"
+      reference: "gps"
+      show_error: true
+      predicted:
+        - name: "vision"
+          color: "#d62728"
+          label: "Active vision (/vision_pose_enu)"
+          align_z: false
+        - name: "tags"
+          color: "#2ca02c"
+          label: "AprilTag"
+          align_z: false
+        - name: "dpvo"
+          color: "#ff7f0e"
+          label: "DPVO"
+          align_z: false
+
+    # 5) Высота во времени, точки покрашены по видимости меток
+    #    (зелёный - метка видна в окне visibility_gap_sec, красный - нет).
+    #    Та же логика что в marker_visibility, но в плоскости (t, Z).
+    #    show_reference_line=true рисует светло-серую линию-подложку.
+    - type: "altitude_visibility"
+      title: "Высота во времени (цвет по видимости AprilTag)"
+      visibility_gap_sec: 0.5
+      show_reference_line: true
+      sources:
+        - name: "gps"
+          kind: "gps"
+          topic: "/ap/gps/fix"
+
+    # 6) Три раздельных subplots: X(t), Y(t), Z(t).
+    - type: "xyz_separately"
+      title: "X / Y / Z по отдельности"
+      sources:
+        - name: "gps"
+          color: "#1f77b4"
+        - name: "vision"
+          color: "#d62728"
+        - name: "tags"
+          color: "#2ca02c"
+        - name: "dpvo"
+          color: "#ff7f0e"
+
+    # 7) Видимость меток вдоль траектории GPS (XY-плоскость).
+    #    Точка зелёная если в окне visibility_gap_sec пришло
+    #    хотя бы одно сообщение /tag_detections с непустым detections[],
+    #    иначе красная.
+    - type: "marker_visibility"
+      title: "Видимость AprilTag по траектории"
+      visibility_gap_sec: 0.5
+      sources:
+        - name: "gps"
+          kind: "gps"
+          topic: "/ap/gps/fix"

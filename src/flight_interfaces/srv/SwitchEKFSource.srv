@@ -1,0 +1,4 @@
+uint8 source # 1 for GPS, 2 for ExternalNav, 3 for ...
+---
+bool success
+string message

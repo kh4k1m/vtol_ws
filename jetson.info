@@ -1,0 +1,34 @@
+(nim) nvidia@ubuntu:~/vtol_ws$ bash chec.sh 
+=== who / home ===
+nvidia
+HOME=/home/nvidia
+=== ROS в /opt/ros ===
+total 12
+drwxr-xr-x  3 root root 4096 Mar 22 16:22 .
+drwxr-xr-x  6 root root 4096 Mar 23 17:02 ..
+drwxr-xr-x 11 root root 4096 Mar 22 16:23 humble
+=== ROS_DISTRO в этой оболочке ===
+ROS_DISTRO=humble
+=== ros2 (если уже source в сессии) ===
+usage: ros2 [-h] [--use-python-default-buffering] Call `ros2 <command> -h` for more detailed usage. ...
+ros2: error: unrecognized arguments: --version
+/opt/ros/humble/bin/ros2
+=== vtol_ws ===
+найден: /home/nvidia/vtol_ws
+  есть install/setup.bash
+найден: /home/nvidia/vtol_ws
+  есть install/setup.bash
+=== colcon (если есть) ===
+/usr/bin/colcon
+usage: colcon [-h] [--log-base LOG_BASE] [--log-level LOG_LEVEL]
+              {build,extension-points,extensions,graph,info,list,metadata,mixin,test,test-result,version-check}
+              ...
+colcon: error: argument verb_name: invalid choice: '--version' (choose from 'build', 'extension-points', 'extensions', 'graph', 'info', 'list', 'metadata', 'mixin', 'test', 'test-result', 'version-check')
+colcon не в PATH
+=== ОС ===
+PRETTY_NAME="Ubuntu 22.04.5 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.5 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+(nim) nvidia@ubuntu:~/vtol_ws$ 

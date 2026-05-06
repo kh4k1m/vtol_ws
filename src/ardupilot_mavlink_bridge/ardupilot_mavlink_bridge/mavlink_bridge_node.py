@@ -67,6 +67,13 @@ class MavlinkBridgeNode(Node):
         self._status_timer = self.create_timer(
             0.5, self._status_tick, callback_group=status_group
         )
+        # Outgoing GCS heartbeat at 1 Hz. Without this ArduPilot triggers
+        # FS_GCS (Failsafe -> RTL/QLAND) ~5s after it stops hearing a GCS
+        # heartbeat, which aborted every AUTO takeoff routed through this
+        # bridge. See MavlinkConnection.send_gcs_heartbeat for details.
+        self._heartbeat_timer = self.create_timer(
+            1.0, self._heartbeat_tick, callback_group=io_group
+        )
 
         forward_state = (
             'enabled' if self.vision._forward_enabled else 'DISABLED (log_only mode)'
@@ -84,6 +91,9 @@ class MavlinkBridgeNode(Node):
 
     def _status_tick(self):
         self.telemetry.publish_status_snapshot()
+
+    def _heartbeat_tick(self):
+        self.connection.send_gcs_heartbeat()
 
 
 def main(args=None):

@@ -10,7 +10,7 @@
    sudo bash ~/vtol_ws/autostart/install_systemd.sh
 
 3) Что произойдёт после ребута:
-   * через 2 минуты после загрузки: запустится `ros2 launch bringup flight.launch.py`
+   * через 45 секунд после загрузки: запустится `ros2 launch bringup flight.launch.py`
    * автономного взлёта НЕ будет
    * пилот сам решает, запускать ли takeoff командой
 
@@ -33,8 +33,8 @@
 Параметры takeoff (можно переопределить через env):
    TARGET_ALT_M=15.0           # высота зависания, метров
    HOVER_SEC=10.0              # время зависания, секунд
-   FLIGHT_DELAY_SEC=120        # задержка до запуска flight.launch.py
-   TAKEOFF_DELAY_SEC=180       # задержка до запуска gps_takeoff_land_node
+   FLIGHT_DELAY_SEC=45         # задержка до запуска flight.launch.py (сек)
+   TAKEOFF_DELAY_SEC=60        # задержка до запуска gps_takeoff_land_node
                                # (отсчёт от boot, не от flight)
 
 Например, изменить высоту до 20м:

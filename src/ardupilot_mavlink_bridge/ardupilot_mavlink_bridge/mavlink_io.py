@@ -92,6 +92,39 @@ class MavlinkConnection:
     def set_on_connect(self, callback: Callable[[], None]) -> None:
         self._on_connect_cb = callback
 
+    def send_gcs_heartbeat(self) -> bool:
+        """Send a HEARTBEAT identifying us as a GCS to keep ArduPilot's
+        FS_GCS happy. ArduPilot triggers ``GCS Failsafe`` (RTL/QLAND/etc)
+        if it doesn't receive a HEARTBEAT from a GCS within
+        ``FS_GCS_TIMEOUT`` (default ~5 s). Without this, any AUTO/GUIDED
+        mission triggered through this bridge is aborted by ArduPilot a
+        few seconds in.
+
+        We send as MAV_TYPE_GCS (6) / MAV_AUTOPILOT_INVALID (8). The
+        underlying pymavlink connection uses ``source_system=255`` by
+        default, which matches ArduPilot's ``SYSID_MYGCS=255`` default
+        and therefore satisfies the GCS-presence check.
+
+        Returns True on success, False if no connection or send failed.
+        """
+        if self._master is None:
+            return False
+        try:
+            with self._lock:
+                if self._master is None:
+                    return False
+                self._master.mav.heartbeat_send(
+                    mavutil.mavlink.MAV_TYPE_GCS,
+                    mavutil.mavlink.MAV_AUTOPILOT_INVALID,
+                    0,  # base_mode
+                    0,  # custom_mode
+                    mavutil.mavlink.MAV_STATE_ACTIVE,
+                )
+            return True
+        except Exception as exc:
+            self._logger.debug(f'GCS heartbeat send failed: {exc}')
+            return False
+
     def open_if_needed(self) -> None:
         """Open the connection if closed. Reconnect on heartbeat timeout."""
         now = time.monotonic()

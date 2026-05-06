@@ -28,8 +28,8 @@ WITH_TAKEOFF=0
 DO_UNINSTALL=0
 TARGET_ALT_M="${TARGET_ALT_M:-15.0}"
 HOVER_SEC="${HOVER_SEC:-10.0}"
-FLIGHT_DELAY_SEC="${FLIGHT_DELAY_SEC:-120}"   # 2 мин после boot
-TAKEOFF_DELAY_SEC="${TAKEOFF_DELAY_SEC:-180}" # 3 мин после boot (= ~1 мин после flight)
+FLIGHT_DELAY_SEC="${FLIGHT_DELAY_SEC:-45}"   # 45с после boot
+TAKEOFF_DELAY_SEC="${TAKEOFF_DELAY_SEC:-60}" # 60с после boot (= ~15с после flight)
 
 while [[ $# -gt 0 ]]; do
   case "$1" in

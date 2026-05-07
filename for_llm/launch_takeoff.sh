@@ -41,7 +41,7 @@ TARGET_ALT="${TARGET_ALT_M:-15.0}"
 HOVER_SEC="${HOVER_SEC:-10.0}"
 
 echo "${LOG_TAG} starting gps_takeoff_land_node target=${TARGET_ALT}m hover=${HOVER_SEC}s"
-exec ros2 run flight_manager gps_waypoints_node \
+exec ros2 run flight_manager gps_takeoff_land_node \
   --ros-args \
-  -p target_altitude_m:=100.0 \
-  -p hover_duration_sec:=300.0
+  -p target_altitude_m:="${TARGET_ALT}" \
+  -p hover_duration_sec:="${HOVER_SEC}"

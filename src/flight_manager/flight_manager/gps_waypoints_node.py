@@ -17,7 +17,7 @@ def add_meters_to_latlon(lat, lon, dx_meters, dy_meters):
 class GpsWaypointsNode(Node):
     def __init__(self):
         super().__init__('gps_waypoints_node')
-        self.declare_parameter('target_altitude_m', 40.0)
+        self.declare_parameter('target_altitude_m', 100.0)
         self.declare_parameter('waypoint_distance_m', 300.0)
 
         self.target_alt = self.get_parameter('target_altitude_m').value
@@ -95,12 +95,21 @@ class GpsWaypointsNode(Node):
             lons = []
             alts = []
             
-            # Generate 5 waypoints (a star pattern)
-            star_indices = [0, 2, 4, 1, 3]
+            # # Generate 5 waypoints (a star pattern)
+            # star_indices = [0, 2, 4, 1, 3]
+            # for i in star_indices:
+            #     angle = math.radians(i * 72.0)
+            #     dx = self.wp_dist * math.sin(angle)
+            #     dy = self.wp_dist * math.cos(angle)
+            #     wp_lat, wp_lon = add_meters_to_latlon(self.home_lat, self.home_lon, dx, dy)
+            #     lats.append(wp_lat)
+            #     lons.append(wp_lon)
+            #     alts.append(self.target_alt)
+            star_indices = [0, 1, 2]
             for i in star_indices:
-                angle = math.radians(i * 72.0)
-                dx = self.wp_dist * math.sin(angle)
-                dy = self.wp_dist * math.cos(angle)
+                angle = math.radians(i * 15.0 + 210)
+                dx = self.wp_dist * math.sin(angle) * i
+                dy = self.wp_dist * math.cos(angle) * i
                 wp_lat, wp_lon = add_meters_to_latlon(self.home_lat, self.home_lon, dx, dy)
                 lats.append(wp_lat)
                 lons.append(wp_lon)

@@ -1,0 +1,12 @@
+# Request a backend to drop its current state and re-initialize.
+# All backends that publish on /vision/<backend>/* should expose this
+# service on /vision/<backend>/reset.
+
+# Optional override. If non-empty the backend should attempt to seed
+# its next initialization with this pose (e.g. the last tag-localizer
+# pose so re-init keeps a usable reference). Empty header.frame_id =
+# no seed, start from identity.
+geometry_msgs/PoseStamped seed_pose
+---
+bool ok
+string detail

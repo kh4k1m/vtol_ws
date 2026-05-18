@@ -1,0 +1,9 @@
+# Force a backend to use a specific global anchor instead of its own
+# estimate. Useful for: replaying a session with a known anchor, snapping
+# DPVO output to the same global frame as the AprilTag map, or wiring a
+# global-map binder (e.g. visual place recognition into a city map).
+
+GlobalAnchor anchor
+---
+bool ok
+string detail

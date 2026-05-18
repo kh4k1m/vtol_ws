@@ -9,20 +9,103 @@ a tracking-grade state.
 Also escalates after repeated arm rejections instead of looping forever
 and surfaces the last few PreArm/Arm STATUSTEXT lines reported by the
 bridge.
+
+Optional waypoint follow-up:
+    when ``enable_waypoints`` is true AND ``waypoints_path`` resolves to
+    a file with usable GPS coordinates, the mission switches to GUIDED
+    after the takeoff hover and visits every line of the file via
+    ``/ap/cmd/goto_global`` before landing. The format is one waypoint
+    per line:
+
+        # lat       lon         alt_rel_m  (alt optional)
+        -35.3609281 149.1668904 30.0
+
+    Lines starting with ``#`` and empty lines are ignored. If a row
+    omits the altitude column the mission uses
+    ``waypoint_cruise_altitude_m`` (default 30 m). Arrival is decided by
+    horizontal haversine distance to the target dropping below
+    ``waypoint_arrival_radius_m``.
+
+    The waypoint phase is intentionally NOT used when navigation==tags:
+    that mode is exercised as "takeoff + hover above pad + land on pad"
+    and adding a cruise leg would defeat the AprilTag landing test.
 """
 
 from __future__ import annotations
 
 import math
+import os
 import time
+from typing import List, Optional, Tuple
 
 import rclpy
-from flight_interfaces.srv import SetMode, SwitchEKFSource, Takeoff
+from flight_interfaces.srv import GoToGlobal, SetMode, SwitchEKFSource, Takeoff
 from marker_interfaces.msg import NavStatus
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
+from sensor_msgs.msg import NavSatFix
 from std_msgs.msg import Bool, Float64, String
 from std_srvs.srv import SetBool, Trigger
+
+
+_EARTH_RADIUS_M = 6_371_000.0
+
+
+def _haversine_distance_m(
+    lat1_deg: float, lon1_deg: float, lat2_deg: float, lon2_deg: float,
+) -> float:
+    """Great-circle horizontal distance between two WGS84 points, in metres.
+
+    Used to decide "we reached the current waypoint". Standard haversine,
+    accurate to <0.5 % across the distances we use (hundreds of metres).
+    """
+    if not all(math.isfinite(v) for v in (lat1_deg, lon1_deg, lat2_deg, lon2_deg)):
+        return float('nan')
+    lat1 = math.radians(lat1_deg)
+    lat2 = math.radians(lat2_deg)
+    dlat = math.radians(lat2_deg - lat1_deg)
+    dlon = math.radians(lon2_deg - lon1_deg)
+    a = (
+        math.sin(dlat / 2.0) ** 2
+        + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2.0) ** 2
+    )
+    return 2.0 * _EARTH_RADIUS_M * math.asin(math.sqrt(a))
+
+
+def _parse_waypoints_file(
+    path: str, default_alt_m: float,
+) -> List[Tuple[float, float, float]]:
+    """Read ``path`` line-by-line and return ``[(lat, lon, alt_rel_m), ...]``.
+
+    Format intentionally minimal so anyone can hand-edit the file
+    without YAML lint pain: whitespace-separated decimals, ``#``
+    comments, blank lines OK. Lines with two columns inherit
+    ``default_alt_m`` so an operator can store a constant-altitude
+    route as just ``lat lon``.
+
+    Any malformed line is logged-and-skipped rather than aborting the
+    whole mission; we prefer "fly the points we could parse" over
+    "refuse to take off".
+    """
+    waypoints: List[Tuple[float, float, float]] = []
+    if not path or not os.path.isfile(path):
+        return waypoints
+    with open(path, 'r', encoding='utf-8') as fh:
+        for raw in fh:
+            line = raw.strip()
+            if not line or line.startswith('#'):
+                continue
+            parts = line.split()
+            if len(parts) < 2:
+                continue
+            try:
+                lat = float(parts[0])
+                lon = float(parts[1])
+                alt = float(parts[2]) if len(parts) >= 3 else float(default_alt_m)
+            except ValueError:
+                continue
+            waypoints.append((lat, lon, alt))
+    return waypoints
 
 
 # State codes that count as "vision is good enough to fly on".
@@ -40,6 +123,18 @@ class MissionManagerNode(Node):
         self.declare_parameter('vision_ready_duration_sec', 1.5)
         self.declare_parameter('vision_timeout_sec', 0.75)
         self.declare_parameter('vision_loss_abort_sec', 2.0)
+        # During REQUEST_SWITCH_EKF / WAIT_FOR_EXTERNAL_NAV the bridge keeps
+        # resending the last ODOMETRY at 20 Hz for ~1s after pose stops, so
+        # ArduPilot does not see brief visual blinks. We therefore tolerate
+        # transient losses here for much longer than vision_timeout_sec - if
+        # we bounced back to WAIT_FOR_NAV on every flicker EKF3 would never
+        # accumulate enough consistent samples to declare "is using external
+        # nav data" and arming would deadlock.
+        self.declare_parameter('ekf_wait_vision_loss_tolerance_sec', 8.0)
+        # Hard cap on total time we sit in WAIT_FOR_EXTERNAL_NAV before
+        # giving up and re-arming the visual-lock dance. Prevents waiting
+        # forever if EKF3 silently refuses the source switch.
+        self.declare_parameter('ekf_ready_timeout_sec', 60.0)
 
         # State codes (uint8) that the mission accepts as "ready".
         # Defaults to TRACKING + TRACKING_DEGRADED.
@@ -57,10 +152,58 @@ class MissionManagerNode(Node):
         self.declare_parameter('landing_complete_altitude_m', 0.3)
         self.declare_parameter('arm_max_attempts', 5)
 
+        # Optional waypoint cruise between HOLD and REQUEST_LAND.
+        # All four parameters are no-ops when enable_waypoints=False or
+        # the path is empty / missing - the mission falls through to
+        # the original "hover then land" flow exactly as before.
+        self.declare_parameter('enable_waypoints', False)
+        self.declare_parameter(
+            'waypoints_path', os.path.expanduser('~/coords.txt')
+        )
+        # 50 m leaves room for the VTOL->forward-flight transition's
+        # altitude sag (~5-15 m for our airframe in SITL without an
+        # airspeed sensor) and keeps us above Q_RTL_ALT.
+        self.declare_parameter('waypoint_cruise_altitude_m', 50.0)
+        # Arrival radius is the horizontal distance below which we
+        # consider the waypoint "reached" and advance to the next one.
+        # In Plane GUIDED ArduPlane reaches the target by entering a
+        # loiter circle of radius WP_LOITER_RAD (60 m default) and
+        # never actually overflies the point - so a tight 15 m radius
+        # would deadlock the mission. 80 m = WP_LOITER_RAD + slack
+        # for wind / SITL noise; the next-wp trigger fires on the
+        # first loiter pass.
+        self.declare_parameter('waypoint_arrival_radius_m', 80.0)
+        # Per-waypoint hard timeout: ~600 m route at TRIM_ARSPD_CM
+        # (12 m/s) = ~50 s of cruise, plus 5-10 s for the initial
+        # forward-flight transition. 200 s leaves comfortable
+        # head-room without letting us loop forever if wind / EKF
+        # ranges out.
+        self.declare_parameter('waypoint_timeout_sec', 200.0)
+        # Mode the mission switches to for the waypoint cruise.
+        # GUIDED with Q_GUIDED_MODE=0 (ArduPlane default; pinned in
+        # config/ardupilot/visual_only_sitl.parm for SITL clarity) is
+        # the fixed-wing controller path: SetMode(GUIDED) initiates a
+        # VTOL->forward-flight transition, /ap/cmd/goto_global enqueues
+        # a MISSION_ITEM_INT(NAV_WAYPOINT) the plane flies to and
+        # loiters around. Tags-only flights never hit this code (they
+        # set enable_waypoints=False), which is why we don't need a
+        # multirotor-friendly default here.
+        self.declare_parameter('waypoint_flight_mode', 'GUIDED')
+        # Mode the mission restores after the last waypoint and
+        # before LAND. QLOITER triggers the back-transition to VTOL
+        # so QLAND starts from a stable multirotor hover.
+        self.declare_parameter('waypoint_post_mode', 'QLOITER')
+
         self.target_altitude_m = self.get_parameter('target_altitude_m').value
         self.vision_ready_duration_sec = self.get_parameter('vision_ready_duration_sec').value
         self.vision_timeout_sec = self.get_parameter('vision_timeout_sec').value
         self.vision_loss_abort_sec = self.get_parameter('vision_loss_abort_sec').value
+        self.ekf_wait_vision_loss_tolerance_sec = float(
+            self.get_parameter('ekf_wait_vision_loss_tolerance_sec').value
+        )
+        self.ekf_ready_timeout_sec = float(
+            self.get_parameter('ekf_ready_timeout_sec').value
+        )
         self.vision_allowed_state_codes = {
             int(code) for code in self.get_parameter('vision_allowed_state_codes').value
         }
@@ -75,6 +218,49 @@ class MissionManagerNode(Node):
         self.takeoff_reached_margin_m = self.get_parameter('takeoff_reached_margin_m').value
         self.landing_complete_altitude_m = self.get_parameter('landing_complete_altitude_m').value
         self.arm_max_attempts = max(1, int(self.get_parameter('arm_max_attempts').value))
+
+        self.enable_waypoints = bool(self.get_parameter('enable_waypoints').value)
+        self.waypoints_path = str(self.get_parameter('waypoints_path').value or '')
+        self.waypoint_cruise_altitude_m = float(
+            self.get_parameter('waypoint_cruise_altitude_m').value
+        )
+        self.waypoint_arrival_radius_m = float(
+            self.get_parameter('waypoint_arrival_radius_m').value
+        )
+        self.waypoint_timeout_sec = float(
+            self.get_parameter('waypoint_timeout_sec').value
+        )
+        self.waypoint_flight_mode = str(
+            self.get_parameter('waypoint_flight_mode').value or 'GUIDED'
+        ).upper()
+        self.waypoint_post_mode = str(
+            self.get_parameter('waypoint_post_mode').value or 'QLOITER'
+        ).upper()
+
+        self.waypoints: List[Tuple[float, float, float]] = []
+        if self.enable_waypoints:
+            self.waypoints = _parse_waypoints_file(
+                self.waypoints_path, self.waypoint_cruise_altitude_m
+            )
+            if self.waypoints:
+                self.get_logger().info(
+                    f'Loaded {len(self.waypoints)} cruise waypoints from '
+                    f'{self.waypoints_path}'
+                )
+                for i, (lat, lon, alt) in enumerate(self.waypoints):
+                    self.get_logger().info(
+                        f'  wp{i + 1}: lat={lat:.7f} lon={lon:.7f} alt={alt:.1f} m'
+                    )
+            else:
+                self.get_logger().info(
+                    'enable_waypoints=True but no usable waypoints in '
+                    f'{self.waypoints_path!r}; mission will hover and land '
+                    'as in the no-waypoints flow'
+                )
+        self.current_waypoint_index = 0
+        self.last_gps_lat_deg: Optional[float] = None
+        self.last_gps_lon_deg: Optional[float] = None
+        self.last_waypoint_log_monotonic = 0.0
 
         self.ap_connected = False
         self.ap_armed = False
@@ -109,18 +295,30 @@ class MissionManagerNode(Node):
         self.create_subscription(Bool, '/ap/armed', self._ap_armed_cb, 10)
         self.create_subscription(Bool, '/ap/external_nav_ready', self._ap_ext_nav_cb, 10)
         self.create_subscription(String, '/ap/flight_mode', self._ap_mode_cb, 10)
+        # NavSatFix from /ap/gps/fix: in SITL this is the simulated GPS,
+        # on the real airframe it is the autopilot's GLOBAL_POSITION_INT
+        # echo through telemetry_publisher. Either way it gives us the
+        # truth position we use to decide "we reached the waypoint".
+        self.create_subscription(
+            NavSatFix, '/ap/gps/fix', self._gps_fix_cb, qos_profile_sensor_data,
+        )
 
         self.set_mode_client = self.create_client(SetMode, '/ap/cmd/set_mode')
         self.arm_client = self.create_client(SetBool, '/ap/cmd/arm')
         self.takeoff_client = self.create_client(Takeoff, '/ap/cmd/takeoff')
         self.land_client = self.create_client(Trigger, '/ap/cmd/land')
         self.switch_ekf_client = self.create_client(SwitchEKFSource, '/ap/cmd/switch_ekf_source')
+        self.goto_client = self.create_client(GoToGlobal, '/ap/cmd/goto_global')
 
         self.timer = self.create_timer(0.2, self._tick)
 
-        self.get_logger().info(
-            f'Configured autonomous scenario: takeoff to {self.target_altitude_m:.1f} m and land'
+        scenario_desc = (
+            f'takeoff to {self.target_altitude_m:.1f} m, '
+            f'{len(self.waypoints)} cruise waypoint(s), land'
+            if self.waypoints
+            else f'takeoff to {self.target_altitude_m:.1f} m and land'
         )
+        self.get_logger().info(f'Configured autonomous scenario: {scenario_desc}')
         self._set_state('WAIT_FOR_AP', 'Waiting for MAVLink bridge connection')
 
     # -- subscriptions -----------------------------------------------------
@@ -145,6 +343,18 @@ class MissionManagerNode(Node):
 
     def _ap_mode_cb(self, msg: String):
         self.ap_mode = str(msg.data)
+
+    def _gps_fix_cb(self, msg: NavSatFix):
+        # NavSatFix may legitimately publish NaN before a fix is acquired
+        # (telemetry_publisher emits one as soon as it sees a partial
+        # GLOBAL_POSITION_INT). Keep the previous valid sample in that
+        # case so the waypoint distance check stays meaningful between
+        # short fix dropouts.
+        lat = float(msg.latitude)
+        lon = float(msg.longitude)
+        if math.isfinite(lat) and math.isfinite(lon):
+            self.last_gps_lat_deg = lat
+            self.last_gps_lon_deg = lon
 
     # -- main tick ---------------------------------------------------------
 
@@ -198,19 +408,43 @@ class MissionManagerNode(Node):
             return
 
         if self.state == 'WAIT_FOR_EXTERNAL_NAV':
-            if not self._vision_ready(now):
-                self._set_state(
-                    'WAIT_FOR_NAV',
-                    'Lost stable visual lock while waiting for ArduPilot external-nav readiness',
-                )
-            elif self.ap_external_nav_ready:
+            if self.ap_external_nav_ready:
                 self._set_state(
                     'REQUEST_RESET_MODE',
                     'ArduPilot reports external navigation ready',
                 )
-            elif (now - self.last_external_nav_wait_log_monotonic) > 2.0:
+                return
+
+            # Tolerate transient visual blinks: EKF3 needs continuous
+            # ODOMETRY for many seconds to switch source, and the bridge
+            # keeps resending the last sample for ~1 s after pose stops.
+            # Only give up if vision has been bad for an extended period.
+            vision_loss_elapsed = (
+                (now - self.vision_loss_since)
+                if self.vision_loss_since is not None
+                else 0.0
+            )
+            if vision_loss_elapsed > self.ekf_wait_vision_loss_tolerance_sec:
+                self._set_state(
+                    'WAIT_FOR_NAV',
+                    'Lost stable visual lock while waiting for ArduPilot '
+                    f'external-nav readiness ({vision_loss_elapsed:.1f}s without lock)',
+                )
+                return
+
+            if self._state_elapsed(now) > self.ekf_ready_timeout_sec:
+                self._set_state(
+                    'REQUEST_SWITCH_EKF',
+                    'ArduPilot did not report external-nav ready within '
+                    f'{self.ekf_ready_timeout_sec:.0f}s; re-issuing PARAM_SET',
+                )
+                return
+
+            if (now - self.last_external_nav_wait_log_monotonic) > 2.0:
+                lock_state = 'OK' if self._vision_ready(now) else f'flicker ({vision_loss_elapsed:.1f}s)'
                 self.get_logger().info(
-                    'Waiting for ArduPilot external-nav readiness before arming'
+                    'Waiting for ArduPilot external-nav readiness before arming '
+                    f'(visual lock: {lock_state})'
                 )
                 self.last_external_nav_wait_log_monotonic = now
             return
@@ -336,7 +570,117 @@ class MissionManagerNode(Node):
 
         if self.state == 'HOLD':
             if self._state_elapsed(now) > self.hover_duration_sec:
-                self._set_state('REQUEST_LAND', 'Hover dwell complete')
+                # If a cruise route is loaded, divert through GUIDED ->
+                # goto_global x N -> QLOITER before landing. With no
+                # waypoints we fall through to the original behaviour
+                # ("hover, then land") unchanged - this is the only path
+                # exercised by navigation==tags missions.
+                if self.waypoints:
+                    self._set_state(
+                        'REQUEST_WAYPOINT_MODE',
+                        'Hover dwell complete; entering cruise mode for '
+                        f'{len(self.waypoints)} waypoint(s)',
+                    )
+                else:
+                    self._set_state('REQUEST_LAND', 'Hover dwell complete')
+            return
+
+        if self.state == 'REQUEST_WAYPOINT_MODE':
+            self._drive_service_state(
+                client=self.set_mode_client,
+                request=self._make_set_mode_request(self.waypoint_flight_mode),
+                command_name=f'set_mode {self.waypoint_flight_mode}',
+                success_state='WAIT_WAYPOINT_MODE',
+            )
+            return
+
+        if self.state == 'WAIT_WAYPOINT_MODE':
+            if self.ap_mode == self.waypoint_flight_mode:
+                self._set_state(
+                    'REQUEST_WAYPOINT',
+                    f'Vehicle in {self.waypoint_flight_mode}; commanding '
+                    f'waypoint {self.current_waypoint_index + 1}'
+                    f'/{len(self.waypoints)}',
+                )
+            elif self._state_elapsed(now) > self.command_timeout_sec:
+                # Some firmwares (Plane GUIDED without Q_GUIDED_MODE)
+                # silently reject GUIDED for a quadplane in VTOL hover.
+                # Give up cleanly to QLAND so we don't burn battery
+                # ping-ponging set_mode forever.
+                self._transition_to_landing(
+                    f'Timed out waiting for {self.waypoint_flight_mode} '
+                    'mode confirmation; aborting cruise'
+                )
+            return
+
+        if self.state == 'REQUEST_WAYPOINT':
+            if self.current_waypoint_index >= len(self.waypoints):
+                self._set_state(
+                    'REQUEST_POST_WAYPOINT_MODE',
+                    'All cruise waypoints reached; returning to '
+                    f'{self.waypoint_post_mode} for landing',
+                )
+                return
+            wp = self.waypoints[self.current_waypoint_index]
+            self._drive_service_state(
+                client=self.goto_client,
+                request=self._make_goto_request(wp),
+                command_name=(
+                    f'goto_global wp{self.current_waypoint_index + 1}'
+                    f'/{len(self.waypoints)} '
+                    f'lat={wp[0]:.7f} lon={wp[1]:.7f} alt={wp[2]:.1f}'
+                ),
+                success_state='CRUISE_TO_WAYPOINT',
+            )
+            return
+
+        if self.state == 'CRUISE_TO_WAYPOINT':
+            if self._waypoint_reached(now):
+                self.current_waypoint_index += 1
+                if self.current_waypoint_index >= len(self.waypoints):
+                    self._set_state(
+                        'REQUEST_POST_WAYPOINT_MODE',
+                        'Last cruise waypoint reached; switching to '
+                        f'{self.waypoint_post_mode} before LAND',
+                    )
+                else:
+                    self._set_state(
+                        'REQUEST_WAYPOINT',
+                        f'Reached waypoint {self.current_waypoint_index} '
+                        f'/{len(self.waypoints)}; advancing to next',
+                    )
+            elif self._state_elapsed(now) > self.waypoint_timeout_sec:
+                self._transition_to_landing(
+                    f'Waypoint {self.current_waypoint_index + 1} not '
+                    f'reached within {self.waypoint_timeout_sec:.0f} s; '
+                    'cutting cruise and landing'
+                )
+            return
+
+        if self.state == 'REQUEST_POST_WAYPOINT_MODE':
+            self._drive_service_state(
+                client=self.set_mode_client,
+                request=self._make_set_mode_request(self.waypoint_post_mode),
+                command_name=f'set_mode {self.waypoint_post_mode}',
+                success_state='WAIT_POST_WAYPOINT_MODE',
+            )
+            return
+
+        if self.state == 'WAIT_POST_WAYPOINT_MODE':
+            if self.ap_mode == self.waypoint_post_mode:
+                self._set_state(
+                    'REQUEST_LAND',
+                    f'Vehicle settled in {self.waypoint_post_mode} after '
+                    'cruise; commanding LAND',
+                )
+            elif self._state_elapsed(now) > self.command_timeout_sec:
+                # Best-effort: still try to land even if the mode
+                # confirmation never arrives. QLAND from any plane mode
+                # is generally accepted by ArduPilot.
+                self._transition_to_landing(
+                    f'Timed out waiting for {self.waypoint_post_mode} '
+                    'after cruise; commanding LAND anyway'
+                )
             return
 
         if self.state == 'REQUEST_LAND':
@@ -386,7 +730,16 @@ class MissionManagerNode(Node):
         )
 
     def _should_abort_to_land(self, now):
-        if self.state not in {'ASCENDING', 'HOLD'}:
+        # Any "we are in the air" state qualifies: we want a vision
+        # dropout during cruise to land just as aggressively as one
+        # during the initial hover. Mode-switch states are NOT in this
+        # set because the bridge keeps re-sending the last pose for
+        # ~1 s after a transient gap, and counting that as "in the air"
+        # would yo-yo the mission between LAND and HOLD.
+        if self.state not in {
+            'ASCENDING', 'HOLD',
+            'REQUEST_WAYPOINT', 'CRUISE_TO_WAYPOINT',
+        }:
             return False
         if self.vision_loss_since is None:
             return False
@@ -394,6 +747,35 @@ class MissionManagerNode(Node):
             return False
         self._transition_to_landing('Visual localization lost during autonomous flight')
         return True
+
+    def _waypoint_reached(self, now: float) -> bool:
+        """Decide if we're close enough to the current waypoint to advance.
+
+        Pure horizontal distance: altitude is enforced by goto_global's
+        own setpoint, and using a 3D ball would refuse to advance when
+        the controller overshoots in z by a metre. Logs a "still
+        going" line at most every 2 s so the mission tail isn't spammed
+        but the operator still gets feedback during a long leg.
+        """
+        if self.current_waypoint_index >= len(self.waypoints):
+            return True
+        if self.last_gps_lat_deg is None or self.last_gps_lon_deg is None:
+            return False
+        wp = self.waypoints[self.current_waypoint_index]
+        dist_m = _haversine_distance_m(
+            self.last_gps_lat_deg, self.last_gps_lon_deg, wp[0], wp[1],
+        )
+        if not math.isfinite(dist_m):
+            return False
+        if (now - self.last_waypoint_log_monotonic) > 2.0:
+            self.get_logger().info(
+                f'Cruising to wp{self.current_waypoint_index + 1}'
+                f'/{len(self.waypoints)}: '
+                f'{dist_m:.1f} m horizontal '
+                f'(arrival radius {self.waypoint_arrival_radius_m:.1f} m)'
+            )
+            self.last_waypoint_log_monotonic = now
+        return dist_m <= self.waypoint_arrival_radius_m
 
     # -- service helpers ---------------------------------------------------
 
@@ -495,6 +877,16 @@ class MissionManagerNode(Node):
     def _make_takeoff_request(self, altitude_m):
         request = Takeoff.Request()
         request.altitude_m = float(altitude_m)
+        return request
+
+    def _make_goto_request(self, waypoint: Tuple[float, float, float]):
+        request = GoToGlobal.Request()
+        request.lat_deg = float(waypoint[0])
+        request.lon_deg = float(waypoint[1])
+        request.alt_m = float(waypoint[2])
+        # Leave yaw unset - the bridge encodes it as 0.0 (= "yaw to
+        # heading of travel") which is what we want for cruise legs.
+        request.yaw_deg = 0.0
         return request
 
 

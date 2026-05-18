@@ -125,12 +125,22 @@ public:
             std::bind(&TagDetectorNode::image_callback, this, std::placeholders::_1));
 
         detections_pub_ = this->create_publisher<marker_interfaces::msg::MarkerDetectionArray>("/tag_detections", qos);
-        
-        cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
+
+        // This project uses AprilTag 36h11 exclusively. The dictionary is
+        // hard-coded on purpose: there are no other marker families on the
+        // drone or in the SITL scene. (OpenCV exposes its API under the
+        // `cv::aruco::*` namespace - that name comes from upstream OpenCV
+        // and applies to AprilTag too; nothing ArUco is going on here.)
+        cv::aruco::Dictionary dictionary =
+            cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11);
         cv::aruco::DetectorParameters detectorParams = cv::aruco::DetectorParameters();
         detector_ = std::make_shared<cv::aruco::ArucoDetector>(dictionary, detectorParams);
 
-        RCLCPP_INFO(this->get_logger(), "Tag detector node started with dynamic parameters.");
+        RCLCPP_INFO(
+            this->get_logger(),
+            "Tag detector node started. dictionary=DICT_APRILTAG_36h11 "
+            "default_marker_size=%.3f",
+            default_marker_size_);
     }
 
 private:

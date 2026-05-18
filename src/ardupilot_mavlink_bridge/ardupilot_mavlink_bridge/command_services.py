@@ -31,8 +31,27 @@ from std_srvs.srv import SetBool, Trigger
 ALTITUDE_ONLY_LOCAL_OFFSET_MASK = 3579
 
 # EKF source selectors used by SwitchEKFSource. Only EKF3 is supported.
-EKF_SRC_GPS = {'POSXY': 3.0, 'POSZ': 1.0}  # POSZ=1 is Baro
-EKF_SRC_EXTERNAL_NAV = {'POSXY': 6.0, 'POSZ': 6.0}
+#
+# These describe a FULL source switch (position, velocity and yaw)
+# rather than just position. Without switching velocity to ExternalNav
+# the EKF would still pull horizontal/vertical velocity from GPS, and
+# on a real airframe with no GPS that source becomes "no data" and
+# EKF3 would refuse to use external nav. Yaw stays on the compass for
+# GPS mode and moves to ExternalNav when we're flying on visuals.
+#
+# POSZ=1 is Baro (the canonical "altitude from barometer" choice for
+# GPS-aided flight). VELZ=3 = GPS-vertical-velocity. For visual-only
+# every source is 6 = ExternalNav.
+EKF_SRC_GPS = {
+    'POSXY': 3.0, 'POSZ': 1.0,
+    'VELXY': 3.0, 'VELZ': 3.0,
+    'YAW': 1.0,
+}
+EKF_SRC_EXTERNAL_NAV = {
+    'POSXY': 6.0, 'POSZ': 6.0,
+    'VELXY': 6.0, 'VELZ': 6.0,
+    'YAW': 6.0,
+}
 
 
 class CommandServices:
@@ -414,25 +433,54 @@ class CommandServices:
             return response
         try:
             params = EKF_SRC_EXTERNAL_NAV if int(request.source) == 2 else EKF_SRC_GPS
+            # All sources that define a complete navigation backend: the
+            # EKF needs a position+velocity+yaw triple from the same
+            # family or it falls back to whatever else is configured
+            # (typically GPS), which defeats the point on a GPS-denied
+            # platform.
+            param_map = [
+                (b'EK3_SRC1_POSXY', params['POSXY']),
+                (b'EK3_SRC1_POSZ',  params['POSZ']),
+                (b'EK3_SRC1_VELXY', params['VELXY']),
+                (b'EK3_SRC1_VELZ',  params['VELZ']),
+                (b'EK3_SRC1_YAW',   params['YAW']),
+            ]
 
-            def sender_xy(master):
-                master.mav.param_set_send(
-                    master.target_system, master.target_component,
-                    b'EK3_SRC1_POSXY', params['POSXY'],
-                    mavutil.mavlink.MAV_PARAM_TYPE_REAL32,
-                )
+            def make_setter(name: bytes, value: float):
+                def _send(master):
+                    master.mav.param_set_send(
+                        master.target_system, master.target_component,
+                        name, float(value),
+                        mavutil.mavlink.MAV_PARAM_TYPE_REAL32,
+                    )
+                return _send
 
-            def sender_z(master):
-                master.mav.param_set_send(
-                    master.target_system, master.target_component,
-                    b'EK3_SRC1_POSZ', params['POSZ'],
-                    mavutil.mavlink.MAV_PARAM_TYPE_REAL32,
-                )
+            def make_reader(name: bytes):
+                def _send(master):
+                    master.mav.param_request_read_send(
+                        master.target_system, master.target_component,
+                        name, -1,
+                    )
+                return _send
 
-            self._send(sender_xy)
-            self._send(sender_z)
+            for name, value in param_map:
+                self._send(make_setter(name, value))
+            # Explicitly ask AP to echo the new values. Without this, on
+            # some firmware/stream-rate setups the only signal of an
+            # EKF source change is the (sometimes silent) "EKF3 IMU0
+            # is using external nav data" STATUSTEXT — and if AHRS is
+            # configured to use a non-EKF3 backend (e.g. SITL cheat
+            # backend, AHRS_EKF_TYPE=10) that STATUSTEXT never fires
+            # and the mission state machine waits forever. The
+            # PARAM_VALUE echo is parsed in TelemetryPublisher and used
+            # as an alternative external-nav-ready signal.
+            for name, _ in param_map:
+                self._send(make_reader(name))
             response.success = True
-            response.message = f'EKF Source {request.source} requested via PARAM_SET'
+            response.message = (
+                f'EKF Source {request.source} requested via PARAM_SET '
+                f'(POS+VEL+YAW; {len(param_map)} params)'
+            )
         except Exception as exc:
             response.success = False
             response.message = str(exc)

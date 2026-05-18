@@ -1,4 +1,59 @@
 mission:
-  # Настройки автономной миссии (взлет и посадка)
+  # Настройки автономной миссии: взлёт -> зависание -> [опциональный
+  # крейс по точкам из coords.txt] -> посадка.
   target_altitude_m: 7.0
   hover_duration_sec: 3.0
+
+  # Крейс по точкам после зависания, перед посадкой.
+  #
+  # Активируется в flight.launch.py для всех значений navigation, кроме
+  # "tags" - там оставлен квадракоптерный цикл "взлёт по меткам ->
+  # зависание над меткой -> посадка по меткам" без горизонтального крейса.
+  #
+  # У нас квадраплан (alti_transition_quad). В navigation=dpvo и
+  # navigation=hybrid крейс физически идёт в самолётном режиме:
+  # VTOL_TAKEOFF -> QLOITER -> SetMode(GUIDED) запускает forward-flight
+  # transition -> ArduPlane летит к каждой точке как самолёт и переходит
+  # в loiter вокруг неё (радиус ~ WP_LOITER_RAD) -> SetMode(QLOITER)
+  # инициирует back-transition обратно в VTOL -> QLAND.
+  #
+  # Подсказка SITL: убедитесь, что Q_GUIDED_MODE=0 (default ArduPlane,
+  # явно зашит в config/ardupilot/visual_only_sitl.parm). При
+  # Q_GUIDED_MODE=1 GUIDED работает как мультироторный position-hold и
+  # forward-flight transition не запустится - смысла в крейсе не будет.
+  #
+  # Файл coords.txt - один путь на строку "lat lon [alt_rel_m]",
+  # комментарии "#" и пустые строки игнорируются. См. пример в ~/coords.txt
+  # (три точки ~300 м друг от друга, образуют дугу к ENE от стандартного
+  # SITL-дома CMAC). mission_manager последовательно отправляет каждую
+  # точку через сервис /ap/cmd/goto_global и ждёт, пока горизонтальная
+  # хавер-дистанция до неё не упадёт ниже arrival_radius_m.
+  waypoints:
+    path: "~/coords.txt"
+    # Используется, если в coords.txt не задана третья колонка (alt).
+    # 50 м оставляет запас под просадку при forward-flight transition
+    # (квадраплан без воздушки теряет ~5-15 м за 3-5 с transit) и
+    # держит дрон выше Q_RTL_ALT (25 м в alti_transition_quad.param).
+    cruise_altitude_m: 50.0
+    # Считаем точку "достигнутой" при горизонтальной дистанции <= R.
+    # В Plane GUIDED ArduPlane по достижении точки переходит в loiter
+    # вокруг неё с радиусом WP_LOITER_RAD (60 м в SITL по умолчанию),
+    # т.е. внутрь меньшего круга самолёт никогда не зайдёт. Берём 80 м
+    # как WP_LOITER_RAD + запас под ветер/SITL noise, чтобы триггер
+    # на следующий waypoint срабатывал на первом же витке loiter'а.
+    arrival_radius_m: 80.0
+    # Жёсткий таймаут на одну точку. ~600 м (длина дуги до wp3) /
+    # 12 м/с TRIM_ARSPD_CM = 50 c полёта + 5-10 c на transition + запас.
+    # 200 с страхует от ситуации "ветер не дал долететь" без вечного
+    # ожидания.
+    timeout_sec: 200.0
+    # GUIDED при Q_GUIDED_MODE=0 = Plane forward-flight controller:
+    # SetMode(GUIDED) запускает transition в самолёт, /ap/cmd/goto_global
+    # шлёт MISSION_ITEM_INT(NAV_WAYPOINT) c position target, который
+    # ArduPlane долетает в самолётном режиме и зацикливает loiter.
+    flight_mode: "GUIDED"
+    # Куда возвращаемся после крейса перед посадкой: QLOITER инициирует
+    # back-transition VTOL и затем плавный QLAND. Если хотите садиться в
+    # самолётном режиме (на ВПП), замените на FBW + Q_LAND или AUTO с
+    # NAV_LAND - но это уже другой профиль миссии.
+    post_mode: "QLOITER"

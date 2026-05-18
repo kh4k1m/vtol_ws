@@ -74,11 +74,36 @@ tags_detector:
     learn_unknown_tags: true
     confirmation_frames: 5
 
-    # If non-empty, on every newly added marker the full current map is
-    # rewritten atomically to this YAML. Loaded back at next launch as
-    # the seed map. Set to "" to disable persistence (in-memory only).
-    # Path is relative to $VTOL_WS_ROOT.
-    persist_map_path: "logs/maps/discovered_map.yaml"
+    # `persist_map_path` controls where the discovered marker map is
+    # written and (if it already exists at startup) reloaded.
+    #
+    # Behavior is:
+    #
+    #   * Key ABSENT (default, recommended)
+    #       The launch file auto-targets the current session directory:
+    #       <session_dir>/discovered_map.yaml. Each flight therefore
+    #       starts with an EMPTY map (anchor is re-bootstrapped from the
+    #       first detection), and the final session map ends up bundled
+    #       with the bag/video/CSV for post-flight analysis (you can
+    #       diff "where I thought tag X was" vs ground truth). This is
+    #       what you want for field deployments where the marker layout
+    #       changes between flights.
+    #
+    #   * Key set to ""  (explicit in-memory)
+    #       No persistence at all. Map exists only in the live process
+    #       and is dropped at shutdown. Useful for fly_only / SITL
+    #       smoke tests where you don't want any disk artifacts.
+    #
+    #   * Key set to a non-empty path (explicit override)
+    #       The localizer loads that file as the seed map on startup
+    #       and rewrites it on every newly confirmed marker. Use this
+    #       when you have a pre-surveyed landing pad and want the map
+    #       to be authoritative across sessions. The path is resolved
+    #       relative to $VTOL_WS_ROOT.
+    #
+    # Leave this key out by default. Uncomment + customize only when
+    # you want cross-session persistence.
+    # persist_map_path: ""
 
   localizer:
     # Per-frame pose estimator. See src/tag_localizer/tag_localizer/geo.py
@@ -110,16 +135,27 @@ tags_detector:
 
     # If detections stop for longer than this we drop the Kalman state so
     # we don't extrapolate forward with stale velocity at re-acquisition.
-    detection_gap_reset_sec: 0.6
+    # Bumped from 0.6 s -> 2.0 s: in Gazebo SITL on WSL the camera stream
+    # can stall for ~0.5-1 s under load, and short stalls were resetting
+    # the Kalman + stability window mid-takeoff, which made /vision_pose_enu
+    # stop publishing and bounced the mission state machine out of
+    # WAIT_FOR_EXTERNAL_NAV. Real flight should never see >2 s gaps anyway.
+    detection_gap_reset_sec: 2.0
 
     # Stability gate inside localizer_node: a pose is published on
     # /tag_localizer/pose only when XY/Z stddev across the last
     # stable_window_size accepted tagDB poses is at or below the
     # thresholds. Loose values pass through high-altitude PnP noise into
     # /vision_pose_enu; tight values cap publication to low-altitude
-    # frames. Defaults below are a compromise tuned with
-    # tools.localizer_replay against our scene (cm tags + 1.5 m tags).
-    stable_window_size: 10
+    # frames.
+    #
+    # stable_window_size was 10 historically (tuned for high-altitude
+    # multi-tag scenes); on the ground with a single small tag right
+    # under the camera that's overkill - a window reset costs ~0.33 s of
+    # SETTLING state, during which /vision_pose_enu is silent and the
+    # mission state machine perceives a "lock loss". 4 frames (~0.13 s)
+    # is enough to filter PnP jitter without starving downstream.
+    stable_window_size: 4
     stable_xy_stddev_m: 1.0
     stable_z_stddev_m: 2.0
 

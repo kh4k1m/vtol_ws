@@ -14,11 +14,58 @@ def add_meters_to_latlon(lat, lon, dx_meters, dy_meters):
     new_lon = lon + math.degrees(dx_meters / (R * math.cos(math.radians(lat))))
     return new_lat, new_lon
 
+
+def latlon_from_home_meters(home_lat, home_lon, dx, dy):
+    return add_meters_to_latlon(home_lat, home_lon, dx, dy)
+
+
+def point_on_radius(home_lat, home_lon, radius_m, bearing_rad):
+    """bearing_rad: 0 = North, increases clockwise (same as sin/cos pairing below)."""
+    dx = radius_m * math.sin(bearing_rad)
+    dy = radius_m * math.cos(bearing_rad)
+    return latlon_from_home_meters(home_lat, home_lon, dx, dy)
+
+
+# Default bearings (deg, clockwise from North). Order is mission order.
+# Leading 0° is moved to end when defer_first_zero_bearing is true (fly that leg last).
+_DEFAULT_BEARING_DEG = (
+    0.0,
+    30.0,
+    210.0,
+    240.0,
+    60.0,
+    90.0,
+    270.0,
+    300.0,
+    120.0,
+    150.0,
+    330.0,
+)
+
+
+def mission_bearings_deg(bearings, defer_first_zero):
+    """Return list of float bearings in flight order."""
+    out = [float(x) for x in bearings]
+    if defer_first_zero and out and out[0] == 0.0:
+        return out[1:] + [0.0]
+    return out
+
+
+def ring_waypoints_from_bearings_deg(home_lat, home_lon, radius_m, bearings_deg):
+    lats, lons = [], []
+    for deg in bearings_deg:
+        la, lo = point_on_radius(home_lat, home_lon, radius_m, math.radians(deg))
+        lats.append(la)
+        lons.append(lo)
+    return lats, lons
+
 class GpsRangeTestNode(Node):
     def __init__(self):
         super().__init__('gps_range_test_node')
         self.declare_parameter('target_altitude_m', 40.0)
         self.declare_parameter('waypoint_distance_m', 300.0)
+        self.declare_parameter('bearing_deg', list(_DEFAULT_BEARING_DEG))
+        self.declare_parameter('defer_first_zero_bearing', True)
 
         self.target_alt = self.get_parameter('target_altitude_m').value
         self.wp_dist = self.get_parameter('waypoint_distance_m').value
@@ -51,7 +98,9 @@ class GpsRangeTestNode(Node):
         self.home_lat = 0.0
         self.home_lon = 0.0
 
-        self.get_logger().info('GPS Range Test Node (16 WP + Home) initialized.')
+        self.get_logger().info(
+            'GPS Range Test Node (fixed bearing list on ring, no home legs) initialized.'
+        )
 
     def alt_cb(self, msg):
         self.current_alt = msg.data
@@ -90,36 +139,31 @@ class GpsRangeTestNode(Node):
         elif self.state == 'UPLOAD_MISSION':
             self.home_lat = self.current_lat
             self.home_lon = self.current_lon
-            
-            lats = []
-            lons = []
-            alts = []
-            
-            # Generate 16 waypoints, returning to home after each one
-            num_points = 16
-            for i in range(num_points):
-                angle = math.radians(i * (360.0 / num_points))
-                dx = self.wp_dist * math.sin(angle)
-                dy = self.wp_dist * math.cos(angle)
-                
-                # 1. Fly to the outer waypoint
-                wp_lat, wp_lon = add_meters_to_latlon(self.home_lat, self.home_lon, dx, dy)
-                lats.append(wp_lat)
-                lons.append(wp_lon)
-                alts.append(self.target_alt)
-                
-                # 2. Fly back over home
-                lats.append(self.home_lat)
-                lons.append(self.home_lon)
-                alts.append(self.target_alt)
+
+            raw_b = list(self.get_parameter('bearing_deg').value)
+            defer = bool(self.get_parameter('defer_first_zero_bearing').value)
+            bearings = mission_bearings_deg(raw_b, defer)
+
+            lats, lons = ring_waypoints_from_bearings_deg(
+                self.home_lat, self.home_lon, self.wp_dist, bearings
+            )
+            n = len(bearings)
+            alts = [self.target_alt] * n
 
             req = UploadMission.Request()
             req.lats = lats
             req.lons = lons
             req.alts = alts
-            
+
             self.call_service(self.upload_mission_client, req, 'upload_mission')
-            self.get_logger().info(f'Mission uploaded: {num_points} outward points + {num_points} home passes.')
+            if defer and raw_b and float(raw_b[0]) == 0.0:
+                self.get_logger().info(
+                    'bearing_deg[0]==0: flying 0° on ring as last waypoint (defer_first_zero_bearing).'
+                )
+            self.get_logger().info(
+                f'Mission uploaded: {n} waypoints at radius {self.wp_dist:.0f} m, '
+                f'bearings deg: {bearings}.'
+            )
             self.set_state('GUIDED')
 
         elif self.state == 'GUIDED':

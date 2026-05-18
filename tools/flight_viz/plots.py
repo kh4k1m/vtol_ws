@@ -70,6 +70,62 @@ def _interp_at(src_times_ns: List[int],
     return np.interp(src_arr, ref_arr, val_arr).tolist()
 
 
+def _compute_ate_xy(
+    pred_times_ns: List[int],
+    pred_xs: List[float],
+    pred_ys: List[float],
+    ref_times_ns: List[int],
+    ref_xs: List[float],
+    ref_ys: List[float],
+) -> Dict[str, float]:
+    """Absolute Trajectory Error in XY after time-alignment.
+
+    ATE here is the RMSE of the horizontal residual between the
+    predicted trajectory and the reference, where the reference is
+    linearly interpolated at every predicted timestamp. Only samples
+    whose timestamp falls inside the reference's time span (i.e. not
+    clamped by np.interp) are counted - this prevents flat tails before
+    the first GPS fix or after the last one from polluting the metric.
+
+    Returns ``{'ate_rmse_m', 'ate_mean_m', 'ate_max_m', 'count'}``.
+    Empty fields are ``nan`` and ``count == 0`` when there are no
+    overlapping samples.
+    """
+    nan = float('nan')
+    empty = {
+        'ate_rmse_m': nan, 'ate_mean_m': nan,
+        'ate_max_m': nan, 'count': 0,
+    }
+    if not pred_times_ns or not ref_times_ns:
+        return empty
+
+    pred_t = np.asarray(pred_times_ns, dtype=np.float64)
+    ref_t = np.asarray(ref_times_ns, dtype=np.float64)
+
+    mask = (pred_t >= ref_t[0]) & (pred_t <= ref_t[-1])
+    if not np.any(mask):
+        return empty
+
+    pred_x = np.asarray(pred_xs, dtype=np.float64)[mask]
+    pred_y = np.asarray(pred_ys, dtype=np.float64)[mask]
+    pred_t_m = pred_t[mask]
+
+    ref_x_arr = np.asarray(ref_xs, dtype=np.float64)
+    ref_y_arr = np.asarray(ref_ys, dtype=np.float64)
+    ix = np.interp(pred_t_m, ref_t, ref_x_arr)
+    iy = np.interp(pred_t_m, ref_t, ref_y_arr)
+
+    dx = pred_x - ix
+    dy = pred_y - iy
+    d = np.hypot(dx, dy)
+    return {
+        'ate_rmse_m': float(np.sqrt(np.mean(d * d))),
+        'ate_mean_m': float(np.mean(d)),
+        'ate_max_m': float(np.max(d)),
+        'count': int(d.size),
+    }
+
+
 def _normalize_predicted_specs(plot_cfg) -> List[Dict]:
     """Return the predicted-source list of dicts. Accepts either a list of
     strings (names) or a list of dicts (full specs)."""
@@ -291,10 +347,24 @@ def make_trajectory_xy_aligned(session, plot_cfg) -> go.Figure:
 
     Per-source ``align_xy: false`` suppresses the translation (raw
     overlay). The applied delta is shown in the legend.
+
+    For every predicted source we also compute the **Absolute
+    Trajectory Error** (ATE) - horizontal RMSE between the post-shift
+    predicted track and the reference, time-aligned by linear
+    interpolation. ATE values are surfaced both in the per-source
+    legend label and in a single subtitle line above the plot, so a
+    glance at the figure tells the operator how much each visual
+    backend drifted relative to GPS truth during the flight.
+
+    ``relative_origin: false`` re-centers both trajectories so the
+    reference's first sample sits at (0, 0). Defaults to ``true``
+    because GPS-ENU is already anchored at the first GPS fix, but
+    flipping it off matches the ``coords: local`` case.
     """
     ref_name = str(plot_cfg.get('reference', 'gps'))
     coords = str(plot_cfg.get('coords', 'gps')).lower()
     title = plot_cfg.get('title', f'XY trajectory aligned to {ref_name}')
+    relative_origin = bool(plot_cfg.get('relative_origin', True))
 
     ref = _resolve_source(session, ref_name)
     fig = go.Figure()
@@ -314,11 +384,24 @@ def make_trajectory_xy_aligned(session, plot_cfg) -> go.Figure:
         return fig
 
     ref_t, rxs, rys, _rzs = ref.as_xyz(coords=coords, session=session)
+
+    # Optionally drop both trajectories to a (0, 0) starting point so
+    # the plot reads as "horizontal divergence from the takeoff point"
+    # rather than "from the GPS anchor". GPS-ENU is already anchored at
+    # the first fix, so for the default visualize.yaml this is a no-op,
+    # but it makes the local-coords variant comparable.
+    if relative_origin and rxs and rys:
+        ox, oy = rxs[0], rys[0]
+        rxs = [x - ox for x in rxs]
+        rys = [y - oy for y in rys]
+
     fig.add_trace(go.Scatter(
         x=rxs, y=rys, mode='lines',
         line=dict(color=COLOR_REFERENCE, width=2),
         name=f'{ref_name} (truth)',
     ))
+
+    ate_lines: List[str] = []
 
     for spec in _normalize_predicted_specs(plot_cfg):
         name = spec.get('name')
@@ -334,20 +417,73 @@ def make_trajectory_xy_aligned(session, plot_cfg) -> go.Figure:
         if not sxs:
             continue
         if bool(spec.get('align_xy', True)):
-            dx = _alignment_offset(st, sxs, ref_t, rxs)
-            dy = _alignment_offset(st, sys, ref_t, rys)
+            # Use the un-shifted reference for the alignment offset
+            # because that is what makes the predicted's first sample
+            # land on the reference at the same wall time. The 0,0
+            # shift below moves both traces together.
+            _ref_t_for_align, _rxs_raw, _rys_raw, _ = \
+                ref.as_xyz(coords=coords, session=session)
+            dx = _alignment_offset(st, sxs, _ref_t_for_align, _rxs_raw)
+            dy = _alignment_offset(st, sys, _ref_t_for_align, _rys_raw)
             sxs = [x + dx for x in sxs]
             sys = [y + dy for y in sys]
-            label = (f"{spec.get('label', name)} "
-                     f"(XY anchored at t0: Δ=({dx:+.2f}, {dy:+.2f}) m)")
+            align_note = f"XY anchored at t0: Δ=({dx:+.2f}, {dy:+.2f}) m"
         else:
-            label = f"{spec.get('label', name)} (raw)"
+            align_note = "raw"
+
+        # ATE is computed against the un-shifted reference so the
+        # number reflects real-world divergence, not the cosmetic
+        # 0,0 re-centering applied to the plotted lines.
+        _ref_t_for_ate, _rxs_for_ate, _rys_for_ate, _ = \
+            ref.as_xyz(coords=coords, session=session)
+        ate = _compute_ate_xy(
+            st, sxs, sys, _ref_t_for_ate, _rxs_for_ate, _rys_for_ate,
+        )
+
+        if relative_origin and rxs and rys:
+            # ``rxs[0]`` is now 0 because we shifted; recover the
+            # original origin to apply the same shift to ``sxs/sys``.
+            _ref_t_for_origin, _rxs_origin, _rys_origin, _ = \
+                ref.as_xyz(coords=coords, session=session)
+            sxs = [x - _rxs_origin[0] for x in sxs]
+            sys = [y - _rys_origin[0] for y in sys]
+
+        if ate['count'] > 0:
+            ate_str = f"ATE={ate['ate_rmse_m']:.2f} m"
+            ate_lines.append(
+                f"{spec.get('label', name)}: ATE(RMSE)={ate['ate_rmse_m']:.2f} m "
+                f"| mean={ate['ate_mean_m']:.2f} | max={ate['ate_max_m']:.2f} "
+                f"(n={ate['count']})"
+            )
+        else:
+            ate_str = "ATE=n/a"
+            ate_lines.append(
+                f"{spec.get('label', name)}: ATE=n/a (no time overlap with {ref_name})"
+            )
+
+        label = f"{spec.get('label', name)} ({align_note}, {ate_str})"
+
         fig.add_trace(go.Scatter(
             x=sxs, y=sys, mode='lines+markers',
             line=dict(color=spec.get('color', '#ff7f0e'), width=1.5),
             marker=dict(size=3),
             name=label,
         ))
+
+    if ate_lines:
+        # Subtitle annotation: one line per predicted source. Sits just
+        # below the main title so the operator sees ATE numbers without
+        # having to mouse over legend entries.
+        subtitle = '<br>'.join(ate_lines)
+        fig.update_layout(
+            title=dict(
+                text=f"{title}<br>"
+                     f"<span style='font-size:12px;color:#666'>{subtitle}</span>",
+                x=0.5,
+                xanchor='center',
+            ),
+        )
+
     return fig
 
 

@@ -13,10 +13,15 @@
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <!-- Source of truth for visual navigation topic contract. -->
+  <exec_depend>vision_interfaces</exec_depend>
+  <!-- Legacy mirror so single_source_router still sees /dpvo/nav_status. -->
   <exec_depend>marker_interfaces</exec_depend>
-  <exec_depend>cv_bridge</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>python3-yaml</exec_depend>
+  <!-- Optional: matplotlib is used by dpvo_trajectory_writer_node for the
+       end-of-flight PNG. Install via pip in the dpvo conda env if missing. -->
+  <exec_depend>python3-matplotlib</exec_depend>
 
   <export>
     <build_type>ament_python</build_type>

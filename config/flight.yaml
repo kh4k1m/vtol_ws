@@ -3,7 +3,7 @@ flight_config:
   # "real"     - реальный дрон (камера: USB /dev/video* или RTSP, + автопилот по UART)
   # "gazebo"   - SITL: камера и автопилот через Gazebo
   # "from_log" - воспроизведение из логов (rosbag/mp4 + SITL для прогона)
-  environment: "real"
+  environment: "gazebo"
 
   # 2. Алгоритм навигации
   # "tags"      - полёт по AprilTag меткам (взлёт/посадка автоматически)
@@ -11,7 +11,7 @@ flight_config:
   # "orb_slam3" - полёт по ORB-SLAM3 (mono / imu-mono)
   # "hybrid"    - метки + VO с автопереключением и маппингом
   # "none"      - сбор данных (камера + bridge), без алгоритмов навигации
-  navigation: "tags"
+  navigation: "hybrid"
 
   # 3. Источник VO для navigation == "hybrid"
   # "dpvo" или "orb_slam3"
@@ -40,6 +40,22 @@ flight_config:
   gazebo_camera_topic: "/world/runway/model/alti_transition_quad/link/down_camera_link/sensor/down_camera_sensor/image"
   gazebo_camera_info_topic: "/world/runway/model/alti_transition_quad/link/down_camera_link/sensor/down_camera_sensor/camera_info"
 
+  # Параметры ArduPilot (эталон для QGC / SITL / утилиты apply_arming_check.py).
+  # ARMING_CHECK — битмаска предохранительных проверок перед ARM; 0 = все выкл.
+  # Для «все стандартные проверки» используйте значение из доки под вашу
+  # прошивку (Plane/Copter), часто это -1 или большой uint32 в QGC.
+  #
+  # Для SITL «честный визуальный полёт» (без truth-pose cheat и без GPS)
+  # применяйте дополнительно config/ardupilot/visual_only_sitl.parm — он
+  # выставляет AHRS_EKF_TYPE=3, EK3_SRC1_*=ExternalNav, SIM_GPS_DISABLE=1.
+  # Подробности: config/ardupilot/README.txt, утилита
+  # tools/apply_sitl_visual_only.py.
+  ardupilot:
+    arming_check:
+      real: 1
+      gazebo: 0
+      from_log: 0
+
   # 5. Режим работы стека (управление полётом + логирование)
   #
   # ПРИМЕЧАНИЕ: тонкий тюнинг tag_localizer (anchor strategy, pose_solver,
@@ -62,6 +78,16 @@ flight_config:
   #                  работает, ВСЕ данные пишутся для пост-разбора.
   #                  Дефолт для реальных вылетов.
   #
+  # "fly_and_viz"  - то же что fly_and_log + после выхода из launch'а
+  #                  автоматически дёргается tools/flight_viz по только
+  #                  что записанной сессии и рендерит PNG-графики в
+  #                  <session>/viz/: горизонтальный путь (truth vs
+  #                  предсказание для каждого активного источника, с
+  #                  посчитанным ATE в заголовке), высота во времени,
+  #                  XYZ по осям и видимость меток. Удобно для SITL
+  #                  итераций: ткнул Ctrl+C - получил картинки, не
+  #                  вспоминая команду flight_viz вручную.
+  #
   # "fly_only"     - то же что fly_and_log, но БЕЗ записи. Для коротких
   #                  итераций в SITL (десятки запусков подряд - не засирать
   #                  диск).
@@ -69,13 +95,21 @@ flight_config:
   # "log_subset"   - летим как fly_and_log, но пишем только группы топиков
   #                  из logging.subset_groups (например только /ap/* без
   #                  тяжёлых /camera/image_raw).
-  mode: "log_only"
+  mode: "fly_and_viz"
 
   logging:
     # Корень для всех сессий, относительно $VTOL_WS_ROOT.
     # Реальный путь сессии: <log_root>/<session_prefix>_<timestamp>/
     log_root: "logs"
     session_prefix: "session"
+
+    # Запись логов только пока safety switch «разрешил моторы»
+    # (топик /ap/safety_released от mavlink bridge). При каждом новом цикле
+    # «safety OFF (запись) → safety ON (стоп)» создаётся отдельная папка
+    # session_<timestamp> под log_root. Повторные нажатия в полёте дают
+    # несколько фрагментов — это нормально для логов.
+    safety_gated_sessions:
+      enabled: false
 
     # --- ROSBAG для replay --------------------------------------------------
     rosbag:
@@ -107,7 +141,7 @@ flight_config:
         core:    [/tf, /tf_static, /clock, /camera/camera_info]
         ap:      [/ap/imu/raw, /ap/imu/data, /ap/attitude,
                   /ap/gps/fix, /ap/relative_alt,
-                  /ap/armed, /ap/connected, /ap/external_nav_ready,
+                  /ap/armed, /ap/safety_released, /ap/connected, /ap/external_nav_ready,
                   /ap/flight_mode]
         vision:  [/vision_pose_enu, /nav/status]
         tags:    [/tag_detections, /localizer_status,
@@ -120,6 +154,11 @@ flight_config:
       profiles:
         log_only:    [core, ap, vision, tags, vo]
         fly_and_log: [core, ap, vision, tags, vo, mission]
+        # fly_and_viz пишет тот же набор что fly_and_log: иначе после
+        # SIGINT в <session>/bag не оказывается ни одного нав-топика
+        # и flight_viz рендерит пустые графики (был баг "нет картинок
+        # в logs/"). Список держим синхронным с fly_and_log.
+        fly_and_viz: [core, ap, vision, tags, vo, mission]
         fly_only:    []
         log_subset:  []
 

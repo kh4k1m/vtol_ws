@@ -3,7 +3,7 @@ flight_config:
   # "real"     - реальный дрон (камера: USB /dev/video* или RTSP, + автопилот по UART)
   # "gazebo"   - SITL: камера и автопилот через Gazebo
   # "from_log" - воспроизведение из логов (rosbag/mp4 + SITL для прогона)
-  environment: "gazebo"
+  environment: "real"
 
   # 2. Алгоритм навигации
   # "tags"      - полёт по AprilTag меткам (взлёт/посадка автоматически)
@@ -95,7 +95,7 @@ flight_config:
   # "log_subset"   - летим как fly_and_log, но пишем только группы топиков
   #                  из logging.subset_groups (например только /ap/* без
   #                  тяжёлых /camera/image_raw).
-  mode: "fly_and_viz"
+  mode: "log_only"
 
   logging:
     # Корень для всех сессий, относительно $VTOL_WS_ROOT.
